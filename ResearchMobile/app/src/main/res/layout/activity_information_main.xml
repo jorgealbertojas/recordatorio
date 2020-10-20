@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:id="@+id/nRelative"
+    android:layout_height="match_parent"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+
+    tools:context="com.example.jorgealberto.researchmobile.InformationMain">
+
+
+
+   />
+
+    <TextView
+        android:id="@+id/actionbarTitle"
+        style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+        android:layout_width="fill_parent"
+        android:layout_height="35dp"
+        android:background="@color/green_main"
+
+        android:textSize="25dp"
+        android:text="@string/main"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+
+
+    <androidx.cardview.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        card_view:cardElevation="0dp"
+        card_view:cardCornerRadius="1dp"
+        android:layout_height="120dp"
+        android:tag="0"
+        android:visibility="visible"
+        android:id="@+id/cardViewOcorrencia"
+        android:layout_below="@+id/actionbarTitle">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Relative">
+
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:id="@+id/ImageViewOcorrencia"
+                android:tag="0"
+                android:focusableInTouchMode="false"
+                android:padding="20dp"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/bandeira" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/TextViewOcorrencia"
+                android:text="rerereeet"
+                android:singleLine="false"
+                android:tag="0"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_alignParentTop="true"
+       />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/TextViewReclamante"
+                android:text="1"
+                android:textStyle="bold"
+                android:textSize="15dp"
+                android:tag="0"
+
+                android:textIsSelectable="false"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/ImageViewOcorrencia"
+                android:layout_toEndOf="@+id/ImageViewOcorrencia" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/TextViewEntrada"
+                android:text="2ddddd"
+                android:tag="0"
+                android:textStyle="bold"
+                android:textSize="15dp"
+
+                android:layout_alignParentBottom="true"
+ />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textViewConceito"
+                android:text="FI"
+                android:tag="0"
+                android:layout_marginRight="50dp"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:layout_alignParentBottom="true"
+                 />
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/relativecard"
+
+
+        android:layout_below="@+id/cardViewOcorrencia"
+        >
+
+
+        <com.getbase.floatingactionbutton.FloatingActionsMenu
+            android:id="@+id/multiple_actions_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:fab_addButtonColorNormal="@color/white"
+            tools:fab_addButtonColorPressed="@color/white_pressed"
+            tools:fab_addButtonSize = "normal"
+            tools:fab_addButtonPlusIconColor="@color/half_black"
+            tools:fab_expandDirection="down"
+            android:elevation="10dp"
+            tools:fab_labelStyle="@style/menu_labels_style"
+            android:focusableInTouchMode="true"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true">
+
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:fab_colorNormal="@color/white"
+                card_view:fab_icon="@mipmap/mapa"
+                android:id="@+id/gps"
+
+                card_view:fab_title="Gps"
+                tools:fab_colorPressed="@color/white_pressed"
+                tools:fab_size="mini"/>
+
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:fab_colorNormal="@color/white"
+                card_view:fab_icon="@mipmap/chat"
+                card_view:fab_title="Chat"
+                tools:fab_colorPressed="@color/white_pressed"
+                tools:fab_size="mini"/>
+
+
+     <!--       <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/conlude"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:fab_colorNormal="@color/white"
+                card_view:fab_icon="@mipmap/conclude"
+                tools:fab_colorPressed="@color/white_pressed"/>-->
+
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/action_enable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:fab_colorNormal="@color/white"
+                card_view:fab_icon="@mipmap/opcao4"
+                tools:fab_title="Set bottom menu enabled/disabled"
+                tools:fab_colorPressed="@color/white_pressed"/>
+
+
+        </com.getbase.floatingactionbutton.FloatingActionsMenu>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:layout_below="@+id/cardViewOcorrencia"
+        android:layout_marginStart="10sp"
+        android:layout_marginEnd="10sp"
+
+
+        android:id="@+id/Relative2"
+        android:layout_marginTop="25sp">
+
+>
+            <RelativeLayout
+                android:layout_width="130dp"
+                android:id="@+id/cardViewAceitar"
+                android:layout_height="wrap_content"
+                android:foreground="?android:attr/selectableItemBackground">
+
+            <ImageView
+                android:layout_width="130dp"
+                android:layout_height="50dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:id="@+id/imageViewAceitar"
+                android:background="@color/blue_button"
+                android:src="@mipmap/aceitar"
+                android:scaleType="fitCenter"
+                android:baselineAlignBottom="true"
+                android:focusable="true" />
+            <TextView
+                android:layout_width="130dp"
+                android:layout_height="30dp"
+                android:id="@+id/textView3"
+                android:text="@string/aceitar"
+                android:tag="0"
+
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:background="@color/blue_button"
+                android:textColor="@color/white"
+                android:textAlignment="center"
+                android:layout_below="@+id/imageViewAceitar"
+                android:elegantTextHeight="true"
+                android:foreground="?android:attr/selectableItemBackground" />
+            </RelativeLayout>
+
+
+
+        <RelativeLayout
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+
+            android:id="@+id/cardViewFinalizar"
+            android:foreground="?android:attr/selectableItemBackground">
+            <ImageView
+                android:layout_width="130dp"
+                android:layout_height="50dp"
+                android:id="@+id/imageViewFinalizar"
+                android:background="@color/blue_button"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/finalizar"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp" />
+
+            <TextView
+                android:layout_width="130dp"
+                android:layout_height="30dp"
+                android:id="@+id/textView4"
+                android:text="@string/finalizar"
+                android:tag="0"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:background="@color/blue_button"
+                android:textColor="@color/white"
+                android:textAlignment="center"
+                android:layout_below="@+id/imageViewFinalizar"
+                android:elegantTextHeight="true"
+                android:foreground="?android:attr/selectableItemBackground" />
+            </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <androidx.cardview.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        card_view:cardElevation="2sp"
+        card_view:cardCornerRadius="1dp"
+        android:layout_height="wrap_content"
+        android:tag="0"
+        android:visibility="visible"
+        android:id="@+id/cardViewGlobal"
+        android:layout_below="@+id/Relative2"
+        android:layout_marginTop="25sp">
+
+        <com.diegodobelo.expandingview.ExpandingList
+            android:id="@+id/expanding_list_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </androidx.cardview.widget.CardView>
+
+
+</RelativeLayout>

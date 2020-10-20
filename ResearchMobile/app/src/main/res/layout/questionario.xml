@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:configChanges=""
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/color_primary"
+        android:padding="10dp">
+
+        <com.shuhart.stepview.StepView
+            android:id="@+id/step_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="6dp"
+            app:sv_selectedCircleColor="@color/white"
+            app:sv_selectedTextColor="@color/white"
+            app:sv_stepLineWidth="1dp"
+            app:sv_stepPadding="4dp"
+            app:sv_nextTextColor="@color/colorAccent"
+            app:sv_nextStepLineColor="@color/colorAccent"
+            app:sv_nextStepCircleColor="@color/gray"
+            app:sv_doneCircleColor="@color/colorAccent"
+            app:sv_doneStepLineColor="@color/colorAccent"
+            app:sv_doneCircleRadius="12dp"
+            app:sv_selectedCircleRadius="12dp"
+            android:pointerIcon="arrow"
+            app:sv_selectedStepNumberColor="@color/colorPrimary"
+            app:sv_stepViewStyle="@style/StepView"
+            app:sv_doneStepMarkColor="@color/colorPrimary"
+            app:sv_stepNumberTextSize="12sp"
+            app:sv_textSize="16sp"
+            app:sv_animationType="Line" />
+
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/editEntrevistado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#f4f4f4"
+        android:clickable="false"
+        android:cursorVisible="false"
+        android:ems="10"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        android:fontFeatureSettings="R"
+        android:textStyle="bold"
+        android:fontFamily="@fonts/R"
+        android:padding="20dp">
+
+        <requestFocus />
+    </EditText>
+    <View android:layout_height="2dp"
+        android:layout_width="match_parent"
+        android:background="@color/gray_lighter">
+
+    </View>
+    <ScrollView
+        android:id="@+id/nScrollView"
+        android:layout_width="fill_parent"
+        android:layout_height="88dp"
+        android:layout_weight="0.03"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:focusableInTouchMode="false" >
+
+        <LinearLayout
+            android:id="@+id/edits_ll"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical" >
+        </LinearLayout>
+    </ScrollView>
+
+	<TableLayout
+	    xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:layout_width="fill_parent"
+	    android:layout_height="80dp"
+	    android:background="#000000" >
+        <View android:layout_height="2dp"
+            android:layout_width="match_parent"
+            android:background="@color/gray_lighter">
+
+        </View>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_weight="2"
+        android:orientation="horizontal"
+        android:stretchColumns="*" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="#ffffff" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:background="#ffffff" >
+
+            <Button
+                android:id="@+id/buttonPersonalizado2"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_alignParentLeft="true"
+                android:background="@drawable/buttonborder"
+                android:onClick="Avancar"
+                android:text="teste"
+                android:visibility="invisible"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/black"
+                android:padding="15dp"
+                android:scaleType="fitXY" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:background="#ffffff" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:background="#ffffff" >
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:background="#ffffff" >
+
+
+            <Button
+                android:id="@+id/buttonPersonalizado"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/buttonborder"
+                android:onClick="Avancar"
+                android:text="teste"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:visibility="invisible"
+                android:textColor="@color/black"
+                android:padding="15dp"
+                android:scaleType="fitXY" />
+
+            <ImageButton
+                android:id="@+id/imageButtonAvancar"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:background="@null"
+                android:onClick="Avancar"
+                android:padding="15dp"
+                android:scaleType="fitXY"
+                android:src="@mipmap/iconappsetaesquerda" />
+        </RelativeLayout>
+    </TableRow>
+
+</TableLayout>
+
+    </LinearLayout>

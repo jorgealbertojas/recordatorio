@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+   <TextView
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="Perfil 1"
+       android:textStyle="bold"
+   />
+
+	<Spinner
+       android:id="@+id/Spinnerperfil1"
+       android:layout_width="fill_parent"
+       android:layout_height="wrap_content"
+       android:textStyle="bold"
+    />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Perfil 2"
+        android:textStyle="bold"
+        android:visibility="invisible" />
+
+    <Spinner
+        android:id="@+id/Spinnerperfil2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:visibility="invisible" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Numero"
+        android:id="@+id/checkBoxNumero" />
+
+    <View
+        android:id="@+id/view1"
+        android:layout_width="wrap_content"
+        android:layout_height="86dp" />
+
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+    	android:layout_width="wrap_content" 
+    	android:layout_gravity="center_horizontal"
+    	android:layout_height="wrap_content">  
+    <TableRow>
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Entrevistado:"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/editEntrevistado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Digitar numero" >
+
+        <requestFocus />
+    </EditText>
+     </TableRow>
+ 
+</TableLayout>
+
+    <ImageButton
+        android:id="@+id/imageButton2"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@null"
+        android:scaleType="fitXY"
+        android:src="@mipmap/ok_01" />
+
+</LinearLayout>

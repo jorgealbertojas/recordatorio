@@ -1,0 +1,72 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">2dp</dimen>
+    <dimen name="activity_vertical_margin">1dp</dimen>
+    <dimen name="card_radius">5dp</dimen>
+    <dimen name="nav_drawer_width">260dp</dimen>
+
+    <dimen name="space_opcao">5dp</dimen>
+
+    <dimen name="text_size_help">16sp</dimen>
+
+
+    <dimen name="activity_horizontal_margin_content">4dp</dimen>
+
+    <dimen name="fab_margin">24dp</dimen>
+    <dimen name="fab_margin_open">16dp</dimen>
+    <dimen name="fab_margin_content">6dp</dimen>
+
+    <dimen name="tab_max_width">200dp</dimen>
+
+
+    <!-- Material Design guides lines  -->
+
+    <!-- Components – Lists - Only text -->
+    <dimen name="card_list_height">88dp</dimen>
+
+    <dimen name="text4_list_size">22sp</dimen>
+
+    <dimen name="text1_list_size">16sp</dimen>
+    <dimen name="text1_list_padding_left">4dp</dimen>
+    <dimen name="text1_list_padding_top">4dp</dimen>
+    <dimen name="text1_list_padding_bottom">4dp</dimen>
+    <dimen name="text1_list_padding">8dp</dimen>
+
+    <dimen name="text2_list_size">14sp</dimen>
+    <dimen name="text2_list_height">88dp</dimen>
+    <dimen name="text2_list_padding_left">4dp</dimen>
+    <dimen name="text2_list_padding_top">4dp</dimen>
+    <dimen name="text2_list_padding_bottom">4dp</dimen>
+    <dimen name="text2_list_padding">4dp</dimen>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="card_forecast_list_item_vertical_padding">16dp</dimen>
+
+
+    <dimen name="card_padding">8dp</dimen>
+
+    <!-- Text of the Content  -->
+    <dimen name="text_big">9sp</dimen>
+    <dimen name="text_normal">5sp</dimen>
+
+
+    <dimen name="image_help_width">25dp</dimen>
+    <dimen name="image_help_heigth">25dp</dimen>
+
+    <dimen name="background">60dp</dimen>
+    <dimen name="background_padding">10dp</dimen>
+
+    <dimen name="mb_corner_radius_2">50dp</dimen>
+
+    <!-- Login  -->
+    <dimen name="login_button_radius">30dp</dimen>
+    <dimen name="login_button_height">60dp</dimen>
+    <dimen name="login_button_width">300dp</dimen>
+    <dimen name="login_holder_height">25dp</dimen>
+    <dimen name="login_horizontalline_spacing">10dp</dimen>
+
+    <dimen name="monogram_width">40dp</dimen>
+    <dimen name="monogram_height">80dp</dimen>
+
+
+</resources>
