@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:id="@+id/nRelative"
     android:layout_height="match_parent"
     style="@style/background_all"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     tools:context="com.example.jorgealberto.researchmobile.InformationMain">
-
 
 
     <ImageView
@@ -17,6 +16,9 @@
         android:layout_centerHorizontal="true"
         android:scaleType="centerCrop"
         android:src="@mipmap/ic_icon"
+        card_view:layout_constraintEnd_toEndOf="parent"
+        card_view:layout_constraintStart_toStartOf="parent"
+        card_view:layout_constraintTop_toTopOf="parent"
         card_view:srcCompat="@mipmap/ic_icon" />
 
     <ImageView
@@ -25,7 +27,10 @@
         android:layout_height="60dp"
         android:layout_centerInParent="true"
         android:src="@mipmap/icones150px01"
-        />
+        card_view:layout_constraintBottom_toBottomOf="parent"
+        card_view:layout_constraintEnd_toEndOf="parent"
+        card_view:layout_constraintStart_toStartOf="parent"
+        card_view:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/criar"
@@ -38,7 +43,11 @@
         android:text="Iniciar"
         android:textColor="#2a4c73"
         android:textSize="17sp"
-        android:textStyle="normal" />
+        android:textStyle="normal"
+        card_view:layout_constraintBottom_toBottomOf="parent"
+        card_view:layout_constraintEnd_toEndOf="parent"
+        card_view:layout_constraintStart_toStartOf="parent"
+        card_view:layout_constraintTop_toTopOf="parent" />
 
 
     <ImageView
@@ -49,67 +58,71 @@
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
         android:src="@mipmap/icones150px02"
-        android:visibility="invisible" />
+        android:visibility="invisible"
+        card_view:layout_constraintBottom_toBottomOf="parent"
+        card_view:layout_constraintEnd_toEndOf="parent"
+        card_view:layout_constraintStart_toStartOf="parent"
+        card_view:layout_constraintTop_toTopOf="parent" />
 
 
     <com.getbase.floatingactionbutton.FloatingActionsMenu
         android:id="@+id/multiple_actions_down"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible"
-        tools:fab_addButtonColorNormal="@color/white"
-        tools:fab_addButtonColorPressed="@color/white_pressed"
-        tools:fab_addButtonSize = "normal"
-        tools:fab_addButtonPlusIconColor="@color/blue_button"
-        tools:fab_expandDirection="down"
         android:elevation="10dp"
-        tools:fab_labelStyle="@style/menu_labels_style"
         android:focusableInTouchMode="true"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true">
+        android:visibility="visible"
+        card_view:layout_constraintBottom_toBottomOf="parent"
+        card_view:layout_constraintEnd_toEndOf="parent"
+        tools:fab_addButtonColorNormal="@color/color_primary"
+        tools:fab_addButtonColorPressed="@color/white_pressed"
+        tools:fab_addButtonPlusIconColor="@color/color_accent"
+        card_view:fab_addButtonColorNormal="@color/color_accent"
+        tools:fab_addButtonSize="normal"
+        tools:fab_expandDirection="up"
+        tools:fab_labelStyle="@style/menu_labels_style">
 
 
         <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/gps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:fab_colorNormal="@color/white"
             card_view:fab_icon="@mipmap/mapa"
-            android:id="@+id/gps"
             card_view:fab_title="Gps"
+            tools:fab_colorNormal="@color/white"
             tools:fab_colorPressed="@color/white_pressed"
-            tools:fab_size="mini"/>
+            tools:fab_size="mini" />
 
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/chat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:fab_colorNormal="@color/white"
             card_view:fab_icon="@mipmap/chat"
             card_view:fab_title="Chat"
+            tools:fab_colorNormal="@color/white"
             tools:fab_colorPressed="@color/white_pressed"
-            tools:fab_size="mini"/>
+            tools:fab_size="mini" />
 
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/bkp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:fab_colorNormal="@color/white"
             card_view:fab_icon="@mipmap/database"
-            tools:fab_colorPressed="@color/white_pressed"/>
+            tools:fab_colorNormal="@color/white"
+            tools:fab_colorPressed="@color/white_pressed" />
 
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/buscar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:fab_colorNormal="@color/white"
             card_view:fab_icon="@mipmap/configuration"
-            tools:fab_title="Set bottom menu enabled/disabled"
-            tools:fab_colorPressed="@color/white_pressed"/>
+            tools:fab_colorNormal="@color/white"
+            tools:fab_colorPressed="@color/white_pressed"
+            tools:fab_title="Set bottom menu enabled/disabled" />
 
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>

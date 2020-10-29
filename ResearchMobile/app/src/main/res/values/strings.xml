@@ -10,6 +10,8 @@
     <string name="drawer_close">Close</string>
     <string name="title_activity_nav_drawer_row">nav_drawer_row</string>
 
+    <string name="create">Crie sua conta</string>
+    <string name="login_email_null">Entre com e-mail cadastrado!</string>
 
     <string name="opcao_2">Recordatório</string>
     <string name="opcao_3">Verificar Conexão</string>

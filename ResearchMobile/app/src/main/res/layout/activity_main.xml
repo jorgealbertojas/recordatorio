@@ -46,35 +46,6 @@
         </androidx.appcompat.widget.ContentFrameLayout>
 
 
-
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:background="@color/white"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/textView1"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentTop="true"
-                    android:layout_toEndOf="@+id/actionbarTitle"
-                    android:layout_toRightOf="@+id/actionbarTitle"
-
-                    android:text=""
-                    android:textColor="#ffffff"
-                    android:textSize="18sp"
-                    android:textAlignment="center"
-                    tools:text="Recordátorio Alimentar"
-
-                    android:gravity="center" />
-
-
-            </RelativeLayout>
-
-
-
         <android.gesture.GestureOverlayView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

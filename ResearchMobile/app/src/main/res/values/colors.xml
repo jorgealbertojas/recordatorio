@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black_semi_transparent">#B2000000</color>
-    <color name="color_primary">#4a89ff</color>
+    <color name="color_primary">#3F51B5</color>
     <color name="color_primary_dark">#A8A6A1</color>
-    <color name="color_accent">#00C4E1</color>
+    <color name="color_accent">#3F51B5</color>
     <color name="white">#ffffff</color>
     <color name="blue_dark">#283593</color>
-    <color name="blue_medium">#00aded</color>
+
     <color name="blue_ligth">#9FC1FB</color>
     <color name="pink">#F83F9B</color>
 
@@ -33,9 +33,9 @@
     <color name="gold">#ffd700</color>
     <color name="green_main">#2fb193</color>
 
-    <color name="green_button">#27B193</color>
+    <color name="NoAccent">#a8a8a8</color>
 
-    <color name="blue_button">#0476f8</color>
+    <color name="green_button">#27B193</color>
 
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>

@@ -750,27 +750,9 @@ public class MainFragment extends Fragment {
         return ResultadoLista;
     }
 
-/*    @Override
-    protected void onDestroy() {
-        //if (modulo.nGPS){
-        //	Intent intent = new Intent("android.location.GPS_ENABLED_CHANGE");
-        //	intent.putExtra("enabled", false);
-        //	sendBroadcast(intent);
-        //	intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-        //    startActivityForResult(intent, 1);
-        //}
-
-        super.onDestroy();
-        //cursorPergunta.close();
-    };*/
-
-
     private StringWriter ParametroRetorna(){
         try{
             writeXmlInicio();
-
-
-
 
             Cursor cusrsorlogin = bd.rawQuery(sql_select.GET_USUARIO2,new String[] {(carregarsuario_login())});
             cusrsorlogin.moveToFirst();
@@ -782,13 +764,6 @@ public class MainFragment extends Fragment {
                 bd.execSQL(" update controle_inicio set ID_USUARIO =  " + usuario  + " , NM_USUARIO = '" + Nomeusuario + "'");
                 bd.execSQL(" update controle_fim set ID_USUARIO = " + usuario  + " , NM_USUARIO = '" + Nomeusuario + "'");
             }
-
-
-
-
-
-
-
 
             Resposta OResposta = new Resposta();
             writeXml(PegarDados(sql_select.GET_RESPOSTAOrdenado,OResposta), sql_create.TABLE_RESPOSTA);
@@ -804,27 +779,17 @@ public class MainFragment extends Fragment {
             Controle_fim OControle_fim = new Controle_fim();
             writeXml(PegarDados(sql_select.GET_CONTROLE_FIM,OControle_fim), sql_create.TABLE_CONTROLE_FIM);
 
-
-
             // sql_select.GET_RESPOSTA
-
             writeXmlFim();
             StringWriter s = new StringWriter();
             s = writer;
-            //TextView textoEdits = (TextView) findViewById(R.id.textView2);
-
-            //textoEdits.setText(s.toString());
-
 
             return s;
         }
         catch (Throwable ex){
             return  null;
         }
-
     }
-
-
 
     private class MythreadWeservice implements Runnable {
         private int numLoops;
@@ -842,7 +807,6 @@ public class MainFragment extends Fragment {
                     mDialog.setMessage("Atualizando o servidor com os dados coletados da pesquisa " + filtro_desc_pesquisa);
                 }
             });
-
 
             try {
 
@@ -893,9 +857,6 @@ public class MainFragment extends Fragment {
                         bd.execSQL(sql_delete.DEL_CONTROLE_INICIO);
                         bd.execSQL(sql_delete.DEL_CONTROLE_FIM);
                         new FTPtransferencia().execute("seuparametro");
-
-                        contaCompletoEIncompleto();
-
 
                     } else {
                         Toast.makeText(fragmentView.getContext(), "Verifique a internet! Problemas na atualização!", Toast.LENGTH_SHORT).show();
@@ -1001,19 +962,14 @@ public class MainFragment extends Fragment {
                     nBoolean = false;
                 }
                 return nBoolean;
-
-
-
             }
             catch (Exception exception)
             {
                 return false;
-
             }
         }
 
     }
-
 
     public static boolean externalMemoryAvailable() {
         return android.os.Environment.getExternalStorageState().equals(
@@ -1176,54 +1132,5 @@ public class MainFragment extends Fragment {
     }
 
 
-    private void contaCompletoEIncompleto(){
-
-        nDataBase = new DataBase(fragmentView.getContext());
-        bd = nDataBase.getReadableDatabase();
-
-        int AlunoAtual = 0;
-        int contaAluno = 0;
-
-        int valoTotalCompleto = 0;
-        int valoTotalIncompleto = 0;
-
-        TextView textoCompleto = (TextView) fragmentView.findViewById(R.id.actionbarTitle);
-
-        textoCompleto.setText("0  ");
-
-        Cursor cursoAluno = bd.rawQuery(sql_select.get_todos_alunos, null);
-        cursoAluno.moveToFirst();
-
-        Cursor Cursorget_contapergunta = bd.rawQuery(sql_select.get_contapergunta,null);
-        Cursorget_contapergunta.moveToFirst();
-        int varCursorget_contapergunta = Cursorget_contapergunta.getInt(0);
-
-        Cursor cursoContapergunta = bd.rawQuery(sql_select.get_contapergunta, null);
-        cursoAluno.moveToFirst();
-
-
-        while (!cursoAluno.isAfterLast()) {
-
-            AlunoAtual = cursoAluno.getInt(0);
-
-            Cursor cursorReposta1 = bd.rawQuery(sql_select.GET_completo,new String[] {Integer.toString(varCursorget_contapergunta), Integer.toString(AlunoAtual)});
-            cursorReposta1.moveToFirst();
-            if (cursorReposta1.getCount() == 1){
-                valoTotalCompleto = valoTotalCompleto + 1;
-            }else{
-                valoTotalIncompleto = valoTotalIncompleto + 1;
-            }
-
-
-            textoCompleto.setText(Integer.toString(valoTotalCompleto));
-
-            cursoAluno.moveToNext();
-        }
-    }
-
-
-
-
-
-}
+  }
 
