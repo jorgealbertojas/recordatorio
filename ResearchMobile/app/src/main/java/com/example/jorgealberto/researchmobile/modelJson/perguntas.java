@@ -10,6 +10,7 @@ public class perguntas implements Serializable {
     private String descricao;
     private Integer ordem;
     private String personalizacao;
+    private String bloco;
     private List<itens> itens;
 
     public List<com.example.jorgealberto.researchmobile.modelJson.itens> getItens() {
@@ -58,5 +59,13 @@ public class perguntas implements Serializable {
 
     public void setPersonalizacao(String personalizacao) {
         this.personalizacao = personalizacao;
+    }
+
+    public String getBloco() {
+        return bloco;
+    }
+
+    public void setBloco(String bloco) {
+        this.bloco = bloco;
     }
 }

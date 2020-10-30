@@ -80,7 +80,32 @@ public class DataBase extends SQLiteOpenHelper{
 
 		ContentValues obj = new ContentValues();
 
+		obj.put("ID_BLOCO","0");
+		obj.put("DESCBLOCO","teste descrição bloco");
+		obj.put("INFORMACAO","teste bloco");
+		db.insert(sql_create.TABLE_BLOCO, null, obj);
+
 		obj.put("ID_BLOCO","1");
+		obj.put("DESCBLOCO","teste descrição bloco");
+		obj.put("INFORMACAO","teste bloco");
+		db.insert(sql_create.TABLE_BLOCO, null, obj);
+
+		obj.put("ID_BLOCO","2");
+		obj.put("DESCBLOCO","teste descrição bloco");
+		obj.put("INFORMACAO","teste bloco");
+		db.insert(sql_create.TABLE_BLOCO, null, obj);
+
+		obj.put("ID_BLOCO","3");
+		obj.put("DESCBLOCO","teste descrição bloco");
+		obj.put("INFORMACAO","teste bloco");
+		db.insert(sql_create.TABLE_BLOCO, null, obj);
+
+		obj.put("ID_BLOCO","4");
+		obj.put("DESCBLOCO","teste descrição bloco");
+		obj.put("INFORMACAO","teste bloco");
+		db.insert(sql_create.TABLE_BLOCO, null, obj);
+
+		obj.put("ID_BLOCO","5");
 		obj.put("DESCBLOCO","teste descrição bloco");
 		obj.put("INFORMACAO","teste bloco");
 		db.insert(sql_create.TABLE_BLOCO, null, obj);

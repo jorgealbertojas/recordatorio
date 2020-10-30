@@ -424,6 +424,9 @@ public class LoginActivity extends AppCompatActivity
         @Override
         public void onResponse(Call<ListWrapper<perguntas>> call, Response<ListWrapper<perguntas>> response) {
             try {
+
+                String tempBloco = "0";
+                Integer tempBlocoNumber = -1;
                 if (response.isSuccessful()) {
                     ArrayList<perguntas> data = new ArrayList<>();
                     data.addAll(response.body().perguntas);
@@ -431,7 +434,16 @@ public class LoginActivity extends AppCompatActivity
                     for (int i = 0; i < data.size() ; i++) {
                         Pergunta pergunta = new Pergunta();
                         pergunta.setDESCRICAO(data.get(i).getDescricao());
-                        pergunta.setID_BLOCO(1);
+                        if (!data.get(i).getBloco().equals(tempBloco)){
+                            tempBlocoNumber ++;
+                            tempBloco = data.get(i).getBloco();
+                        }
+
+                        if (tempBlocoNumber >= 5){
+                            pergunta.setID_BLOCO(5);
+                        }else {
+                            pergunta.setID_BLOCO(tempBlocoNumber);
+                        }
                         pergunta.setID_PERGUNTA_JSON(data.get(i).getId());
                         pergunta.setID_PERGUNTA(i);
                         pergunta.setNUM_SUBFORMULARIO(0);
@@ -454,9 +466,19 @@ public class LoginActivity extends AppCompatActivity
                             }else if (data.get(i).getItens().get(y).getTipo() == 0) {
                                 opcao.setVALOR(34);
                             }else if (data.get(i).getItens().get(y).getTipo() == 6) {
-                                opcao.setVALOR(10);
+                                if (data.get(i).getItens().get(y).getPersonalizacao() != null) {
+                                    if (data.get(i).getItens().get(y).getPersonalizacao().equals("Hora e minuto")) {
+                                        opcao.setVALOR(8);
+                                    } else {
+                                        opcao.setVALOR(10);
+                                    }
+                                }else{
+                                    opcao.setVALOR(10);
+                                }
                             }else if (data.get(i).getItens().get(y).getTipo() == 9) {
                                 opcao.setVALOR(0);
+                            }else if (data.get(i).getItens().get(y).getTipo() == 10) {
+                                opcao.setVALOR(99);
                             }
 
                             opcao.setPERSONALIZACAO(data.get(i).getItens().get(y).getPersonalizacao());
@@ -526,7 +548,6 @@ public class LoginActivity extends AppCompatActivity
 
         private void saveEscola(Escola nEscola)
         {
-
             ContentValues obj = new ContentValues();
             obj.put("ID_ESCOLA",nEscola.getID_ESCOLA());
             obj.put("COD_UF",nEscola.getCOD_UF());

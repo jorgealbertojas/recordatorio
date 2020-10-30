@@ -176,9 +176,9 @@ public class sql_select {
 					" FROM MODO_PREPARACAO  "+
 					" WHERE ID_ALIMENTO = ? ";
 
-	public static String GET_ADICAO =
+	public static String GET_ADICOES =
 			" SELECT ID_ALUNO, DESCRICAO " +
-					" FROM ADICAO  "+
+					" FROM ADICOES  "+
 					" WHERE ID_ALIMENTO = ? ";
 
 	public static String GET_MEDIDAS_CASEIRAS =

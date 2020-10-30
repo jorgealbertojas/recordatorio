@@ -20,13 +20,17 @@
         android:id="@+id/fragmentloginView1"/>
 
     <ImageView
-        app:layout_heightPercent="40%"
-        app:layout_widthPercent="40%"
-        android:layout_centerHorizontal="true"
-        android:src="@mipmap/ic_icon"
-        android:transitionName="icon_main"
         android:id="@+id/fragmentloginLogo"
-        android:alpha="100"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:alpha="100"
+        android:tint="@color/colorPrimary"
+        android:background="@drawable/bnt_blue_border_oval"
+        android:src="@mipmap/ic_icon"
+        android:transitionName="icon_main" />
 
     <RelativeLayout
         android:layout_height="wrap_content"
@@ -40,7 +44,7 @@
             android:layout_height="@dimen/login_holder_height"
             android:layout_width="@dimen/login_holder_height"
             android:tint="#ffffff"
-            android:src="@drawable/places_ic_clear"
+            android:src="@drawable/user_icon"
             android:id="@+id/mainImageView1"
             android:layout_marginBottom="30dp"/>
 
@@ -49,7 +53,7 @@
             android:layout_width="@dimen/login_holder_height"
             android:layout_marginTop="6dp"
             android:tint="#ffffff"
-            android:src="@drawable/places_ic_clear"
+            android:src="@drawable/password_icon"
             android:layout_below="@id/mainImageView1"
             android:id="@+id/mainImageView2"/>
 
@@ -76,7 +80,7 @@
             android:layout_alignBottom="@id/mainImageView1"
             android:textColor="#FFFFFF"
             android:id="@+id/mainEditText1"
-            android:hint="login_e_mail"
+            android:hint="e-mail"
             android:textColorHint="@color/colorAccent"
             android:typeface="serif"/>
 
@@ -101,7 +105,7 @@
             android:textColor="#FFFFFF"
             android:id="@+id/mainEditText2"
             android:textColorHint="@color/colorAccent"
-            android:hint="login_password"
+            android:hint="senha"
             android:typeface="serif"/>
 
         <EditText
@@ -119,7 +123,7 @@
             android:id="@+id/mainEditText3"
             android:textColorHint="@color/colorAccent"
             android:visibility="gone"
-            android:hint="login_confirm_password"
+            android:hint="corfirmar senha"
             android:typeface="serif"/>
 
         <View
@@ -147,14 +151,14 @@
             android:layout_height="wrap_content"
             android:textColor="#cccccc"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="dont_have_an_account"
+            android:text=""
             android:typeface="serif"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="create_account"
+            android:text="Criar conta"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:textSize="14sp"
@@ -166,7 +170,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="forget_password"
+            android:text="Esqueci senha"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:id="@+id/label_forget"

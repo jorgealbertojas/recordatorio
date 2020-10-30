@@ -177,6 +177,8 @@ public class automatico extends Activity{
 			   String varusuario = "";
 			   String varGPS = "";
 			   String varData = "";
+
+			 int eeeee =  cursor.getCount();
 			
 			while(!cursor.isAfterLast() )
 			{

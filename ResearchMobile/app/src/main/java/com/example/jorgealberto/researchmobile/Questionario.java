@@ -4,6 +4,7 @@ import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -90,6 +91,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class Questionario extends Activity {
+    public static String  saltoTEMP_NOVO = "";
+    public String saltoTEMP = saltoTEMP_NOVO;
+    public static String ambienteTEMP = "";
 
     public boolean PassouPorAquiTextoTemp = false;
 
@@ -162,6 +166,7 @@ public class Questionario extends Activity {
     private List<String> steps = null;
     private boolean podedefechar = false;
     private InterfaceRetrofit mInterfaceObject;
+    private StepView stepView;
 
     private GoogleApiClient client;
     private Callback<List<alimentos>> objectCallback = new Callback<List<alimentos>>() {
@@ -250,7 +255,7 @@ public class Questionario extends Activity {
                 insereControleFim();
             }
         }
-
+        saltoTEMP = saltoTEMP_NOVO;
         super.onDestroy();
         //cursorPergunta.close();
     }
@@ -439,6 +444,15 @@ public class Questionario extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
+        nDataBase = new DataBase(this);
+        bd = nDataBase.getReadableDatabase();
+
+        if (!saltoTEMP.equals("")) {
+            bd.execSQL(sql_delete.DEL_SALTO_TODOS, new String[]{});
+            InsereSalto(saltoTEMP, saltoTEMP);
+            saltoTEMP = "";
+        }
+
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.questionario);
@@ -448,13 +462,14 @@ public class Questionario extends Activity {
         buttonPersonalizado = (Button) findViewById(R.id.buttonPersonalizado);
         buttonPersonalizado2 = (Button) findViewById(R.id.buttonPersonalizado2);
 
-        StepView stepView = findViewById(R.id.step_view);
-        stepView.setStepsNumber(4);
+        stepView = findViewById(R.id.step_view);
+        stepView.setStepsNumber(5);
         steps = new ArrayList<>();
-        steps.add("Criança");
-        steps.add("Alimentos");
-        steps.add("Detalhes");
-        steps.add("Revisão");
+        steps.add("");
+        steps.add("");
+        steps.add("");
+        steps.add("");
+        steps.add("");
         stepView.setSteps(steps);
 
         Bundle extras = getIntent().getExtras();
@@ -500,8 +515,7 @@ public class Questionario extends Activity {
             }
             AvancarQuestionario("");
 
-            nDataBase = new DataBase(this);
-            bd = nDataBase.getReadableDatabase();
+
             Cursor GET_tem_controle_inicio = bd.rawQuery(sql_select.GET_tem_controle_inicio, new String[]{Integer.toString(AlunoAtual)});
             GET_tem_controle_inicio.moveToFirst();
 
@@ -543,14 +557,14 @@ public class Questionario extends Activity {
 
         } else if (savedInstanceState != null) {
             AbrirQuestionarioSQL();
-            Localizador();
+       //     Localizador();
             MaxText = new ArrayList<String>();
             HintText = new ArrayList<String>();
             PERSONALIZACAOHint = new ArrayList<String>();
             PERSONALIZAOText = new ArrayList<String>();
             TagText = new ArrayList<String>();
             criarNovaEditText();
-            PreencherResposta(Integer.toString(NumeroPerguntaAtual));
+          //  PreencherResposta(Integer.toString(NumeroPerguntaAtual));
             cursorPergunta.moveToNext();
         }
 
@@ -695,7 +709,6 @@ public class Questionario extends Activity {
                 llPergunta.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
             }
 
-            //	if (getPersonalizacaoCP(cursorPergunta.getString(1),Integer.toString(AlunoAtual))){
             if (getPersonalizacaoCP("", "")) {
 
                 if (cursorPergunta.getString(1) != null) {
@@ -711,14 +724,6 @@ public class Questionario extends Activity {
 
 
                 }
-
-/*				if (getPersonalizacaoOD(cursorPergunta.getString(1),Integer.toString(AlunoAtual)).toString().equals("")){
-					llPergunta.setText(cursorPergunta.getString(1));
-				}else{
-					String variaveLabel = cursorPergunta.getString(1).substring(cursorPergunta.getString(1).indexOf("[[OD"),cursorPergunta.getString(1).indexOf("]]")+2);
-					String variavelCompletaLabel = (cursorPergunta.getString(1).toString().replace(variaveLabel,getPersonalizacaoOD(cursorPergunta.getString(1),Integer.toString(AlunoAtual)).toString()));
-					llPergunta.setText(variavelCompletaLabel);
-				}*/
 
                 llPergunta.refreshDrawableState();
 
@@ -740,145 +745,166 @@ public class Questionario extends Activity {
                 buttonPersonalizado2.setVisibility(View.INVISIBLE);
                 imageButtonAvancar.setVisibility(View.VISIBLE);
                 while (!cursor.isAfterLast()) {
-                    try {
-                        // RADIONBUTTON
-                        if (cursor.getInt(2) == 0) {
-                            if (!((cursor.getString(0)).equals(igual))) {
-                                igual = cursor.getString(0);
-                                count++;
-                                LinearLayout.LayoutParams params;
 
-                                if (cursor.getString(3).equals("Você/a criança acrescentou algo neste alimento?")) {
+                    if (mostraAmbiente(cursor.getString(8))) {
 
-                                } else if (personalizado(cursor.getString(3))) {
+
+
+                        stepView.go(4,true);
+
+
+                        try {
+
+                            if (cursor.getInt(2) == 99) {
+                                AdicionarYouTube();
+                            }
+                            // RADIONBUTTON
+                            else if (cursor.getInt(2) == 0) {
+                                if (!((cursor.getString(0)).equals(igual))) {
+                                    igual = cursor.getString(0);
+                                    count++;
+                                    LinearLayout.LayoutParams params;
+
+                                    if (cursor.getString(3).equals("Você/a criança acrescentou algo neste alimento?")) {
+
+                                    } else if (personalizado(cursor.getString(3))) {
+                                        params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                        RadioButton radionbutton = new RadioButton(this);
+                                        params.setMargins(0, 10, 0, 30);
+
+                                        if (getPersonalizacaoOD(cursor.getString(3), Integer.toString(AlunoAtual)).equals("")) {
+                                            radionbutton.setText(cursor.getString(3));
+                                        } else {
+                                            String getPersonalizacaoRE = "";
+                                            getPersonalizacaoRE = getPersonalizacaoOD(cursor.getString(3), Integer.toString(AlunoAtual));
+                                            radionbutton.setVisibility(View.INVISIBLE);
+                                            todasPrespostasPersonalizadasRadionButon(cursor.getString(0), getPersonalizacaoRE);
+                                        }
+                                        radionbutton.setTag(cursor.getString(0));
+                                        radionbutton.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/Roboto-Regular.ttf"));
+
+                                        if (nFONTE.equals("P")) {
+                                            radionbutton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+                                        } else if (nFONTE.equals("M")) {
+                                            radionbutton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                                        } else if (nFONTE.equals("G")) {
+                                            radionbutton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
+                                        }
+
+                                        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                                                .hideSoftInputFromWindow(radionbutton.getWindowToken(), 0);
+
+                                        radionbutton.setOnClickListener(new OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+
+                                                if ("Domiciliar".equals(((RadioButton) view).getText().toString())){
+                                                    colocarValorAmbiente("{{EXIBIR_SOMENTE_DOMICILIAR}}");
+                                                }
+                                                if ("Escolar".equals(((RadioButton) view).getText().toString())){
+                                                    colocarValorAmbiente("{{EXIBIR_SOMENTE_ESCOLAR}}");
+                                                }
+
+
+                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual)});
+                                                bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
+
+                                                if (getPersonalizacaoBOOLEAN(Integer.toString(NumeroPerguntaAtual), ((RadioButton) view).getTag().toString())) {
+                                                    insereRegistro(((RadioButton) view).getTag().toString(), ((RadioButton) view).getText().toString(), 0);
+                                                } else {
+                                                    insereRegistro(((RadioButton) view).getTag().toString(), "", 0);
+                                                }
+
+                                                Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), ((RadioButton) view).getTag().toString()});
+                                                cursorSALTO.moveToFirst();
+                                                cursorSALTO.getCount();
+
+                                                if (cursorSALTO.getCount() > 0) {
+                                                    if (!cursorSALTO.getString(6).equals("0")) {
+                                                        InsereSalto(cursorSALTO.getString(6), ((RadioButton) view).getTag().toString());
+                                                    }
+                                                }
+
+                                                for (int i = 0; i < radionbuttons.size(); i++) {
+                                                    radionbuttons.get(i).setChecked(false);
+                                                }
+
+                                                for (int i = 0; i < checkboxs.size(); i++) {
+                                                    checkboxs.get(i).setChecked(false);
+                                                }
+
+                                                ((RadioButton) view).setChecked(true);
+                                            }
+                                        });
+                                        radionbuttons.add(radionbutton); // adiciona a nova editText a lista.
+                                        ll.addView(radionbutton, params); // adiciona a editText ao ViewGroup
+                                    } else if (cursor.getString(3).equals("{{lista_alimentos_cadastrados_com_opcoes_editar_e_excluir}}")) {
+                                        criarAlimentosInseridos();
+                                    } else if (cursor.getString(3).equals("{{lista_alimentos_cadastrados_com_opcao_mais}}")) {
+
+                                        Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), cursor.getString(0)});
+                                        cursorSALTO.moveToFirst();
+                                        cursorSALTO.getCount();
+
+                                        if (cursorSALTO.getCount() > 0) {
+                                            if (!cursorSALTO.getString(6).equals("0")) {
+                                                InsereSalto(cursorSALTO.getString(6), cursor.getString(0));
+                                            }
+                                        }
+
+
+                                        criarAlimentosInseridosDetahles();
+                                    }
+                                }
+                            } else if (cursor.getInt(2) == 34) {
+                                String opcoes = cursor.getString(3);
+                                if (buttonPersonalizado.getVisibility() == View.INVISIBLE) {
+                                    buttonPersonalizado.setVisibility(View.VISIBLE);
+                                    buttonPersonalizado.setTag(cursor.getString(6));
+                                    buttonPersonalizado.setText(opcoes);
+                                } else {
+                                    buttonPersonalizado2.setVisibility(View.VISIBLE);
+                                    buttonPersonalizado2.setTag(cursor.getString(6));
+                                    buttonPersonalizado2.setText(opcoes);
+                                }
+                                imageButtonAvancar.setVisibility(View.INVISIBLE);
+                            }
+                            // Combo
+                            else if (cursor.getInt(2) == 33) {
+                                if (!((cursor.getString(0)).equals(igual))) {
+                                    igual = cursor.getString(0);
+                                    count++;
+                                    LinearLayout.LayoutParams params;
+
+                                    TextInputLayout editAnimation = new TextInputLayout(this);
+                                    editAnimation.setTag(cursor.getString(0));
+
                                     params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-                                    RadioButton radionbutton = new RadioButton(this);
-                                    params.setMargins(0, 10, 0, 30);
 
-                                    if (getPersonalizacaoOD(cursor.getString(3), Integer.toString(AlunoAtual)).equals("")) {
-                                        radionbutton.setText(cursor.getString(3));
-                                    } else {
-                                        String getPersonalizacaoRE = "";
-                                        getPersonalizacaoRE = getPersonalizacaoOD(cursor.getString(3), Integer.toString(AlunoAtual));
-                                        radionbutton.setVisibility(View.INVISIBLE);
-                                        todasPrespostasPersonalizadasRadionButon(cursor.getString(0), getPersonalizacaoRE);
-                                    }
-                                    radionbutton.setTag(cursor.getString(0));
-                                    radionbutton.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/Roboto-Regular.ttf"));
+                                    String array_spinner[];
 
-                                    if (nFONTE.equals("P")) {
-                                        radionbutton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-                                    } else if (nFONTE.equals("M")) {
-                                        radionbutton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-                                    } else if (nFONTE.equals("G")) {
-                                        radionbutton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
+                                    Spinner spinner = new Spinner(this);
+                                    String opcoes = personalizadoTESTE(cursor.getString(8));
+
+                                    array_spinner = new String[Utility.countCaracter(opcoes) + 1];
+
+                                    for (int i = 0; i < array_spinner.length; i++) {
+                                        if (i == 0) {
+                                            array_spinner[0] = "";
+                                        } else {
+                                            array_spinner[i] = opcoes.substring(0, Utility.positionCaracter(opcoes));
+                                            opcoes = opcoes.substring(Utility.positionFirstCaracter(opcoes), opcoes.length());
+                                        }
                                     }
+
+                                    ArrayAdapter adapter = new ArrayAdapter(this,
+                                            R.layout.textview_spinner_item, array_spinner);
+                                    spinner.setAdapter(adapter);
+                                    params.setMargins(0, 5, 0, 20);
+                                    spinner.setTag(cursor.getString(0));
 
                                     ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                                            .hideSoftInputFromWindow(radionbutton.getWindowToken(), 0);
-
-                                    radionbutton.setOnClickListener(new OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual)});
-                                            bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
-
-                                            if (getPersonalizacaoBOOLEAN(Integer.toString(NumeroPerguntaAtual), ((RadioButton) view).getTag().toString())) {
-                                                insereRegistro(((RadioButton) view).getTag().toString(), ((RadioButton) view).getText().toString(), 0);
-                                            } else {
-                                                insereRegistro(((RadioButton) view).getTag().toString(), "", 0);
-                                            }
-
-                                            Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), ((RadioButton) view).getTag().toString()});
-                                            cursorSALTO.moveToFirst();
-                                            cursorSALTO.getCount();
-
-                                            if (cursorSALTO.getCount() > 0) {
-                                                if (!cursorSALTO.getString(6).equals("0")) {
-                                                    InsereSalto(cursorSALTO.getString(6), ((RadioButton) view).getTag().toString());
-                                                }
-                                            }
-
-                                            for (int i = 0; i < radionbuttons.size(); i++) {
-                                                radionbuttons.get(i).setChecked(false);
-                                            }
-
-                                            for (int i = 0; i < checkboxs.size(); i++) {
-                                                checkboxs.get(i).setChecked(false);
-                                            }
-
-                                            ((RadioButton) view).setChecked(true);
-                                        }
-                                    });
-                                    radionbuttons.add(radionbutton); // adiciona a nova editText a lista.
-                                    ll.addView(radionbutton, params); // adiciona a editText ao ViewGroup
-                                } else if (cursor.getString(3).equals("{{lista_alimentos_crianca}}")) {
-                                    criarAlimentosInseridos();
-                                } else if (cursor.getString(3).equals("{{lista_alimentos_rf22_com_icone_de_mais}}")) {
-
-                                    Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), cursor.getString(0)});
-                                    cursorSALTO.moveToFirst();
-                                    cursorSALTO.getCount();
-
-                                    if (cursorSALTO.getCount() > 0) {
-                                        if (!cursorSALTO.getString(6).equals("0")) {
-                                            InsereSalto(cursorSALTO.getString(6), cursor.getString(0));
-                                        }
-                                    }
-
-
-                                    criarAlimentosInseridosDetahles();
-                                }
-                            }
-                        } else if (cursor.getInt(2) == 34) {
-                            String opcoes = cursor.getString(3);
-                            if (buttonPersonalizado.getVisibility() == View.INVISIBLE) {
-                                buttonPersonalizado.setVisibility(View.VISIBLE);
-                                buttonPersonalizado.setTag(cursor.getString(6));
-                                buttonPersonalizado.setText(opcoes);
-                            } else {
-                                buttonPersonalizado2.setVisibility(View.VISIBLE);
-                                buttonPersonalizado2.setTag(cursor.getString(6));
-                                buttonPersonalizado2.setText(opcoes);
-                            }
-                            imageButtonAvancar.setVisibility(View.INVISIBLE);
-                        }
-                        // Combo
-                        else if (cursor.getInt(2) == 33) {
-                            if (!((cursor.getString(0)).equals(igual))) {
-                                igual = cursor.getString(0);
-                                count++;
-                                LinearLayout.LayoutParams params;
-
-                                TextInputLayout editAnimation = new TextInputLayout(this);
-                                editAnimation.setTag(cursor.getString(0));
-
-                                params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-
-                                String array_spinner[];
-
-                                Spinner spinner = new Spinner(this);
-                                String opcoes = personalizadoTESTE(cursor.getString(8));
-
-                                array_spinner = new String[Utility.countCaracter(opcoes) + 1];
-
-                                for (int i = 0; i < array_spinner.length; i++) {
-                                    if (i == 0) {
-                                        array_spinner[0] = "";
-                                    } else {
-                                        array_spinner[i] = opcoes.substring(0, Utility.positionCaracter(opcoes));
-                                        opcoes = opcoes.substring(Utility.positionFirstCaracter(opcoes), opcoes.length());
-                                    }
-                                }
-
-                                ArrayAdapter adapter = new ArrayAdapter(this,
-                                        R.layout.textview_spinner_item, array_spinner);
-                                spinner.setAdapter(adapter);
-                                params.setMargins(0, 5, 0, 20);
-                                spinner.setTag(cursor.getString(0));
-
-                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                                        .hideSoftInputFromWindow(spinner.getWindowToken(), 0);
+                                            .hideSoftInputFromWindow(spinner.getWindowToken(), 0);
 
 							/*	spinner.setOnClickListener(new OnClickListener() {
 									@Override
@@ -915,387 +941,387 @@ public class Questionario extends Activity {
 								});*/
 
 
-                                editAnimation.addView(spinner, params);
-                                editAnimation.setHelperText("  " + cursor.getString(3));
+                                    editAnimation.addView(spinner, params);
+                                    editAnimation.setHelperText("  " + cursor.getString(3));
 
-                                editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
-                                editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
-                                edits.add(editAnimation); // adiciona a nova editText a lista.
-                                ll.addView(editAnimation, params);
+                                    editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
+                                    editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
+                                    edits.add(editAnimation); // adiciona a nova editText a lista.
+                                    ll.addView(editAnimation, params);
 
-                                ll.addView(spinner, params); // adiciona a editText ao ViewGroup
+                                    ll.addView(spinner, params); // adiciona a editText ao ViewGroup
+                                }
                             }
-                        }
 
-                        // CHECK
-                        else if (cursor.getInt(2) == 2) {
+                            // CHECK
+                            else if (cursor.getInt(2) == 2) {
 
-                            if (!((cursor.getString(0)).equals(igual))) {
-                                igual = cursor.getString(0);
-                                count++;
-                                LinearLayout.LayoutParams params;
+                                if (!((cursor.getString(0)).equals(igual))) {
+                                    igual = cursor.getString(0);
+                                    count++;
+                                    LinearLayout.LayoutParams params;
 
-                                params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-                                params.setMargins(0, 10, 0, 30);
+                                    params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                    params.setMargins(0, 10, 0, 30);
 
-                                CheckBox checkbox = new CheckBox(this);
-                                checkbox.setTag(cursor.getString(0));
-
-
-                                String getPersonalizacaoRE = "";
+                                    CheckBox checkbox = new CheckBox(this);
+                                    checkbox.setTag(cursor.getString(0));
 
 
-                                if (getPersonalizacaoOD(cursor.getString(3), Integer.toString(AlunoAtual)).equals("")) {
-                                    checkbox.setText(cursor.getString(3));
-                                } else {
-                                    getPersonalizacaoRE = getPersonalizacaoOD(cursor.getString(3), Integer.toString(AlunoAtual));
-                                    //checkbox.setText(getPersonalizacaoRE(cursor.getString(3),Integer.toString(AlunoAtual)));
-                                    checkbox.setVisibility(View.INVISIBLE);
-                                    todasPrespostasPersonalizadas(cursor.getString(0), getPersonalizacaoRE);
-                                }
-                                checkbox.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/Roboto-Regular.ttf"));
+                                    String getPersonalizacaoRE = "";
 
 
-                                if (nFONTE.equals("P")) {
-                                    checkbox.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-                                } else if (nFONTE.equals("M")) {
-                                    checkbox.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-                                } else if (nFONTE.equals("G")) {
-                                    checkbox.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
-                                }
-
-                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                                        .hideSoftInputFromWindow(checkbox.getWindowToken(), 0);
-
-                                checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                                    @Override
-                                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                                        //if (PassouPorAquiTextoTemp) {
-                                        boolean pegarEstado = isChecked;
-
-                                        Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString()});
-                                        cursorSALTO.moveToFirst();
-                                        cursorSALTO.getCount();
-
-                                        for (int i = 0; i < radionbuttons.size(); i++) {
-
-                                            if (radionbuttons.get(i).isChecked()) {
-                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), (radionbuttons.get(i).getTag().toString())});
-                                            }
-                                            radionbuttons.get(i).setChecked(false);
-                                        }
-
-                                        if (isChecked) {
-                                            bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString()});
-
-                                            if (getPersonalizacaoBOOLEAN(Integer.toString(NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString())) {
-                                                insereRegistro(buttonView.getTag().toString(), ((CheckBox) buttonView).getText().toString(), 0);
-                                            } else {
-                                                insereRegistro(buttonView.getTag().toString(), "", 0);
-                                            }
-
-                                            if (cursorSALTO.getCount() > 0) {
-                                                String n = cursorSALTO.getString(6);
-                                                if (!cursorSALTO.getString(6).equals("0")) {
-                                                    InsereSalto(cursorSALTO.getString(6), ((CheckBox) buttonView).getTag().toString());
-                                                }
-                                            }
-                                        } else {
-                                            bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString()});
-                                            if (cursorSALTO.getCount() > 0) {
-                                                String n = cursorSALTO.getString(6);
-                                                if (!cursorSALTO.getString(6).equals("0")) {
-                                                    bd.execSQL(sql_delete.DEL_SALTO, new String[]{cursorSALTO.getString(1)});
-                                                }
-                                            }
-                                        }
+                                    if (getPersonalizacaoOD(cursor.getString(3), Integer.toString(AlunoAtual)).equals("")) {
+                                        checkbox.setText(cursor.getString(3));
+                                    } else {
+                                        getPersonalizacaoRE = getPersonalizacaoOD(cursor.getString(3), Integer.toString(AlunoAtual));
+                                        //checkbox.setText(getPersonalizacaoRE(cursor.getString(3),Integer.toString(AlunoAtual)));
+                                        checkbox.setVisibility(View.INVISIBLE);
+                                        todasPrespostasPersonalizadas(cursor.getString(0), getPersonalizacaoRE);
                                     }
-                                    //}
-                                });
+                                    checkbox.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/Roboto-Regular.ttf"));
 
-                                checkboxs.add(checkbox); // adiciona a nova editText a lista.
-                                ll.addView(checkbox, params); // adiciona a editText ao ViewGroup
-                            }
-                        }
-                        // numero 4 o numero normal
-                        else if (cursor.getInt(2) == 4) {
-                            if (!((cursor.getString(0)).equals(igual))) {
-                                nMin = cursor.getInt(4);
-                                nMax = cursor.getInt(1);
 
-                                igual = cursor.getString(0);
-                                count++;
-                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                                params.setMargins(0, 10, 0, 30);
-
-                                EditText edit = new EditText(this);
-                                edit.setInputType(InputType.TYPE_CLASS_NUMBER);
-                                edit.setBackgroundResource(R.drawable.rounded_corner);
-
-                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                                        .hideSoftInputFromWindow(edit.getWindowToken(), 0);
-
-                                MinhaTAG asTags = new MinhaTAG();
-
-                                edit.setTag(cursor.getString(0));
-                                if (cursor.getString(3).indexOf("]]") > 0) {
-                                    PERSONALIZACAOHint.add(cursor.getString(3));
-                                    edit.setHint(cursor.getString(3).toString().replace(cursor.getString(3).toString().substring(cursor.getString(3).toString().indexOf("[["), cursor.getString(3).toString().indexOf("]]") + 2), " "));
-                                    HintText.add(cursor.getString(3).toString().replace(cursor.getString(3).toString().substring(cursor.getString(3).toString().indexOf("[["), cursor.getString(3).toString().indexOf("]]") + 2), " "));
-                                } else {
-                                    //edit.setHint(cursor.getString(3));
-                                    HintText.add(cursor.getString(3));
-                                    PERSONALIZACAOHint.add(cursor.getString(3));
-                                }
-                                edit.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/Roboto-Regular.ttf"));
-
-                                if (nFONTE.equals("P")) {
-                                    edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-                                } else if (nFONTE.equals("M")) {
-                                    edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-                                } else if (nFONTE.equals("G")) {
-                                    edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
-                                }
-
-                                TemEditText = edit;
-                                //HintText.add(edit.getTag().toString());
-                                TagText.add(edit.getTag().toString());
-                                AtualHint = cursor.getString(3);
-
-                                MaxText.add(Integer.toString(nMax));
-
-                                PERSONALIZAOText.add(edit.getTag().toString());
-                                AtualMax = nMax;
-                                PassouPorAquiTextoTemp = false;
-
-                                edit.setOnFocusChangeListener(new OnFocusChangeListener() {
-                                    @Override
-                                    public void onFocusChange(View v, boolean hasFocus) {
-                                        if (hasFocus) {
-                                            AtualMax = locazinaEditText((EditText) v);
-                                            AtualHint = locazinaEditHINT((EditText) v);
-                                            AtualPERSONALIZACAOHint = locazinaEditPERSONALIZACAO((EditText) v);
-                                            TemEditText = ((EditText) v);
-                                            PassouPorAquiTextoTemp = true;
-                                        } else {
-                                            //Toast.makeText(getApplicationContext(), "lost the focus", Toast.LENGTH_LONG).show();
-                                        }
+                                    if (nFONTE.equals("P")) {
+                                        checkbox.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+                                    } else if (nFONTE.equals("M")) {
+                                        checkbox.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                                    } else if (nFONTE.equals("G")) {
+                                        checkbox.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
                                     }
-                                });
 
-                                edit.setOnTouchListener(new View.OnTouchListener() {
-                                    public boolean onTouch(View v, MotionEvent event) {
-                                        AtualMax = locazinaEditText((EditText) v);
-                                        AtualHint = locazinaEditHINT((EditText) v);
-                                        AtualPERSONALIZACAOHint = locazinaEditPERSONALIZACAO((EditText) v);
-                                        TemEditText = ((EditText) v);
-                                        ((EditText) v).setInputType(InputType.TYPE_CLASS_NUMBER);
-                                        PassouPorAquiTextoTemp = true;
+                                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                                            .hideSoftInputFromWindow(checkbox.getWindowToken(), 0);
 
-                                        return false;
-                                    }
-                                });
+                                    checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                                        @Override
+                                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                                TextWatcher textWatcher = new TextWatcher() {
-                                    public void afterTextChanged(Editable s) {
-                                        if (PassouPorAquiTextoTemp) {
+                                            //if (PassouPorAquiTextoTemp) {
+                                            boolean pegarEstado = isChecked;
+
+                                            Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString()});
+                                            cursorSALTO.moveToFirst();
+                                            cursorSALTO.getCount();
+
                                             for (int i = 0; i < radionbuttons.size(); i++) {
+
                                                 if (radionbuttons.get(i).isChecked()) {
-                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString()});
+                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), (radionbuttons.get(i).getTag().toString())});
                                                 }
                                                 radionbuttons.get(i).setChecked(false);
                                             }
 
-                                            bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), (TemEditText.getTag().toString())});
-                                            if (s.length() > 0) {
-                                                insereRegistro((TemEditText.getTag().toString()), s.toString(), 0);
+                                            if (isChecked) {
+                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString()});
 
-                                                Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), TemEditText.getTag().toString()});
-                                                cursorSALTO.moveToFirst();
-                                                cursorSALTO.getCount();
+                                                if (getPersonalizacaoBOOLEAN(Integer.toString(NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString())) {
+                                                    insereRegistro(buttonView.getTag().toString(), ((CheckBox) buttonView).getText().toString(), 0);
+                                                } else {
+                                                    insereRegistro(buttonView.getTag().toString(), "", 0);
+                                                }
+
                                                 if (cursorSALTO.getCount() > 0) {
                                                     String n = cursorSALTO.getString(6);
-
-                                                    String varAtualHint = AtualPERSONALIZACAOHint;
-
-                                                    String varAtualHintCompletoTM = (getPersonalizacaoTM(varAtualHint)).toString();
-
                                                     if (!cursorSALTO.getString(6).equals("0")) {
+                                                        InsereSalto(cursorSALTO.getString(6), ((CheckBox) buttonView).getTag().toString());
+                                                    }
+                                                }
+                                            } else {
+                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString()});
+                                                if (cursorSALTO.getCount() > 0) {
+                                                    String n = cursorSALTO.getString(6);
+                                                    if (!cursorSALTO.getString(6).equals("0")) {
+                                                        bd.execSQL(sql_delete.DEL_SALTO, new String[]{cursorSALTO.getString(1)});
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        //}
+                                    });
+
+                                    checkboxs.add(checkbox); // adiciona a nova editText a lista.
+                                    ll.addView(checkbox, params); // adiciona a editText ao ViewGroup
+                                }
+                            }
+                            // numero 4 o numero normal
+                            else if (cursor.getInt(2) == 4) {
+                                if (!((cursor.getString(0)).equals(igual))) {
+                                    nMin = cursor.getInt(4);
+                                    nMax = cursor.getInt(1);
+
+                                    igual = cursor.getString(0);
+                                    count++;
+                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                                    params.setMargins(0, 10, 0, 30);
+
+                                    EditText edit = new EditText(this);
+                                    edit.setInputType(InputType.TYPE_CLASS_NUMBER);
+                                    edit.setBackgroundResource(R.drawable.rounded_corner);
+
+                                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                                            .hideSoftInputFromWindow(edit.getWindowToken(), 0);
+
+                                    MinhaTAG asTags = new MinhaTAG();
+
+                                    edit.setTag(cursor.getString(0));
+                                    if (cursor.getString(3).indexOf("]]") > 0) {
+                                        PERSONALIZACAOHint.add(cursor.getString(3));
+                                        edit.setHint(cursor.getString(3).toString().replace(cursor.getString(3).toString().substring(cursor.getString(3).toString().indexOf("[["), cursor.getString(3).toString().indexOf("]]") + 2), " "));
+                                        HintText.add(cursor.getString(3).toString().replace(cursor.getString(3).toString().substring(cursor.getString(3).toString().indexOf("[["), cursor.getString(3).toString().indexOf("]]") + 2), " "));
+                                    } else {
+                                        //edit.setHint(cursor.getString(3));
+                                        HintText.add(cursor.getString(3));
+                                        PERSONALIZACAOHint.add(cursor.getString(3));
+                                    }
+                                    edit.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/Roboto-Regular.ttf"));
+
+                                    if (nFONTE.equals("P")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+                                    } else if (nFONTE.equals("M")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                                    } else if (nFONTE.equals("G")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
+                                    }
+
+                                    TemEditText = edit;
+                                    //HintText.add(edit.getTag().toString());
+                                    TagText.add(edit.getTag().toString());
+                                    AtualHint = cursor.getString(3);
+
+                                    MaxText.add(Integer.toString(nMax));
+
+                                    PERSONALIZAOText.add(edit.getTag().toString());
+                                    AtualMax = nMax;
+                                    PassouPorAquiTextoTemp = false;
+
+                                    edit.setOnFocusChangeListener(new OnFocusChangeListener() {
+                                        @Override
+                                        public void onFocusChange(View v, boolean hasFocus) {
+                                            if (hasFocus) {
+                                                AtualMax = locazinaEditText((EditText) v);
+                                                AtualHint = locazinaEditHINT((EditText) v);
+                                                AtualPERSONALIZACAOHint = locazinaEditPERSONALIZACAO((EditText) v);
+                                                TemEditText = ((EditText) v);
+                                                PassouPorAquiTextoTemp = true;
+                                            } else {
+                                                //Toast.makeText(getApplicationContext(), "lost the focus", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    });
+
+                                    edit.setOnTouchListener(new View.OnTouchListener() {
+                                        public boolean onTouch(View v, MotionEvent event) {
+                                            AtualMax = locazinaEditText((EditText) v);
+                                            AtualHint = locazinaEditHINT((EditText) v);
+                                            AtualPERSONALIZACAOHint = locazinaEditPERSONALIZACAO((EditText) v);
+                                            TemEditText = ((EditText) v);
+                                            ((EditText) v).setInputType(InputType.TYPE_CLASS_NUMBER);
+                                            PassouPorAquiTextoTemp = true;
+
+                                            return false;
+                                        }
+                                    });
+
+                                    TextWatcher textWatcher = new TextWatcher() {
+                                        public void afterTextChanged(Editable s) {
+                                            if (PassouPorAquiTextoTemp) {
+                                                for (int i = 0; i < radionbuttons.size(); i++) {
+                                                    if (radionbuttons.get(i).isChecked()) {
+                                                        bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString()});
+                                                    }
+                                                    radionbuttons.get(i).setChecked(false);
+                                                }
+
+                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), (TemEditText.getTag().toString())});
+                                                if (s.length() > 0) {
+                                                    insereRegistro((TemEditText.getTag().toString()), s.toString(), 0);
+
+                                                    Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), TemEditText.getTag().toString()});
+                                                    cursorSALTO.moveToFirst();
+                                                    cursorSALTO.getCount();
+                                                    if (cursorSALTO.getCount() > 0) {
+                                                        String n = cursorSALTO.getString(6);
+
+                                                        String varAtualHint = AtualPERSONALIZACAOHint;
+
+                                                        String varAtualHintCompletoTM = (getPersonalizacaoTM(varAtualHint)).toString();
+
+                                                        if (!cursorSALTO.getString(6).equals("0")) {
 
 
-                                                        String varAtualHintCompleto = (getPersonalizacaoCO(varAtualHint)).toString();
+                                                            String varAtualHintCompleto = (getPersonalizacaoCO(varAtualHint)).toString();
 
 
-                                                        if (varAtualHint.toString().indexOf("<") > 0) {
+                                                            if (varAtualHint.toString().indexOf("<") > 0) {
 
 
-                                                            if (s.toString().length() > 6) {
-                                                                String tamanho = Integer.toString(AtualMax);
-                                                                if (tamanho.length() < s.toString().length()) {
-                                                                    Toast.makeText(Questionario.this, "Atenção! Máximo permitido: " + tamanho.length(), Toast.LENGTH_LONG).show();
-                                                                    s.clear();
+                                                                if (s.toString().length() > 6) {
+                                                                    String tamanho = Integer.toString(AtualMax);
+                                                                    if (tamanho.length() < s.toString().length()) {
+                                                                        Toast.makeText(Questionario.this, "Atenção! Máximo permitido: " + tamanho.length(), Toast.LENGTH_LONG).show();
+                                                                        s.clear();
+                                                                    }
+                                                                } else if (Integer.parseInt(s.toString()) < (Integer.parseInt(varAtualHintCompleto))) {
+                                                                    InsereSalto(cursorSALTO.getString(6), TemEditText.getTag().toString());
+                                                                } else {
+                                                                    bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
                                                                 }
-                                                            } else if (Integer.parseInt(s.toString()) < (Integer.parseInt(varAtualHintCompleto))) {
-                                                                InsereSalto(cursorSALTO.getString(6), TemEditText.getTag().toString());
-                                                            } else {
-                                                                bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
-                                                            }
 
 
-                                                        } else if (varAtualHint.toString().indexOf(">") > 0) {
+                                                            } else if (varAtualHint.toString().indexOf(">") > 0) {
 
 
-                                                            if (s.toString().length() > 6) {
-                                                                String tamanho = Integer.toString(AtualMax);
-                                                                if (tamanho.length() < s.toString().length()) {
-                                                                    Toast.makeText(Questionario.this, "Atenção! Máximo permitido: " + tamanho.length(), Toast.LENGTH_LONG).show();
-                                                                    s.clear();
+                                                                if (s.toString().length() > 6) {
+                                                                    String tamanho = Integer.toString(AtualMax);
+                                                                    if (tamanho.length() < s.toString().length()) {
+                                                                        Toast.makeText(Questionario.this, "Atenção! Máximo permitido: " + tamanho.length(), Toast.LENGTH_LONG).show();
+                                                                        s.clear();
+                                                                    }
+                                                                } else if (Integer.parseInt(s.toString()) > (Integer.parseInt(varAtualHintCompleto))) {
+                                                                    InsereSalto(cursorSALTO.getString(6), TemEditText.getTag().toString());
+                                                                } else {
+                                                                    bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
                                                                 }
-                                                            } else if (Integer.parseInt(s.toString()) > (Integer.parseInt(varAtualHintCompleto))) {
-                                                                InsereSalto(cursorSALTO.getString(6), TemEditText.getTag().toString());
+
+
                                                             } else {
-                                                                bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
+                                                                InsereSalto(cursorSALTO.getString(6), TemEditText.getTag().toString());
                                                             }
 
 
                                                         } else {
-                                                            InsereSalto(cursorSALTO.getString(6), TemEditText.getTag().toString());
-                                                        }
+                                                            if (varAtualHint.toString().indexOf("<") > 0) {
 
-
-                                                    } else {
-                                                        if (varAtualHint.toString().indexOf("<") > 0) {
-
-                                                            Cursor cursorvarAtualHintCompleto = bd.rawQuery(" SELECT R.VALOR FROM RESPOSTA R, OPCAO O WHERE R.ID_OPCAO = O.ID_OPCAO AND O.ID_OPCAO  = ?  AND R.ID_ALUNO =  ?  ", new String[]{varAtualHintCompletoTM, Integer.toString(AlunoAtual)});
-                                                            cursorvarAtualHintCompleto.moveToFirst();
-                                                            if (cursorvarAtualHintCompleto.getCount() > 0) {
-                                                                AtualMax = cursorvarAtualHintCompleto.getInt(0);
-                                                            }
-
-
-                                                            if (s.toString().length() > 6) {
-                                                                String tamanho = Integer.toString(AtualMax);
-                                                                if (tamanho.length() < s.toString().length()) {
-                                                                    Toast.makeText(Questionario.this, "Atenção! Máximo permitido: " + tamanho, Toast.LENGTH_LONG).show();
-                                                                    s.clear();
+                                                                Cursor cursorvarAtualHintCompleto = bd.rawQuery(" SELECT R.VALOR FROM RESPOSTA R, OPCAO O WHERE R.ID_OPCAO = O.ID_OPCAO AND O.ID_OPCAO  = ?  AND R.ID_ALUNO =  ?  ", new String[]{varAtualHintCompletoTM, Integer.toString(AlunoAtual)});
+                                                                cursorvarAtualHintCompleto.moveToFirst();
+                                                                if (cursorvarAtualHintCompleto.getCount() > 0) {
+                                                                    AtualMax = cursorvarAtualHintCompleto.getInt(0);
                                                                 }
-                                                            } else if (s.toString().length() > 0) {
-                                                                String tamanho = Integer.toString(AtualMax);
-                                                                if (tamanho.length() < s.toString().length()) {
-                                                                    Toast.makeText(Questionario.this, "Atenção! Máximo permitido: " + tamanho, Toast.LENGTH_LONG).show();
-                                                                    s.clear();
+
+
+                                                                if (s.toString().length() > 6) {
+                                                                    String tamanho = Integer.toString(AtualMax);
+                                                                    if (tamanho.length() < s.toString().length()) {
+                                                                        Toast.makeText(Questionario.this, "Atenção! Máximo permitido: " + tamanho, Toast.LENGTH_LONG).show();
+                                                                        s.clear();
+                                                                    }
+                                                                } else if (s.toString().length() > 0) {
+                                                                    String tamanho = Integer.toString(AtualMax);
+                                                                    if (tamanho.length() < s.toString().length()) {
+                                                                        Toast.makeText(Questionario.this, "Atenção! Máximo permitido: " + tamanho, Toast.LENGTH_LONG).show();
+                                                                        s.clear();
+                                                                    }
+                                                                } else {
+                                                                    bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
                                                                 }
-                                                            } else {
-                                                                bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
-                                                            }
 
 
-                                                        } else if (varAtualHint.toString().indexOf(">") > 0) {
+                                                            } else if (varAtualHint.toString().indexOf(">") > 0) {
 
-                                                            Cursor cursorvarAtualHintCompleto = bd.rawQuery(" SELECT R.VALOR FROM RESPOSTA R, OPCAO O WHERE R.ID_OPCAO = O.ID_OPCAO AND O.ID_OPCAO  = ?  AND R.ID_ALUNO =  ?  ", new String[]{varAtualHintCompletoTM, Integer.toString(AlunoAtual)});
-                                                            cursorvarAtualHintCompleto.moveToFirst();
-                                                            if (cursorvarAtualHintCompleto.getCount() > 0) {
-                                                                AtualMax = cursorvarAtualHintCompleto.getInt(0);
-                                                            }
-
-                                                            if (s.toString().length() > 6) {
-                                                                String tamanho = Integer.toString(AtualMax);
-                                                                if (tamanho.length() < s.toString().length()) {
-                                                                    Toast.makeText(Questionario.this, "Atenção! Máximo permitido: " + tamanho, Toast.LENGTH_LONG).show();
-                                                                    s.clear();
+                                                                Cursor cursorvarAtualHintCompleto = bd.rawQuery(" SELECT R.VALOR FROM RESPOSTA R, OPCAO O WHERE R.ID_OPCAO = O.ID_OPCAO AND O.ID_OPCAO  = ?  AND R.ID_ALUNO =  ?  ", new String[]{varAtualHintCompletoTM, Integer.toString(AlunoAtual)});
+                                                                cursorvarAtualHintCompleto.moveToFirst();
+                                                                if (cursorvarAtualHintCompleto.getCount() > 0) {
+                                                                    AtualMax = cursorvarAtualHintCompleto.getInt(0);
                                                                 }
-                                                            } else if (s.toString().length() > 0) {
-                                                                String tamanho = Integer.toString(AtualMax);
-                                                                if (tamanho.length() < s.toString().length()) {
-                                                                    Toast.makeText(Questionario.this, "Atenção! Máximo permitido: " + tamanho, Toast.LENGTH_LONG).show();
-                                                                    s.clear();
+
+                                                                if (s.toString().length() > 6) {
+                                                                    String tamanho = Integer.toString(AtualMax);
+                                                                    if (tamanho.length() < s.toString().length()) {
+                                                                        Toast.makeText(Questionario.this, "Atenção! Máximo permitido: " + tamanho, Toast.LENGTH_LONG).show();
+                                                                        s.clear();
+                                                                    }
+                                                                } else if (s.toString().length() > 0) {
+                                                                    String tamanho = Integer.toString(AtualMax);
+                                                                    if (tamanho.length() < s.toString().length()) {
+                                                                        Toast.makeText(Questionario.this, "Atenção! Máximo permitido: " + tamanho, Toast.LENGTH_LONG).show();
+                                                                        s.clear();
+                                                                    }
+                                                                } else {
+                                                                    bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
                                                                 }
-                                                            } else {
-                                                                bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
+
+
                                                             }
-
-
                                                         }
                                                     }
                                                 }
-                                            }
-                                            try {
-                                                if (!((s.toString().equals("")))) {
-                                                    if (s.toString().length() > 1) {
-                                                        String gggg = s.toString().substring(0, 1).toString();
-                                                        if (s.toString().substring(0, 1).toString().equals("0")) {
-                                                            s.clear();
+                                                try {
+                                                    if (!((s.toString().equals("")))) {
+                                                        if (s.toString().length() > 1) {
+                                                            String gggg = s.toString().substring(0, 1).toString();
+                                                            if (s.toString().substring(0, 1).toString().equals("0")) {
+                                                                s.clear();
+                                                            }
                                                         }
-                                                    }
 
-                                                    if (s.toString().length() > 6) {
-                                                        String tamanho = Integer.toString(AtualMax);
-                                                        if (tamanho.length() < s.toString().length()) {
-                                                            Toast.makeText(Questionario.this, "Atenção! Máximo permitido: " + tamanho.length(), Toast.LENGTH_LONG).show();
+                                                        if (s.toString().length() > 6) {
+                                                            String tamanho = Integer.toString(AtualMax);
+                                                            if (tamanho.length() < s.toString().length()) {
+                                                                Toast.makeText(Questionario.this, "Atenção! Máximo permitido: " + tamanho.length(), Toast.LENGTH_LONG).show();
+                                                                s.clear();
+                                                            }
+                                                        } else if (Integer.parseInt(s.toString()) > (AtualMax)) {
+                                                            Toast.makeText(Questionario.this, "Atenção! Máximo permitido:" + Integer.toString(AtualMax), Toast.LENGTH_LONG).show();
                                                             s.clear();
                                                         }
-                                                    } else if (Integer.parseInt(s.toString()) > (AtualMax)) {
-                                                        Toast.makeText(Questionario.this, "Atenção! Máximo permitido:" + Integer.toString(AtualMax), Toast.LENGTH_LONG).show();
-                                                        s.clear();
                                                     }
+                                                } catch (Exception e) {
+
                                                 }
-                                            } catch (Exception e) {
-
                                             }
                                         }
-                                    }
 
-                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                                    }
+                                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                                        }
 
-                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                    }
+                                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                        }
 
-                                };
+                                    };
 
-                                LinearLayout.LayoutParams paramsTextHelp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-                                paramsTextHelp.setMargins(0, 0, 0, 0);
-                                TextInputLayout editAnimation = new TextInputLayout(this);
-                                editAnimation.setTag(cursor.getString(0));
-                                editAnimation.setHelperText("  " + cursor.getString(3));
+                                    LinearLayout.LayoutParams paramsTextHelp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                    paramsTextHelp.setMargins(0, 0, 0, 0);
+                                    TextInputLayout editAnimation = new TextInputLayout(this);
+                                    editAnimation.setTag(cursor.getString(0));
+                                    editAnimation.setHelperText("  " + cursor.getString(3));
 
-                                editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
-                                editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
+                                    editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
+                                    editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
 
-                                edit.addTextChangedListener(textWatcher);
-                                edit.setBackground(null);
-                                editAnimation.addView(edit, paramsTextHelp);
-                                edits.add(editAnimation); // adiciona a nova editText a lista.
-                                ll.addView(editAnimation, params);
+                                    edit.addTextChangedListener(textWatcher);
+                                    edit.setBackground(null);
+                                    editAnimation.addView(edit, paramsTextHelp);
+                                    edits.add(editAnimation); // adiciona a nova editText a lista.
+                                    ll.addView(editAnimation, params);
+                                }
                             }
-                        }
 
-                        // TEXTO
-                        else if (cursor.getInt(2) == 3) {
-                            if (!((cursor.getString(0)).equals(igual))) {
-                                nMin = cursor.getInt(4);
-                                nMax = cursor.getInt(1);
+                            // TEXTO
+                            else if (cursor.getInt(2) == 3) {
+                                if (!((cursor.getString(0)).equals(igual))) {
+                                    nMin = cursor.getInt(4);
+                                    nMax = cursor.getInt(1);
 
-                                igual = cursor.getString(0);
-                                count++;
+                                    igual = cursor.getString(0);
+                                    count++;
 
-                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
 
-                                params.setMargins(0, 10, 0, 30);
-                                EditText edit = new EditText(this);
-                                MinhaTAG asTags = new MinhaTAG();
+                                    params.setMargins(0, 10, 0, 30);
+                                    EditText edit = new EditText(this);
+                                    MinhaTAG asTags = new MinhaTAG();
 
-                                edit.setTag(cursor.getString(0));
-                                //edit.setHint(cursor.getString(3));
-                                edit.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/Roboto-Regular.ttf"));
-                                edit.setBackgroundResource(R.drawable.rounded_corner);
-                                // edit.setHeight(20);
-                                //edit.setGravity(Gravity.CENTER_HORIZONTAL);
+                                    edit.setTag(cursor.getString(0));
+                                    //edit.setHint(cursor.getString(3));
+                                    edit.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/Roboto-Regular.ttf"));
+                                    edit.setBackgroundResource(R.drawable.rounded_corner);
+                                    // edit.setHeight(20);
+                                    //edit.setGravity(Gravity.CENTER_HORIZONTAL);
 
 
-                                // PERSONALIZAÇÃO
+                                    // PERSONALIZAÇÃO
 
 
 
@@ -1345,990 +1371,967 @@ public class Questionario extends Activity {
 							}*/
 
 
-                                if (nFONTE.equals("P")) {
-                                    edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-                                } else if (nFONTE.equals("M")) {
-                                    edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-                                } else if (nFONTE.equals("G")) {
-                                    edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
-                                }
+                                    if (nFONTE.equals("P")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+                                    } else if (nFONTE.equals("M")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                                    } else if (nFONTE.equals("G")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
+                                    }
 
-                                edit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(nMax)});
+                                    edit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(nMax)});
 
-                                TemEditText = edit;
+                                    TemEditText = edit;
 
-                                edit.setInputType(InputType.TYPE_NULL);
+                                    edit.setInputType(InputType.TYPE_NULL);
 
 /*							if (NumeroPerguntaAtual == 25 || NumeroPerguntaAtual == 44 || NumeroPerguntaAtual == 45 ){
 								edit.setInputType(InputType.TYPE_CLASS_NUMBER);
 							}*/
 
-                                TagText.add(edit.getTag().toString());
+                                    TagText.add(edit.getTag().toString());
 
-                                //HintText.add(edit.getTag().toString());
-                                PERSONALIZAOText.add(edit.getTag().toString());
-                                MaxText.add(Integer.toString(nMax));
-                                AtualMax = nMax;
-                                PassouPorAquiTextoTemp = false;
+                                    //HintText.add(edit.getTag().toString());
+                                    PERSONALIZAOText.add(edit.getTag().toString());
+                                    MaxText.add(Integer.toString(nMax));
+                                    AtualMax = nMax;
+                                    PassouPorAquiTextoTemp = false;
 
-                                edit.setOnFocusChangeListener(new OnFocusChangeListener() {
-                                    @Override
-                                    public void onFocusChange(View v, boolean hasFocus) {
-                                        if (hasFocus) {
+                                    edit.setOnFocusChangeListener(new OnFocusChangeListener() {
+                                        @Override
+                                        public void onFocusChange(View v, boolean hasFocus) {
+                                            if (hasFocus) {
+                                                AtualMax = locazinaEditText((EditText) v);
+                                                TemEditText = ((EditText) v);
+                                                PassouPorAquiTextoTemp = true;
+
+                                                //llPergunta.setText(valorPergunta + " \n" + ((EditText)v).getHint().toString() );
+                                            } else {
+                                                //Toast.makeText(getApplicationContext(), "lost the focus", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    });
+                                    edit.setOnTouchListener(new View.OnTouchListener() {
+                                        public boolean onTouch(View v, MotionEvent event) {
                                             AtualMax = locazinaEditText((EditText) v);
                                             TemEditText = ((EditText) v);
+                                            ((EditText) v).setInputType(InputType.TYPE_CLASS_TEXT);
                                             PassouPorAquiTextoTemp = true;
 
-                                            //llPergunta.setText(valorPergunta + " \n" + ((EditText)v).getHint().toString() );
-                                        } else {
-                                            //Toast.makeText(getApplicationContext(), "lost the focus", Toast.LENGTH_LONG).show();
-                                        }
-                                    }
-                                });
-                                edit.setOnTouchListener(new View.OnTouchListener() {
-                                    public boolean onTouch(View v, MotionEvent event) {
-                                        AtualMax = locazinaEditText((EditText) v);
-                                        TemEditText = ((EditText) v);
-                                        ((EditText) v).setInputType(InputType.TYPE_CLASS_TEXT);
-                                        PassouPorAquiTextoTemp = true;
-
-                                        if (AtualMax == 111111) {
-                                            ((EditText) v).setInputType(InputType.TYPE_CLASS_NUMBER);
-                                        }
+                                            if (AtualMax == 111111) {
+                                                ((EditText) v).setInputType(InputType.TYPE_CLASS_NUMBER);
+                                            }
 
 /*									if (NumeroPerguntaAtual == 25){
 										((EditText) v).setInputType(InputType.TYPE_CLASS_NUMBER);
 									}*/
 
-                                        if (nTIME) {
-                                            Contar15segundos();
-                                        }
-
-                                        return false;
-                                    }
-                                });
-
-                                TextWatcher textWatcher = new TextWatcher() {
-                                    public void afterTextChanged(Editable s) {
-                                        for (int i = 0; i < radionbuttons.size(); i++) {
-                                            if (radionbuttons.get(i).isChecked()) {
-                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString()});
+                                            if (nTIME) {
+                                                Contar15segundos();
                                             }
-                                            radionbuttons.get(i).setChecked(false);
-                                        }
-                                        bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
 
-                                        bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), (TemEditText.getTag().toString())});
-                                        if (s.length() > 0) {
-                                            insereRegistro((TemEditText.getTag().toString()), s.toString(), 0);
-                                            Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), TemEditText.getTag().toString()});
-                                            cursorSALTO.moveToFirst();
-                                            cursorSALTO.getCount();
-                                            if (cursorSALTO.getCount() > 0) {
-                                                String n = cursorSALTO.getString(6);
-                                                if (!cursorSALTO.getString(6).equals("0")) {
-                                                    InsereSalto(cursorSALTO.getString(6), TemEditText.getTag().toString());
+                                            return false;
+                                        }
+                                    });
+
+                                    TextWatcher textWatcher = new TextWatcher() {
+                                        public void afterTextChanged(Editable s) {
+                                            for (int i = 0; i < radionbuttons.size(); i++) {
+                                                if (radionbuttons.get(i).isChecked()) {
+                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString()});
+                                                }
+                                                radionbuttons.get(i).setChecked(false);
+                                            }
+                                            bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
+
+                                            bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), (TemEditText.getTag().toString())});
+                                            if (s.length() > 0) {
+                                                insereRegistro((TemEditText.getTag().toString()), s.toString(), 0);
+                                                Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), TemEditText.getTag().toString()});
+                                                cursorSALTO.moveToFirst();
+                                                cursorSALTO.getCount();
+                                                if (cursorSALTO.getCount() > 0) {
+                                                    String n = cursorSALTO.getString(6);
+                                                    if (!cursorSALTO.getString(6).equals("0")) {
+                                                        InsereSalto(cursorSALTO.getString(6), TemEditText.getTag().toString());
+                                                    }
+                                                }
+                                            }
+                                            if (!((s.toString().equals("")))) {
+                                                if (s.toString().length() + 1 > AtualMax) {
+                                                    Toast.makeText(Questionario.this, "Atenção! Máximo permitido:" + Integer.toString(AtualMax), Toast.LENGTH_LONG).show();
+                                                }
+                                            }
+
+                                            if (!s.toString().equals("")) {
+                                                if (s.toString().length() > 2) {
+                                                    if (cursorPergunta.getString(7).equals("ALIMENTO/3")) {
+                                                        String alimento = s.toString();
+                                                        callApiAlimentos();
+                                                        mInterfaceObject.getAlimentos(alimento).enqueue(objectCallback);
+                                                    }
+                                                } else {
+                                                    DestruirStringAlimento();
+                                                }
+
+                                            }
+                                        }
+
+                                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                        }
+
+                                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                        }
+                                    };
+
+                                    LinearLayout.LayoutParams paramsTextHelp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                    paramsTextHelp.setMargins(0, 0, 0, 0);
+                                    TextInputLayout editAnimation = new TextInputLayout(this);
+                                    editAnimation.setTag(cursor.getString(0));
+                                    editAnimation.setHelperText("  " + cursor.getString(3));
+                                    editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
+                                    editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
+
+                                    edit.addTextChangedListener(textWatcher);
+                                    edit.setBackground(null);
+                                    editAnimation.addView(edit, paramsTextHelp);
+                                    edits.add(editAnimation); // adiciona a nova editText a lista.
+                                    ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
+                                }
+
+                                ///	DATA MASCARA
+                            } else if (cursor.getInt(2) == 5) {
+                                if (!((cursor.getString(0)).equals(igual))) {
+                                    nMin = cursor.getInt(4);
+                                    nMax = cursor.getInt(1);
+
+                                    igual = cursor.getString(0);
+                                    count++;
+
+                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                    params.setMargins(0, 10, 0, 30);
+                                    //LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                    //MaskedEditText edit = new MaskedEditText(this);
+                                    MaskedEditText edit = new MaskedEditText(this,
+                                            "**/**/****",
+                                            "*",
+                                            null,
+                                            new MaskedEditText.MaskIconCallback() {
+                                                @Override
+                                                public void onIconPushed() {
+                                                    System.out.println("Icon pushed");
+
+                                                    //Invoke here contact list or just clear input
+
+                                                }
+                                            });
+
+                                    MinhaTAG asTags = new MinhaTAG();
+
+
+                                    TextInputLayout editAnimation = new TextInputLayout(this);
+                                    editAnimation.setTag(cursor.getString(0));
+
+                                    edit.setTag(cursor.getString(0));
+                                    edit.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+                                    edit.setBackgroundResource(R.drawable.rounded_corner);
+
+                                    LinearLayout.LayoutParams paramsTextView = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, (int) 40d);
+                                    LinearLayout.LayoutParams paramsButton = new LinearLayout.LayoutParams((int) 40d, (int) 40d);
+
+                                    TextView nTextView = new TextView(this);
+                                    nTextView.setText("eeee");
+                                    nTextView.setVisibility(View.GONE);
+                                    nTextView.setTag(cursor.getString(0));
+
+                                    Button nButton = new Button(this);
+                                    nButton.setBackgroundResource(R.mipmap.cancel);
+                                    nButton.setVisibility(View.GONE);
+                                    nButton.setText(" ");
+                                    nButton.setTag(cursor.getString(0));
+
+                                    nButton.setOnClickListener(new OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            VisivelLabelButton(((Button) view).getTag().toString(), "", false, "0");
+                                            VisivleMasTexbox(((Button) view).getTag().toString());
+                                        }
+                                    });
+
+                                    //edit.setHint(cursor.getString(3));
+                                    edit.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/Roboto-Regular.ttf"));
+
+
+                                    //edit.setBackgroundResource(R.drawable.rounded_corner);
+                                    // edit.setHeight(20);
+                                    //edit.setGravity(Gravity.CENTER_HORIZONTAL);
+
+                                    if (nFONTE.equals("P")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+                                    } else if (nFONTE.equals("M")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                                    } else if (nFONTE.equals("G")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
+                                    }
+
+                                    //edit.setFilters(new InputFilter[] {new InputFilter.LengthFilter(100)});
+
+                                    Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), edit.getTag().toString()});
+                                    cursorSALTO.moveToFirst();
+                                    cursorSALTO.getCount();
+
+                                    if (cursorSALTO.getCount() > 0) {
+                                        String n = cursorSALTO.getString(6);
+                                        if (!cursorSALTO.getString(6).equals("0")) {
+                                            InsereSalto(cursorSALTO.getString(6), edit.getTag().toString());
+                                        }
+                                    }
+
+                                    TemEditText = edit;
+                                    TagText.add(edit.getTag().toString());
+                                    //HintText.add(edit.getTag().toString());
+                                    PERSONALIZAOText.add(edit.getTag().toString());
+                                    MaxText.add(Integer.toString(100));
+                                    AtualMax = 100;
+
+                                    edit.setOnFocusChangeListener(new OnFocusChangeListener() {
+                                        @Override
+                                        public void onFocusChange(View v, boolean hasFocus) {
+                                            if (hasFocus) {
+                                                AtualMax = locazinaEditText((MaskedEditText) v);
+                                                TempMaskEditText = ((MaskedEditText) v);
+                                                //llPergunta.setText(valorPergunta + " \n" + ((EditText)v).getHint().toString() );
+                                            } else {
+                                                //Toast.makeText(getApplicationContext(), "lost the focus", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    });
+                                    edit.setOnTouchListener(new View.OnTouchListener() {
+                                        public boolean onTouch(View v, MotionEvent event) {
+                                            AtualMax = locazinaEditText((MaskedEditText) v);
+                                            TempMaskEditText = ((MaskedEditText) v);
+
+
+                                            //((EditText)v).setInputType(InputType.TYPE_CLASS_NUMBER);
+
+                                            if (nTIME) {
+                                                Contar15segundos();
+                                            }
+
+                                            return false;
+                                        }
+                                    });
+
+
+                                    TextWatcher textWatcher = new TextWatcher() {
+                                        public void afterTextChanged(Editable s) {
+                                            for (int i = 0; i < radionbuttons.size(); i++) {
+                                                if (radionbuttons.get(i).isChecked()) {
+                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString()});
+                                                }
+                                                radionbuttons.get(i).setChecked(false);
+                                            }
+                                            bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
+
+                                            bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), (TempMaskEditText.getTag().toString())});
+                                            if (s.length() > 0) {
+                                                insereRegistro((TempMaskEditText.getTag().toString()), s.toString(), 0);
+                                                Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), TempMaskEditText.getTag().toString()});
+                                                cursorSALTO.moveToFirst();
+                                                cursorSALTO.getCount();
+                                                if (cursorSALTO.getCount() > 0) {
+                                                    String n = cursorSALTO.getString(6);
+                                                    if (!cursorSALTO.getString(6).equals("0")) {
+                                                        InsereSalto(cursorSALTO.getString(6), TempMaskEditText.getTag().toString());
+                                                    }
+                                                }
+                                            }
+                                            if (!((s.toString().equals("")))) {
+                                                if (s.toString().length() + 1 > AtualMax) {
+                                                    Toast.makeText(Questionario.this, "Atenção! Máximo permitido:" + Integer.toString(AtualMax), Toast.LENGTH_LONG).show();
                                                 }
                                             }
                                         }
-                                        if (!((s.toString().equals("")))) {
-                                            if (s.toString().length() + 1 > AtualMax) {
-                                                Toast.makeText(Questionario.this, "Atenção! Máximo permitido:" + Integer.toString(AtualMax), Toast.LENGTH_LONG).show();
+
+                                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                        }
+
+                                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                        }
+                                    };
+
+                                    LinearLayout.LayoutParams paramsTextHelp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                    paramsTextHelp.setMargins(0, 0, 0, 0);
+
+                                    edit.addTextChangedListener(textWatcher);
+                                    editAnimation.addView(edit, paramsTextHelp);
+                                    editAnimation.setTag(cursor.getString(0));
+                                    editAnimation.setHelperText("  " + cursor.getString(3));
+
+                                    editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
+                                    editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
+
+                                    edits.add(editAnimation); // adiciona a nova editText a lista.
+                                    edit.setBackground(null);
+                                    ll.addView(nTextView, paramsTextHelp);
+                                    ll.addView(nButton, paramsButton);
+                                    ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
+
+                                }
+                            }
+                            /// HORA MASCARA
+                            else if (cursor.getInt(2) == 8) {
+                                if (!((cursor.getString(0)).equals(igual))) {
+                                    nMin = cursor.getInt(4);
+                                    nMax = cursor.getInt(1);
+
+                                    igual = cursor.getString(0);
+                                    count++;
+
+
+                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                    //MaskedEditText edit = new MaskedEditText(this);
+                                    MaskedEditText edit = new MaskedEditText(this,
+                                            "**:**",
+                                            "*",
+                                            null,
+                                            new MaskedEditText.MaskIconCallback() {
+                                                @Override
+                                                public void onIconPushed() {
+                                                    System.out.println("Icon pushed");
+
+                                                    //Invoke here contact list or just clear input
+
+                                                }
+                                            });
+
+                                    MinhaTAG asTags = new MinhaTAG();
+
+
+                                    TextInputLayout editAnimation = new TextInputLayout(this);
+                                    editAnimation.setTag(cursor.getString(0));
+
+                                    edit.setTag(cursor.getString(0));
+                                    edit.setInputType(InputType.TYPE_CLASS_NUMBER);
+                                    edit.setBackgroundResource(R.drawable.rounded_corner);
+
+                                    LinearLayout.LayoutParams paramsTextView = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, (int) 40d);
+                                    LinearLayout.LayoutParams paramsButton = new LinearLayout.LayoutParams((int) 40d, (int) 40d);
+
+                                    TextView nTextView = new TextView(this);
+                                    nTextView.setText("eeee");
+                                    nTextView.setVisibility(View.GONE);
+                                    nTextView.setTag(cursor.getString(0));
+
+                                    Button nButton = new Button(this);
+                                    nButton.setBackgroundResource(R.mipmap.cancel);
+                                    nButton.setVisibility(View.GONE);
+                                    nButton.setText(" ");
+                                    nButton.setTag(cursor.getString(0));
+
+                                    nButton.setOnClickListener(new OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            VisivelLabelButton(((Button) view).getTag().toString(), "", false, "0");
+                                            VisivleMasTexbox(((Button) view).getTag().toString());
+                                        }
+                                    });
+
+                                    //edit.setHint(cursor.getString(3));
+                                    edit.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/Roboto-Regular.ttf"));
+
+                                    if (nFONTE.equals("P")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+                                    } else if (nFONTE.equals("M")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                                    } else if (nFONTE.equals("G")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
+                                    }
+
+                                    //edit.setFilters(new InputFilter[] {new InputFilter.LengthFilter(100)});
+
+                                    Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), edit.getTag().toString()});
+                                    cursorSALTO.moveToFirst();
+                                    cursorSALTO.getCount();
+
+                                    if (cursorSALTO.getCount() > 0) {
+                                        String n = cursorSALTO.getString(6);
+                                        if (!cursorSALTO.getString(6).equals("0")) {
+                                            InsereSalto(cursorSALTO.getString(6), edit.getTag().toString());
+                                        }
+                                    }
+
+                                    TemEditText = edit;
+                                    TagText.add(edit.getTag().toString());
+                                    //HintText.add(edit.getTag().toString());
+                                    PERSONALIZAOText.add(edit.getTag().toString());
+                                    MaxText.add(Integer.toString(100));
+                                    AtualMax = 100;
+
+                                    edit.setOnFocusChangeListener(new OnFocusChangeListener() {
+                                        @Override
+                                        public void onFocusChange(View v, boolean hasFocus) {
+                                            if (hasFocus) {
+                                                AtualMax = locazinaEditText((MaskedEditText) v);
+                                                TempMaskEditText = ((MaskedEditText) v);
+                                                //llPergunta.setText(valorPergunta + " \n" + ((EditText)v).getHint().toString() );
+                                            } else {
+                                                //Toast.makeText(getApplicationContext(), "lost the focus", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    });
+                                    edit.setOnTouchListener(new View.OnTouchListener() {
+                                        public boolean onTouch(View v, MotionEvent event) {
+                                            AtualMax = locazinaEditText((MaskedEditText) v);
+                                            TempMaskEditText = ((MaskedEditText) v);
+
+
+                                            //((EditText)v).setInputType(InputType.TYPE_CLASS_NUMBER);
+
+                                            if (nTIME) {
+                                                Contar15segundos();
+                                            }
+
+                                            return false;
+                                        }
+                                    });
+
+
+                                    TextWatcher textWatcher = new TextWatcher() {
+                                        public void afterTextChanged(Editable s) {
+                                            for (int i = 0; i < radionbuttons.size(); i++) {
+                                                if (radionbuttons.get(i).isChecked()) {
+                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString()});
+                                                }
+                                                radionbuttons.get(i).setChecked(false);
+                                            }
+                                            bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
+
+                                            bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), (TempMaskEditText.getTag().toString())});
+                                            if (s.length() > 0) {
+                                                insereRegistro((TempMaskEditText.getTag().toString()), s.toString(), 0);
+                                                Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), TempMaskEditText.getTag().toString()});
+                                                cursorSALTO.moveToFirst();
+                                                cursorSALTO.getCount();
+                                                if (cursorSALTO.getCount() > 0) {
+                                                    String n = cursorSALTO.getString(6);
+                                                    if (!cursorSALTO.getString(6).equals("0")) {
+                                                        InsereSalto(cursorSALTO.getString(6), TempMaskEditText.getTag().toString());
+                                                    }
+                                                }
+                                            }
+                                            if (!((s.toString().equals("")))) {
+                                                if (s.toString().length() + 1 > AtualMax) {
+                                                    Toast.makeText(Questionario.this, "Atenção! Máximo permitido:" + Integer.toString(AtualMax), Toast.LENGTH_LONG).show();
+                                                }
                                             }
                                         }
 
-                                        if (!s.toString().equals("")) {
-                                            if (s.toString().length() > 1) {
-                                                if (cursorPergunta.getString(7).equals("RF21")) {
-                                                    String alimento = s.toString();
-                                                    callApiAlimentos();
-                                                    mInterfaceObject.getAlimentos(alimento).enqueue(objectCallback);
+                                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                        }
+
+                                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                        }
+                                    };
+                                    LinearLayout.LayoutParams paramsTextHelp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                    paramsTextHelp.setMargins(50, 0, 20, 0);
+
+                                    edit.addTextChangedListener(textWatcher);
+                                    editAnimation.addView(edit, paramsTextHelp);
+                                    editAnimation.setTag(cursor.getString(0));
+                                    editAnimation.setHelperText("  " + cursor.getString(3));
+                                    editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
+                                    editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
+                                    edits.add(editAnimation); // adiciona a nova editText a lista.
+
+                                    ll.addView(nTextView, paramsTextView);
+                                    ll.addView(nButton, paramsButton);
+                                    ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
+
+                                }
+                            }
+                            /// R$ MASCARA
+                            else if (cursor.getInt(2) == 9) {
+                                if (!((cursor.getString(0)).equals(igual))) {
+                                    nMin = cursor.getInt(4);
+                                    nMax = cursor.getInt(1);
+
+                                    igual = cursor.getString(0);
+                                    count++;
+
+                                    MaskedEditText edit;
+
+                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                    //MaskedEditText edit = new MaskedEditText(this);
+                                    if (nMax == 4) {
+                                        edit = new MaskedEditText(this,
+                                                "R$ **,**",
+                                                "*",
+                                                null,
+                                                new MaskedEditText.MaskIconCallback() {
+                                                    @Override
+                                                    public void onIconPushed() {
+                                                        System.out.println("Icon pushed");
+
+                                                        //Invoke here contact list or just clear input
+
+                                                    }
+                                                });
+                                    } else if (nMax == 5) {
+                                        edit = new MaskedEditText(this,
+                                                "R$ ***,**",
+                                                "*",
+                                                null,
+                                                new MaskedEditText.MaskIconCallback() {
+                                                    @Override
+                                                    public void onIconPushed() {
+                                                        System.out.println("Icon pushed");
+
+                                                        //Invoke here contact list or just clear input
+
+                                                    }
+                                                });
+                                    } else if (nMax == 6) {
+                                        edit = new MaskedEditText(this,
+                                                "R$ *.***,**",
+                                                "*",
+                                                null,
+                                                new MaskedEditText.MaskIconCallback() {
+                                                    @Override
+                                                    public void onIconPushed() {
+                                                        System.out.println("Icon pushed");
+
+                                                        //Invoke here contact list or just clear input
+
+                                                    }
+                                                });
+                                    } else if (nMax == 7) {
+                                        edit = new MaskedEditText(this,
+                                                "R$ **.***,**",
+                                                "*",
+                                                null,
+                                                new MaskedEditText.MaskIconCallback() {
+                                                    @Override
+                                                    public void onIconPushed() {
+                                                        System.out.println("Icon pushed");
+
+                                                        //Invoke here contact list or just clear input
+
+                                                    }
+                                                });
+                                    } else {
+                                        edit = new MaskedEditText(this,
+                                                "R$ ***.***,**",
+                                                "*",
+                                                null,
+                                                new MaskedEditText.MaskIconCallback() {
+                                                    @Override
+                                                    public void onIconPushed() {
+                                                        System.out.println("Icon pushed");
+
+                                                        //Invoke here contact list or just clear input
+
+                                                    }
+                                                });
+                                    }
+
+                                    MinhaTAG asTags = new MinhaTAG();
+
+
+                                    TextInputLayout editAnimation = new TextInputLayout(this);
+                                    editAnimation.setTag(cursor.getString(0));
+
+                                    edit.setTag(cursor.getString(0));
+                                    edit.setInputType(InputType.TYPE_CLASS_NUMBER);
+                                    edit.setBackgroundResource(R.drawable.rounded_corner);
+
+
+                                    LinearLayout.LayoutParams paramsTextView = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, (int) 40d);
+                                    LinearLayout.LayoutParams paramsButton = new LinearLayout.LayoutParams((int) 40d, (int) 40d);
+
+                                    TextView nTextView = new TextView(this);
+                                    nTextView.setText("eeee");
+                                    nTextView.setVisibility(View.GONE);
+                                    nTextView.setTag(cursor.getString(0));
+
+                                    Button nButton = new Button(this);
+                                    nButton.setBackgroundResource(R.mipmap.cancel);
+                                    nButton.setVisibility(View.GONE);
+                                    nButton.setText(" ");
+                                    nButton.setTag(cursor.getString(0));
+
+                                    nButton.setOnClickListener(new OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            VisivelLabelButton(((Button) view).getTag().toString(), "", false, "0");
+                                            VisivleMasTexbox(((Button) view).getTag().toString());
+                                        }
+                                    });
+
+                                    //edit.setHint(cursor.getString(3));
+                                    edit.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/Roboto-Regular.ttf"));
+
+
+                                    //edit.setBackgroundResource(R.drawable.rounded_corner);
+                                    // edit.setHeight(20);
+                                    //edit.setGravity(Gravity.CENTER_HORIZONTAL);
+
+                                    if (nFONTE.equals("P")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+                                    } else if (nFONTE.equals("M")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                                    } else if (nFONTE.equals("G")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
+                                    }
+
+                                    //edit.setFilters(new InputFilter[] {new InputFilter.LengthFilter(100)});
+
+                                    Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), edit.getTag().toString()});
+                                    cursorSALTO.moveToFirst();
+                                    cursorSALTO.getCount();
+
+                                    if (cursorSALTO.getCount() > 0) {
+                                        String n = cursorSALTO.getString(6);
+                                        if (!cursorSALTO.getString(6).equals("0")) {
+                                            InsereSalto(cursorSALTO.getString(6), edit.getTag().toString());
+                                        }
+                                    }
+
+                                    TemEditText = edit;
+                                    TagText.add(edit.getTag().toString());
+                                    //HintText.add(edit.getTag().toString());
+                                    PERSONALIZAOText.add(edit.getTag().toString());
+                                    MaxText.add(Integer.toString(100));
+                                    AtualMax = 100;
+
+                                    edit.setOnFocusChangeListener(new OnFocusChangeListener() {
+                                        @Override
+                                        public void onFocusChange(View v, boolean hasFocus) {
+                                            if (hasFocus) {
+                                                AtualMax = locazinaEditText((MaskedEditText) v);
+                                                TempMaskEditText = ((MaskedEditText) v);
+                                                //llPergunta.setText(valorPergunta + " \n" + ((EditText)v).getHint().toString() );
+                                            } else {
+                                                //Toast.makeText(getApplicationContext(), "lost the focus", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    });
+                                    edit.setOnTouchListener(new View.OnTouchListener() {
+                                        public boolean onTouch(View v, MotionEvent event) {
+                                            AtualMax = locazinaEditText((MaskedEditText) v);
+                                            TempMaskEditText = ((MaskedEditText) v);
+
+
+                                            //((EditText)v).setInputType(InputType.TYPE_CLASS_NUMBER);
+
+                                            if (nTIME) {
+                                                Contar15segundos();
+                                            }
+
+                                            return false;
+                                        }
+                                    });
+
+
+                                    TextWatcher textWatcher = new TextWatcher() {
+                                        public void afterTextChanged(Editable s) {
+                                            for (int i = 0; i < radionbuttons.size(); i++) {
+                                                if (radionbuttons.get(i).isChecked()) {
+                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString()});
+                                                }
+                                                radionbuttons.get(i).setChecked(false);
+                                            }
+                                            bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
+
+                                            bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), (TempMaskEditText.getTag().toString())});
+                                            if (s.length() > 0) {
+                                                insereRegistro((TempMaskEditText.getTag().toString()), s.toString(), 0);
+                                                Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), TempMaskEditText.getTag().toString()});
+                                                cursorSALTO.moveToFirst();
+                                                cursorSALTO.getCount();
+                                                if (cursorSALTO.getCount() > 0) {
+                                                    String n = cursorSALTO.getString(6);
+                                                    if (!cursorSALTO.getString(6).equals("0")) {
+                                                        InsereSalto(cursorSALTO.getString(6), TempMaskEditText.getTag().toString());
+                                                    }
+                                                }
+                                            }
+                                            if (!((s.toString().equals("")))) {
+                                                if (s.toString().length() + 1 > AtualMax) {
+                                                    Toast.makeText(Questionario.this, "Atenção! Máximo permitido:" + Integer.toString(AtualMax), Toast.LENGTH_LONG).show();
+                                                }
+                                            }
+                                        }
+
+                                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                        }
+
+                                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                        }
+                                    };
+                                    LinearLayout.LayoutParams paramsTextHelp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                    paramsTextHelp.setMargins(0, 0, 0, 0);
+
+                                    edit.addTextChangedListener(textWatcher);
+                                    editAnimation.addView(edit, paramsTextHelp);
+                                    edits.add(editAnimation); // adiciona a nova editText a lista.
+
+                                    ll.addView(nTextView, paramsTextView);
+                                    ll.addView(nButton, paramsButton);
+                                    ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
+
+                                }
+                            }
+                            // Data
+                            else if (cursor.getInt(2) == 10) {
+                                if (!((cursor.getString(0)).equals(igual))) {
+                                    igual = cursor.getString(0);
+                                    count++;
+                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+                                    Time now = new Time();
+                                    now.setToNow();
+                                    Integer nDia = (now.monthDay);
+                                    Integer nMes = (now.month) + 1;
+                                    Integer nAno = (now.year);
+                                    DatePickerDialog datePicker = new DatePickerDialog(
+                                            this,
+                                            android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                                            null,
+                                            nAno,
+                                            nMes,
+                                            nDia);
+
+                                    Cursor cursorTEMP = bd.rawQuery(sql_select.GET_RESPOSTA_3, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual)});
+                                    cursorTEMP.moveToFirst();
+                                    Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), cursor.getString(0)});
+                                    cursorSALTO.moveToFirst();
+                                    cursorSALTO.getCount();
+
+                                    if (cursorSALTO.getCount() > 0) {
+                                        String n = cursorSALTO.getString(6);
+                                        if (!cursorSALTO.getString(6).equals("0")) {
+                                            InsereSalto(cursorSALTO.getString(6), cursor.getString(0));
+                                        }
+                                    }
+
+
+                                    ///
+                                    LinearLayout.LayoutParams paramsTextHelp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                    paramsTextHelp.setMargins(0, 0, 0, 0);
+                                    TextInputLayout editAnimation = new TextInputLayout(this);
+                                    editAnimation.setTag(cursor.getString(0));
+                                    editAnimation.setHelperText("  " + cursor.getString(3));
+                                    editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
+                                    editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
+
+
+                                    editAnimation.addView(datePicker.getDatePicker(), paramsTextHelp);
+                                    edits.add(editAnimation); // adiciona a nova editText a lista.
+                                    ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
+
+                              }
+
+                            }
+                            // NUMERO
+                            else if (cursor.getInt(2) == 1) {
+                                if (!((cursor.getString(0)).equals(igual))) {
+                                    nMin = cursor.getInt(4);
+                                    nMax = cursor.getInt(1);
+
+                                    igual = cursor.getString(0);
+                                    count++;
+                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                    NumberPicker number = new NumberPicker(this);
+                                    MinhaTAG asTags = new MinhaTAG();
+                                    asTags.nTAG = cursor.getInt(0);
+                                    asTags.nTAGMIN = nMin;
+                                    asTags.nTAGMAX = nMax;
+
+                                    number.setTag(cursor.getString(0));
+                                    number.setValue(0);
+                                    number.setMinValue(nMin);
+                                    number.setMaxValue(nMax);
+                                    number.setWrapSelectorWheel(true);
+
+                                    insereRegistro(cursor.getString(0), Integer.toString(nMin), 0);
+
+                                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                                            .hideSoftInputFromWindow(number.getWindowToken(), 0);
+
+                                    number.setOnValueChangedListener(new OnValueChangeListener() {
+
+                                        @Override
+                                        public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                                            // TODO Auto-generated method stub
+                                            try {
+                                                String Old = "Old Value : ";
+                                                String New = "New Value : ";
+
+                                                MinhaTAG asTags = new MinhaTAG();
+                                                int ntag = asTags.nTAG;
+                                                int nMin = asTags.nTAGMIN;
+                                                int nMax = asTags.nTAGMAX;
+
+                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual)});
+                                                insereRegistro(Integer.toString(ntag), Integer.toString(picker.getValue()), 0);
+
+                                            } catch (Exception e) {
+                                                System.out.println(e.getMessage());
+                                            }
+                                        }
+                                    });
+
+                                    numberPickers.add(number); // adiciona a nova editText a lista.
+                                    ll.addView(number, params); // adiciona a editText ao ViewGroup
+                                }
+                            }
+                            // CHECK especial
+                            else if (cursor.getInt(2) == 6) {
+                                if (!((cursor.getString(0)).equals(igual))) {
+                                    igual = cursor.getString(0);
+                                    count++;
+                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+
+                                    CheckBox checkbox = new CheckBox(this);
+                                    checkbox.setTag(cursor.getString(0));
+                                    checkbox.setText(cursor.getString(3));
+                                    checkbox.setTypeface(null, Typeface.NORMAL);
+
+                                    if (nFONTE.equals("P")) {
+                                        checkbox.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+                                    } else if (nFONTE.equals("M")) {
+                                        checkbox.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                                    } else if (nFONTE.equals("G")) {
+                                        checkbox.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
+                                    }
+
+                                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                                            .hideSoftInputFromWindow(checkbox.getWindowToken(), 0);
+
+                                    checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                                        @Override
+                                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                            boolean pegarEstado = isChecked;
+
+                                            Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString()});
+                                            cursorSALTO.moveToFirst();
+                                            cursorSALTO.getCount();
+
+                                            if (isChecked) {
+                                                TornaVisivelTextEspecial(Integer.toString(Integer.parseInt(buttonView.getTag().toString()) + 1), true);
+                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString()});
+                                                insereRegistro(buttonView.getTag().toString(), "", 0);
+
+                                                if (cursorSALTO.getCount() > 0) {
+                                                    String n = cursorSALTO.getString(6);
+                                                    if (!cursorSALTO.getString(6).equals("0")) {
+                                                        InsereSalto(cursorSALTO.getString(6), ((CheckBox) buttonView).getTag().toString());
+                                                    }
                                                 }
                                             } else {
-                                                DestruirStringAlimento();
-                                            }
-
-                                        }
-                                    }
-
-                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                                    }
-
-                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                                    }
-                                };
-
-                                LinearLayout.LayoutParams paramsTextHelp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-                                paramsTextHelp.setMargins(0, 0, 0, 0);
-                                TextInputLayout editAnimation = new TextInputLayout(this);
-                                editAnimation.setTag(cursor.getString(0));
-                                editAnimation.setHelperText("  " + cursor.getString(3));
-                                editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
-                                editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
-
-                                edit.addTextChangedListener(textWatcher);
-                                edit.setBackground(null);
-                                editAnimation.addView(edit, paramsTextHelp);
-                                edits.add(editAnimation); // adiciona a nova editText a lista.
-                                ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
-                            }
-
-                            ///	DATA MASCARA
-                        } else if (cursor.getInt(2) == 5) {
-                            if (!((cursor.getString(0)).equals(igual))) {
-                                nMin = cursor.getInt(4);
-                                nMax = cursor.getInt(1);
-
-                                igual = cursor.getString(0);
-                                count++;
-
-                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-                                params.setMargins(0, 10, 0, 30);
-                                //LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-                                //MaskedEditText edit = new MaskedEditText(this);
-                                MaskedEditText edit = new MaskedEditText(this,
-                                        "**/**/****",
-                                        "*",
-                                        null,
-                                        new MaskedEditText.MaskIconCallback() {
-                                            @Override
-                                            public void onIconPushed() {
-                                                System.out.println("Icon pushed");
-
-                                                //Invoke here contact list or just clear input
-
-                                            }
-                                        });
-
-                                MinhaTAG asTags = new MinhaTAG();
-
-
-                                TextInputLayout editAnimation = new TextInputLayout(this);
-                                editAnimation.setTag(cursor.getString(0));
-
-                                edit.setTag(cursor.getString(0));
-                                edit.setInputType(InputType.TYPE_CLASS_NUMBER);
-
-                                edit.setBackgroundResource(R.drawable.rounded_corner);
-
-                                LinearLayout.LayoutParams paramsTextView = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, (int) 40d);
-                                LinearLayout.LayoutParams paramsButton = new LinearLayout.LayoutParams((int) 40d, (int) 40d);
-
-                                TextView nTextView = new TextView(this);
-                                nTextView.setText("eeee");
-                                nTextView.setVisibility(View.GONE);
-                                nTextView.setTag(cursor.getString(0));
-
-                                Button nButton = new Button(this);
-                                nButton.setBackgroundResource(R.mipmap.cancel);
-                                nButton.setVisibility(View.GONE);
-                                nButton.setText(" ");
-                                nButton.setTag(cursor.getString(0));
-
-                                nButton.setOnClickListener(new OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        VisivelLabelButton(((Button) view).getTag().toString(), "", false, "0");
-                                        VisivleMasTexbox(((Button) view).getTag().toString());
-                                    }
-                                });
-
-                                //edit.setHint(cursor.getString(3));
-                                edit.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/Roboto-Regular.ttf"));
-
-
-                                //edit.setBackgroundResource(R.drawable.rounded_corner);
-                                // edit.setHeight(20);
-                                //edit.setGravity(Gravity.CENTER_HORIZONTAL);
-
-                                if (nFONTE.equals("P")) {
-                                    edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-                                } else if (nFONTE.equals("M")) {
-                                    edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-                                } else if (nFONTE.equals("G")) {
-                                    edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
-                                }
-
-                                //edit.setFilters(new InputFilter[] {new InputFilter.LengthFilter(100)});
-
-                                Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), edit.getTag().toString()});
-                                cursorSALTO.moveToFirst();
-                                cursorSALTO.getCount();
-
-                                if (cursorSALTO.getCount() > 0) {
-                                    String n = cursorSALTO.getString(6);
-                                    if (!cursorSALTO.getString(6).equals("0")) {
-                                        InsereSalto(cursorSALTO.getString(6), edit.getTag().toString());
-                                    }
-                                }
-
-                                TemEditText = edit;
-                                TagText.add(edit.getTag().toString());
-                                //HintText.add(edit.getTag().toString());
-                                PERSONALIZAOText.add(edit.getTag().toString());
-                                MaxText.add(Integer.toString(100));
-                                AtualMax = 100;
-
-                                edit.setOnFocusChangeListener(new OnFocusChangeListener() {
-                                    @Override
-                                    public void onFocusChange(View v, boolean hasFocus) {
-                                        if (hasFocus) {
-                                            AtualMax = locazinaEditText((MaskedEditText) v);
-                                            TempMaskEditText = ((MaskedEditText) v);
-                                            //llPergunta.setText(valorPergunta + " \n" + ((EditText)v).getHint().toString() );
-                                        } else {
-                                            //Toast.makeText(getApplicationContext(), "lost the focus", Toast.LENGTH_LONG).show();
-                                        }
-                                    }
-                                });
-                                edit.setOnTouchListener(new View.OnTouchListener() {
-                                    public boolean onTouch(View v, MotionEvent event) {
-                                        AtualMax = locazinaEditText((MaskedEditText) v);
-                                        TempMaskEditText = ((MaskedEditText) v);
-
-
-                                        //((EditText)v).setInputType(InputType.TYPE_CLASS_NUMBER);
-
-                                        if (nTIME) {
-                                            Contar15segundos();
-                                        }
-
-                                        return false;
-                                    }
-                                });
-
-
-                                TextWatcher textWatcher = new TextWatcher() {
-                                    public void afterTextChanged(Editable s) {
-                                        for (int i = 0; i < radionbuttons.size(); i++) {
-                                            if (radionbuttons.get(i).isChecked()) {
-                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString()});
-                                            }
-                                            radionbuttons.get(i).setChecked(false);
-                                        }
-                                        bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
-
-                                        bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), (TempMaskEditText.getTag().toString())});
-                                        if (s.length() > 0) {
-                                            insereRegistro((TempMaskEditText.getTag().toString()), s.toString(), 0);
-                                            Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), TempMaskEditText.getTag().toString()});
-                                            cursorSALTO.moveToFirst();
-                                            cursorSALTO.getCount();
-                                            if (cursorSALTO.getCount() > 0) {
-                                                String n = cursorSALTO.getString(6);
-                                                if (!cursorSALTO.getString(6).equals("0")) {
-                                                    InsereSalto(cursorSALTO.getString(6), TempMaskEditText.getTag().toString());
+                                                TornaVisivelTextEspecial(Integer.toString(Integer.parseInt(buttonView.getTag().toString()) + 1), false);
+                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString()});
+                                                bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
+                                                if (cursorSALTO.getCount() > 0) {
+                                                    String n = cursorSALTO.getString(6);
+                                                    if (!cursorSALTO.getString(6).equals("0")) {
+                                                        bd.execSQL(sql_delete.DEL_SALTO, new String[]{cursorSALTO.getString(1)});
+                                                    }
                                                 }
                                             }
                                         }
-                                        if (!((s.toString().equals("")))) {
-                                            if (s.toString().length() + 1 > AtualMax) {
-                                                Toast.makeText(Questionario.this, "Atenção! Máximo permitido:" + Integer.toString(AtualMax), Toast.LENGTH_LONG).show();
-                                            }
-                                        }
-                                    }
+                                    });
 
-                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                                    }
-
-                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                                    }
-                                };
-
-                                LinearLayout.LayoutParams paramsTextHelp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-                                paramsTextHelp.setMargins(0, 0, 0, 0);
-
-                                edit.addTextChangedListener(textWatcher);
-                                editAnimation.addView(edit, paramsTextHelp);
-                                editAnimation.setTag(cursor.getString(0));
-                                editAnimation.setHelperText("  " + cursor.getString(3));
-
-                                editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
-                                editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
-
-                                edits.add(editAnimation); // adiciona a nova editText a lista.
-                                edit.setBackground(null);
-                                ll.addView(nTextView, paramsTextHelp);
-                                ll.addView(nButton, paramsButton);
-                                ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
-
+                                    checkboxs.add(checkbox); // adiciona a nova editText a lista.
+                                    ll.addView(checkbox, params); // adiciona a editText ao ViewGroup
+                                }
                             }
+                            // TEXTO especial
+                            else {
+                                if (!((cursor.getString(0)).equals(igual))) {
+                                    nMin = cursor.getInt(4);
+                                    nMax = cursor.getInt(1);
+
+                                    igual = cursor.getString(0);
+                                    count++;
+                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                    EditText edit = new EditText(this);
+                                    MinhaTAG asTags = new MinhaTAG();
+
+                                    edit.setTag(cursor.getString(0));
+                                    //edit.setHint(cursor.getString(3));
+                                    edit.setVisibility(View.INVISIBLE);
+                                    edit.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
+
+                                    if (nFONTE.equals("P")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+                                    } else if (nFONTE.equals("M")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                                    } else if (nFONTE.equals("G")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
+                                    }
+
+                                    edit.setHeight(0);
+                                    edit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(nMax)});
+
+                                    TemEditText = edit;
+                                    edit.setInputType(InputType.TYPE_NULL);
+
+                                    TagText.add(edit.getTag().toString());
+                                    //HintText.add(edit.getTag().toString());
+                                    PERSONALIZAOText.add(edit.getTag().toString());
+                                    MaxText.add(Integer.toString(nMax));
+                                    AtualMax = nMax;
+
+                                    edit.setOnTouchListener(new View.OnTouchListener() {
+                                        public boolean onTouch(View v, MotionEvent event) {
+                                            AtualMax = locazinaEditText((EditText) v);
+                                            TemEditText = ((EditText) v);
+                                            ((EditText) v).setInputType(InputType.TYPE_CLASS_TEXT);
+                                            return false;
+                                        }
+                                    });
+
+                                    TextWatcher textWatcher = new TextWatcher() {
+                                        public void afterTextChanged(Editable s) {
+                                            bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), (TemEditText.getTag().toString())});
+                                            if (s.length() > 0) {
+                                                insereRegistro((TemEditText.getTag().toString()), s.toString(), 0);
+                                            }
+                                            if (!((s.toString().equals("")))) {
+                                                if (s.toString().length() + 1 > AtualMax) {
+                                                    Toast.makeText(Questionario.this, "Atenção! Máximo permitido:" + Integer.toString(AtualMax), Toast.LENGTH_LONG).show();
+                                                }
+                                            }
+
+                                        }
+
+                                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                        }
+
+                                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                        }
+                                    };
+                                    edit.addTextChangedListener(textWatcher);
+                                    //edits.add(edit); // adiciona a nova editText a lista.
+                                    ll.addView(edit, params); // adiciona a editText ao ViewGroup
+                                }
+                            }
+
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
                         }
-                        /// HORA MASCARA
-                        else if (cursor.getInt(2) == 8) {
-                            if (!((cursor.getString(0)).equals(igual))) {
-                                nMin = cursor.getInt(4);
-                                nMax = cursor.getInt(1);
-
-                                igual = cursor.getString(0);
-                                count++;
-
-
-                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-                                //MaskedEditText edit = new MaskedEditText(this);
-                                MaskedEditText edit = new MaskedEditText(this,
-                                        "**:**",
-                                        "*",
-                                        null,
-                                        new MaskedEditText.MaskIconCallback() {
-                                            @Override
-                                            public void onIconPushed() {
-                                                System.out.println("Icon pushed");
-
-                                                //Invoke here contact list or just clear input
-
-                                            }
-                                        });
-
-                                MinhaTAG asTags = new MinhaTAG();
-
-
-                                TextInputLayout editAnimation = new TextInputLayout(this);
-                                editAnimation.setTag(cursor.getString(0));
-
-                                edit.setTag(cursor.getString(0));
-                                edit.setInputType(InputType.TYPE_CLASS_NUMBER);
-                                edit.setBackgroundResource(R.drawable.rounded_corner);
-
-                                LinearLayout.LayoutParams paramsTextView = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, (int) 40d);
-                                LinearLayout.LayoutParams paramsButton = new LinearLayout.LayoutParams((int) 40d, (int) 40d);
-
-                                TextView nTextView = new TextView(this);
-                                nTextView.setText("eeee");
-                                nTextView.setVisibility(View.GONE);
-                                nTextView.setTag(cursor.getString(0));
-
-                                Button nButton = new Button(this);
-                                nButton.setBackgroundResource(R.mipmap.cancel);
-                                nButton.setVisibility(View.GONE);
-                                nButton.setText(" ");
-                                nButton.setTag(cursor.getString(0));
-
-                                nButton.setOnClickListener(new OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        VisivelLabelButton(((Button) view).getTag().toString(), "", false, "0");
-                                        VisivleMasTexbox(((Button) view).getTag().toString());
-                                    }
-                                });
-
-                                //edit.setHint(cursor.getString(3));
-                                edit.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/Roboto-Regular.ttf"));
-
-                                if (nFONTE.equals("P")) {
-                                    edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-                                } else if (nFONTE.equals("M")) {
-                                    edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-                                } else if (nFONTE.equals("G")) {
-                                    edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
-                                }
-
-                                //edit.setFilters(new InputFilter[] {new InputFilter.LengthFilter(100)});
-
-                                Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), edit.getTag().toString()});
-                                cursorSALTO.moveToFirst();
-                                cursorSALTO.getCount();
-
-                                if (cursorSALTO.getCount() > 0) {
-                                    String n = cursorSALTO.getString(6);
-                                    if (!cursorSALTO.getString(6).equals("0")) {
-                                        InsereSalto(cursorSALTO.getString(6), edit.getTag().toString());
-                                    }
-                                }
-
-                                TemEditText = edit;
-                                TagText.add(edit.getTag().toString());
-                                //HintText.add(edit.getTag().toString());
-                                PERSONALIZAOText.add(edit.getTag().toString());
-                                MaxText.add(Integer.toString(100));
-                                AtualMax = 100;
-
-                                edit.setOnFocusChangeListener(new OnFocusChangeListener() {
-                                    @Override
-                                    public void onFocusChange(View v, boolean hasFocus) {
-                                        if (hasFocus) {
-                                            AtualMax = locazinaEditText((MaskedEditText) v);
-                                            TempMaskEditText = ((MaskedEditText) v);
-                                            //llPergunta.setText(valorPergunta + " \n" + ((EditText)v).getHint().toString() );
-                                        } else {
-                                            //Toast.makeText(getApplicationContext(), "lost the focus", Toast.LENGTH_LONG).show();
-                                        }
-                                    }
-                                });
-                                edit.setOnTouchListener(new View.OnTouchListener() {
-                                    public boolean onTouch(View v, MotionEvent event) {
-                                        AtualMax = locazinaEditText((MaskedEditText) v);
-                                        TempMaskEditText = ((MaskedEditText) v);
-
-
-                                        //((EditText)v).setInputType(InputType.TYPE_CLASS_NUMBER);
-
-                                        if (nTIME) {
-                                            Contar15segundos();
-                                        }
-
-                                        return false;
-                                    }
-                                });
-
-
-                                TextWatcher textWatcher = new TextWatcher() {
-                                    public void afterTextChanged(Editable s) {
-                                        for (int i = 0; i < radionbuttons.size(); i++) {
-                                            if (radionbuttons.get(i).isChecked()) {
-                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString()});
-                                            }
-                                            radionbuttons.get(i).setChecked(false);
-                                        }
-                                        bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
-
-                                        bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), (TempMaskEditText.getTag().toString())});
-                                        if (s.length() > 0) {
-                                            insereRegistro((TempMaskEditText.getTag().toString()), s.toString(), 0);
-                                            Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), TempMaskEditText.getTag().toString()});
-                                            cursorSALTO.moveToFirst();
-                                            cursorSALTO.getCount();
-                                            if (cursorSALTO.getCount() > 0) {
-                                                String n = cursorSALTO.getString(6);
-                                                if (!cursorSALTO.getString(6).equals("0")) {
-                                                    InsereSalto(cursorSALTO.getString(6), TempMaskEditText.getTag().toString());
-                                                }
-                                            }
-                                        }
-                                        if (!((s.toString().equals("")))) {
-                                            if (s.toString().length() + 1 > AtualMax) {
-                                                Toast.makeText(Questionario.this, "Atenção! Máximo permitido:" + Integer.toString(AtualMax), Toast.LENGTH_LONG).show();
-                                            }
-                                        }
-                                    }
-
-                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                                    }
-
-                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                                    }
-                                };
-                                LinearLayout.LayoutParams paramsTextHelp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-                                paramsTextHelp.setMargins(0, 0, 0, 0);
-
-                                edit.addTextChangedListener(textWatcher);
-                                editAnimation.addView(edit, paramsTextHelp);
-                                edits.add(editAnimation); // adiciona a nova editText a lista.
-
-                                ll.addView(nTextView, paramsTextView);
-                                ll.addView(nButton, paramsButton);
-                                ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
-
-                            }
-                        }
-                        /// R$ MASCARA
-                        else if (cursor.getInt(2) == 9) {
-                            if (!((cursor.getString(0)).equals(igual))) {
-                                nMin = cursor.getInt(4);
-                                nMax = cursor.getInt(1);
-
-                                igual = cursor.getString(0);
-                                count++;
-
-                                MaskedEditText edit;
-
-                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-                                //MaskedEditText edit = new MaskedEditText(this);
-                                if (nMax == 4) {
-                                    edit = new MaskedEditText(this,
-                                            "R$ **,**",
-                                            "*",
-                                            null,
-                                            new MaskedEditText.MaskIconCallback() {
-                                                @Override
-                                                public void onIconPushed() {
-                                                    System.out.println("Icon pushed");
-
-                                                    //Invoke here contact list or just clear input
-
-                                                }
-                                            });
-                                } else if (nMax == 5) {
-                                    edit = new MaskedEditText(this,
-                                            "R$ ***,**",
-                                            "*",
-                                            null,
-                                            new MaskedEditText.MaskIconCallback() {
-                                                @Override
-                                                public void onIconPushed() {
-                                                    System.out.println("Icon pushed");
-
-                                                    //Invoke here contact list or just clear input
-
-                                                }
-                                            });
-                                } else if (nMax == 6) {
-                                    edit = new MaskedEditText(this,
-                                            "R$ *.***,**",
-                                            "*",
-                                            null,
-                                            new MaskedEditText.MaskIconCallback() {
-                                                @Override
-                                                public void onIconPushed() {
-                                                    System.out.println("Icon pushed");
-
-                                                    //Invoke here contact list or just clear input
-
-                                                }
-                                            });
-                                } else if (nMax == 7) {
-                                    edit = new MaskedEditText(this,
-                                            "R$ **.***,**",
-                                            "*",
-                                            null,
-                                            new MaskedEditText.MaskIconCallback() {
-                                                @Override
-                                                public void onIconPushed() {
-                                                    System.out.println("Icon pushed");
-
-                                                    //Invoke here contact list or just clear input
-
-                                                }
-                                            });
-                                } else {
-                                    edit = new MaskedEditText(this,
-                                            "R$ ***.***,**",
-                                            "*",
-                                            null,
-                                            new MaskedEditText.MaskIconCallback() {
-                                                @Override
-                                                public void onIconPushed() {
-                                                    System.out.println("Icon pushed");
-
-                                                    //Invoke here contact list or just clear input
-
-                                                }
-                                            });
-                                }
-
-                                MinhaTAG asTags = new MinhaTAG();
-
-
-                                TextInputLayout editAnimation = new TextInputLayout(this);
-                                editAnimation.setTag(cursor.getString(0));
-
-                                edit.setTag(cursor.getString(0));
-                                edit.setInputType(InputType.TYPE_CLASS_NUMBER);
-                                edit.setBackgroundResource(R.drawable.rounded_corner);
-
-
-                                LinearLayout.LayoutParams paramsTextView = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, (int) 40d);
-                                LinearLayout.LayoutParams paramsButton = new LinearLayout.LayoutParams((int) 40d, (int) 40d);
-
-                                TextView nTextView = new TextView(this);
-                                nTextView.setText("eeee");
-                                nTextView.setVisibility(View.GONE);
-                                nTextView.setTag(cursor.getString(0));
-
-                                Button nButton = new Button(this);
-                                nButton.setBackgroundResource(R.mipmap.cancel);
-                                nButton.setVisibility(View.GONE);
-                                nButton.setText(" ");
-                                nButton.setTag(cursor.getString(0));
-
-                                nButton.setOnClickListener(new OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        VisivelLabelButton(((Button) view).getTag().toString(), "", false, "0");
-                                        VisivleMasTexbox(((Button) view).getTag().toString());
-                                    }
-                                });
-
-                                //edit.setHint(cursor.getString(3));
-                                edit.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/Roboto-Regular.ttf"));
-
-
-                                //edit.setBackgroundResource(R.drawable.rounded_corner);
-                                // edit.setHeight(20);
-                                //edit.setGravity(Gravity.CENTER_HORIZONTAL);
-
-                                if (nFONTE.equals("P")) {
-                                    edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-                                } else if (nFONTE.equals("M")) {
-                                    edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-                                } else if (nFONTE.equals("G")) {
-                                    edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
-                                }
-
-                                //edit.setFilters(new InputFilter[] {new InputFilter.LengthFilter(100)});
-
-                                Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), edit.getTag().toString()});
-                                cursorSALTO.moveToFirst();
-                                cursorSALTO.getCount();
-
-                                if (cursorSALTO.getCount() > 0) {
-                                    String n = cursorSALTO.getString(6);
-                                    if (!cursorSALTO.getString(6).equals("0")) {
-                                        InsereSalto(cursorSALTO.getString(6), edit.getTag().toString());
-                                    }
-                                }
-
-                                TemEditText = edit;
-                                TagText.add(edit.getTag().toString());
-                                //HintText.add(edit.getTag().toString());
-                                PERSONALIZAOText.add(edit.getTag().toString());
-                                MaxText.add(Integer.toString(100));
-                                AtualMax = 100;
-
-                                edit.setOnFocusChangeListener(new OnFocusChangeListener() {
-                                    @Override
-                                    public void onFocusChange(View v, boolean hasFocus) {
-                                        if (hasFocus) {
-                                            AtualMax = locazinaEditText((MaskedEditText) v);
-                                            TempMaskEditText = ((MaskedEditText) v);
-                                            //llPergunta.setText(valorPergunta + " \n" + ((EditText)v).getHint().toString() );
-                                        } else {
-                                            //Toast.makeText(getApplicationContext(), "lost the focus", Toast.LENGTH_LONG).show();
-                                        }
-                                    }
-                                });
-                                edit.setOnTouchListener(new View.OnTouchListener() {
-                                    public boolean onTouch(View v, MotionEvent event) {
-                                        AtualMax = locazinaEditText((MaskedEditText) v);
-                                        TempMaskEditText = ((MaskedEditText) v);
-
-
-                                        //((EditText)v).setInputType(InputType.TYPE_CLASS_NUMBER);
-
-                                        if (nTIME) {
-                                            Contar15segundos();
-                                        }
-
-                                        return false;
-                                    }
-                                });
-
-
-                                TextWatcher textWatcher = new TextWatcher() {
-                                    public void afterTextChanged(Editable s) {
-                                        for (int i = 0; i < radionbuttons.size(); i++) {
-                                            if (radionbuttons.get(i).isChecked()) {
-                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString()});
-                                            }
-                                            radionbuttons.get(i).setChecked(false);
-                                        }
-                                        bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
-
-                                        bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), (TempMaskEditText.getTag().toString())});
-                                        if (s.length() > 0) {
-                                            insereRegistro((TempMaskEditText.getTag().toString()), s.toString(), 0);
-                                            Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), TempMaskEditText.getTag().toString()});
-                                            cursorSALTO.moveToFirst();
-                                            cursorSALTO.getCount();
-                                            if (cursorSALTO.getCount() > 0) {
-                                                String n = cursorSALTO.getString(6);
-                                                if (!cursorSALTO.getString(6).equals("0")) {
-                                                    InsereSalto(cursorSALTO.getString(6), TempMaskEditText.getTag().toString());
-                                                }
-                                            }
-                                        }
-                                        if (!((s.toString().equals("")))) {
-                                            if (s.toString().length() + 1 > AtualMax) {
-                                                Toast.makeText(Questionario.this, "Atenção! Máximo permitido:" + Integer.toString(AtualMax), Toast.LENGTH_LONG).show();
-                                            }
-                                        }
-                                    }
-
-                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                                    }
-
-                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                                    }
-                                };
-                                LinearLayout.LayoutParams paramsTextHelp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-                                paramsTextHelp.setMargins(0, 0, 0, 0);
-
-                                edit.addTextChangedListener(textWatcher);
-                                editAnimation.addView(edit, paramsTextHelp);
-                                edits.add(editAnimation); // adiciona a nova editText a lista.
-
-                                ll.addView(nTextView, paramsTextView);
-                                ll.addView(nButton, paramsButton);
-                                ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
-
-                            }
-                        }
-                        // Data
-                        else if (cursor.getInt(2) == 10) {
-                            if (!((cursor.getString(0)).equals(igual))) {
-                                nMin = cursor.getInt(4);
-                                nMax = cursor.getInt(1);
-
-                                igual = cursor.getString(0);
-                                count++;
-                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-
-                                Time now = new Time();
-                                now.setToNow();
-
-                                Integer nDia = (now.monthDay);
-                                Integer nMes = (now.month) + 1;
-                                Integer nAno = (now.year);
-
-                                DatePickerDialog datePicker = new DatePickerDialog(
-                                        this,
-                                        android.R.style.Theme_Holo_Light_Dialog_MinWidth,
-                                        null,
-                                        nAno,
-                                        nMes,
-                                        nDia);
-                                //  datePicker.setCancelable(false);
-                                //  datePicker.setTitle("Select the date");
-                                //datePicker.show();
-
-                                //  DatePicker ndata = new DatePicker(this,);
-                                //  ndata.setSpinnersShown(true);
-                                //   ndata.setCalendarViewShown(false);
-                                MinhaTAG asTags = new MinhaTAG();
-
-                                //   datePicker.getDatePicker().setTag(cursor.getString(0));
-
-                                Cursor cursorTEMP = bd.rawQuery(sql_select.GET_RESPOSTA_3, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual)});
-                                cursorTEMP.moveToFirst();
-
-
-
-
-
-/*
-                                if (cursorTEMP.getCount() > 0) {
-                                    String nValorOpcao = cursorTEMP.getString(4);
-
-                                    if (nValorOpcao.indexOf("/") > 0) {
-                                        nDia = nValorOpcao.substring(0, nValorOpcao.indexOf("/"));
-                                        nValorOpcao = nValorOpcao.substring(nValorOpcao.indexOf("/") + 1, nValorOpcao.length());
-                                        nMes = nValorOpcao.substring(0, nValorOpcao.indexOf("/"));
-                                        nValorOpcao = nValorOpcao.substring(nValorOpcao.indexOf("/") + 1, nValorOpcao.length());
-                                        nAno = nValorOpcao;
-                                    }
-                                }
-
-                             //   ndata.setCalendarViewShown(false);
-                                ndata.init(Integer.parseInt(nAno), Integer.parseInt(nMes) - 1, Integer.parseInt(nDia), new OnDateChangedListener() {
-                                    @Override
-                                    public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                        bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), (view.getTag().toString())});
-                                        insereRegistro((view.getTag().toString()), Integer.toString(dayOfMonth) + "/" + Integer.toString(monthOfYear + 1) + "/" + Integer.toString(year), 0);
-                                    }
-                                });
-
-                                ndata.setOnClickListener(new OnClickListener() {
-
-                                    public void onClick(View v) {
-                                    }
-                                });
-
-                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), (ndata.getTag().toString())});
-                                insereRegistro((ndata.getTag().toString()), nDia + "/" + nMes + "/" + nAno, 0);
-                                DatePickers.add(ndata); // adiciona a nova editText a lista.
-                             */
-                                ll.addView(datePicker.getDatePicker(), params); // adiciona a editText ao ViewGroup
-                            }
-
-                        }
-                        // NUMERO
-                        else if (cursor.getInt(2) == 1) {
-                            if (!((cursor.getString(0)).equals(igual))) {
-                                nMin = cursor.getInt(4);
-                                nMax = cursor.getInt(1);
-
-                                igual = cursor.getString(0);
-                                count++;
-                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-                                NumberPicker number = new NumberPicker(this);
-                                MinhaTAG asTags = new MinhaTAG();
-                                asTags.nTAG = cursor.getInt(0);
-                                asTags.nTAGMIN = nMin;
-                                asTags.nTAGMAX = nMax;
-
-                                number.setTag(cursor.getString(0));
-                                number.setValue(0);
-                                number.setMinValue(nMin);
-                                number.setMaxValue(nMax);
-                                number.setWrapSelectorWheel(true);
-
-                                insereRegistro(cursor.getString(0), Integer.toString(nMin), 0);
-
-                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                                        .hideSoftInputFromWindow(number.getWindowToken(), 0);
-
-                                number.setOnValueChangedListener(new OnValueChangeListener() {
-
-                                    @Override
-                                    public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                                        // TODO Auto-generated method stub
-                                        try {
-                                            String Old = "Old Value : ";
-                                            String New = "New Value : ";
-
-                                            MinhaTAG asTags = new MinhaTAG();
-                                            int ntag = asTags.nTAG;
-                                            int nMin = asTags.nTAGMIN;
-                                            int nMax = asTags.nTAGMAX;
-
-                                            bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual)});
-                                            insereRegistro(Integer.toString(ntag), Integer.toString(picker.getValue()), 0);
-
-                                        } catch (Exception e) {
-                                            System.out.println(e.getMessage());
-                                        }
-                                    }
-                                });
-
-                                numberPickers.add(number); // adiciona a nova editText a lista.
-                                ll.addView(number, params); // adiciona a editText ao ViewGroup
-                            }
-                        }
-                        // CHECK especial
-                        else if (cursor.getInt(2) == 6) {
-                            if (!((cursor.getString(0)).equals(igual))) {
-                                igual = cursor.getString(0);
-                                count++;
-                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-
-                                CheckBox checkbox = new CheckBox(this);
-                                checkbox.setTag(cursor.getString(0));
-                                checkbox.setText(cursor.getString(3));
-                                checkbox.setTypeface(null, Typeface.NORMAL);
-
-                                if (nFONTE.equals("P")) {
-                                    checkbox.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-                                } else if (nFONTE.equals("M")) {
-                                    checkbox.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-                                } else if (nFONTE.equals("G")) {
-                                    checkbox.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
-                                }
-
-                                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                                        .hideSoftInputFromWindow(checkbox.getWindowToken(), 0);
-
-                                checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                                    @Override
-                                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                        boolean pegarEstado = isChecked;
-
-                                        Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString()});
-                                        cursorSALTO.moveToFirst();
-                                        cursorSALTO.getCount();
-
-                                        if (isChecked) {
-                                            TornaVisivelTextEspecial(Integer.toString(Integer.parseInt(buttonView.getTag().toString()) + 1), true);
-                                            bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString()});
-                                            insereRegistro(buttonView.getTag().toString(), "", 0);
-
-                                            if (cursorSALTO.getCount() > 0) {
-                                                String n = cursorSALTO.getString(6);
-                                                if (!cursorSALTO.getString(6).equals("0")) {
-                                                    InsereSalto(cursorSALTO.getString(6), ((CheckBox) buttonView).getTag().toString());
-                                                }
-                                            }
-                                        } else {
-                                            TornaVisivelTextEspecial(Integer.toString(Integer.parseInt(buttonView.getTag().toString()) + 1), false);
-                                            bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString()});
-                                            bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
-                                            if (cursorSALTO.getCount() > 0) {
-                                                String n = cursorSALTO.getString(6);
-                                                if (!cursorSALTO.getString(6).equals("0")) {
-                                                    bd.execSQL(sql_delete.DEL_SALTO, new String[]{cursorSALTO.getString(1)});
-                                                }
-                                            }
-                                        }
-                                    }
-                                });
-
-                                checkboxs.add(checkbox); // adiciona a nova editText a lista.
-                                ll.addView(checkbox, params); // adiciona a editText ao ViewGroup
-                            }
-                        }
-                        // TEXTO especial
-                        else {
-                            if (!((cursor.getString(0)).equals(igual))) {
-                                nMin = cursor.getInt(4);
-                                nMax = cursor.getInt(1);
-
-                                igual = cursor.getString(0);
-                                count++;
-                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-                                EditText edit = new EditText(this);
-                                MinhaTAG asTags = new MinhaTAG();
-
-                                edit.setTag(cursor.getString(0));
-                                //edit.setHint(cursor.getString(3));
-                                edit.setVisibility(View.INVISIBLE);
-                                edit.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
-
-                                if (nFONTE.equals("P")) {
-                                    edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-                                } else if (nFONTE.equals("M")) {
-                                    edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-                                } else if (nFONTE.equals("G")) {
-                                    edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
-                                }
-
-                                edit.setHeight(0);
-                                edit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(nMax)});
-
-                                TemEditText = edit;
-                                edit.setInputType(InputType.TYPE_NULL);
-
-                                TagText.add(edit.getTag().toString());
-                                //HintText.add(edit.getTag().toString());
-                                PERSONALIZAOText.add(edit.getTag().toString());
-                                MaxText.add(Integer.toString(nMax));
-                                AtualMax = nMax;
-
-                                edit.setOnTouchListener(new View.OnTouchListener() {
-                                    public boolean onTouch(View v, MotionEvent event) {
-                                        AtualMax = locazinaEditText((EditText) v);
-                                        TemEditText = ((EditText) v);
-                                        ((EditText) v).setInputType(InputType.TYPE_CLASS_TEXT);
-                                        return false;
-                                    }
-                                });
-
-                                TextWatcher textWatcher = new TextWatcher() {
-                                    public void afterTextChanged(Editable s) {
-                                        bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), (TemEditText.getTag().toString())});
-                                        if (s.length() > 0) {
-                                            insereRegistro((TemEditText.getTag().toString()), s.toString(), 0);
-                                        }
-                                        if (!((s.toString().equals("")))) {
-                                            if (s.toString().length() + 1 > AtualMax) {
-                                                Toast.makeText(Questionario.this, "Atenção! Máximo permitido:" + Integer.toString(AtualMax), Toast.LENGTH_LONG).show();
-                                            }
-                                        }
-
-                                    }
-
-                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                                    }
-
-                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                                    }
-                                };
-                                edit.addTextChangedListener(textWatcher);
-                                //edits.add(edit); // adiciona a nova editText a lista.
-                                ll.addView(edit, params); // adiciona a editText ao ViewGroup
-                            }
-                        }
-
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
                     }
                     cursor.moveToNext();
                 }
@@ -2818,13 +2821,14 @@ public class Questionario extends Activity {
             Cursor cursorSALTO = bd.rawQuery(sql_select.GET_SALTO, null);
             cursorSALTO.moveToFirst();
 
-            int ttt = cursorSALTO.getCount();
+            int ttt = cursorPergunta.getCount();
 
             cursorPergunta.moveToFirst();
 
             if (!cursorSALTO.isAfterLast()) {
                 while (!cursorSALTO.isAfterLast()) {
                     ValorSalto = cursorSALTO.getString(1);
+
                     if (cursorSALTO.getString(1) == "0") {
                         // BREAKPOINT N�O PARA NO BREAK
                         break;
@@ -2862,7 +2866,7 @@ public class Questionario extends Activity {
 
             criarNovaEditText();
 
-            PreencherResposta(Integer.toString(NumeroPerguntaAtual));
+         //   PreencherResposta(Integer.toString(NumeroPerguntaAtual));
 
             cursorPergunta.moveToNext();
 
@@ -3230,55 +3234,61 @@ public class Questionario extends Activity {
 
                         View child2 = ((TextInputLayout) child).getChildAt(y);
                         if (child2 instanceof FrameLayout) {
-                            View child3 = ((FrameLayout) child2).getChildAt(y);
-                            if (child3 instanceof EditText) {
-                                EditText et = (EditText) child3;
+                            for (int x = 0; x < ((FrameLayout) child2).getChildCount(); x++) {
+                                View child3 = ((FrameLayout) child2).getChildAt(x);
+                                if (child3 instanceof EditText) {
+                                    EditText et = (EditText) child3;
 
-                                if (!et.getText().toString().trim().equals("")) {
+                                    if (!et.getText().toString().trim().equals("")) {
 
-                                    if (child2 instanceof MaskedEditText) {
-                                        MaskedEditText ett = (MaskedEditText) child3;
-                                        String r = ett.getText().toString();
-                                        dateValidator = new DateValidator();
-                                        Boolean EData = false;
+                                        if (child2 instanceof MaskedEditText) {
+                                            MaskedEditText ett = (MaskedEditText) child3;
+                                            String r = ett.getText().toString();
+                                            dateValidator = new DateValidator();
+                                            Boolean EData = false;
 
-                                        if (r.toString().indexOf("/") > 0) {
-                                            if (r.toString().equals("  /  /    ")) {
-                                                EData = false;
-                                            } else {
-                                                EData = true;
+                                            if (r.toString().indexOf("/") > 0) {
+                                                if (r.toString().equals("  /  /    ")) {
+                                                    EData = false;
+                                                } else {
+                                                    EData = true;
+                                                }
                                             }
-                                        }
 
-                                        if (EData) {
-                                            if (dateValidator.isThisDateValid(r, "dd/MM/yyyy")) {
+                                            if (EData) {
+                                                if (dateValidator.isThisDateValid(r, "dd/MM/yyyy")) {
+                                                    nBoolean = true;
+                                                } else {
+                                                    return false;
+                                                }
+                                            } else if (ett.getUnmaskedText().toString().equals(ett.getText())) {
+
+                                            } else if (!ett.getUnmaskedText().toString().trim().equals("")) {
                                                 nBoolean = true;
-                                            } else {
-                                                return false;
+                                            } else if (obrigatorio == 2) {
+                                                obrigatoioUm = true;
                                             }
-                                        } else if (ett.getUnmaskedText().toString().equals(ett.getText())) {
 
-                                        } else if (!ett.getUnmaskedText().toString().trim().equals("")) {
-                                            nBoolean = true;
-                                        } else if (obrigatorio == 2) {
-                                            obrigatoioUm = true;
+                                        } else {
+                                            if (!et.getText().toString().trim().equals("")) {
+                                                nBoolean = true;
+                                            }
                                         }
-
-                                    } else {
-                                        if (!et.getText().toString().trim().equals("")) {
-                                            nBoolean = true;
-                                        }
+                                    } else if (obrigatorio == 2) {
+                                        obrigatoioUm = true;
                                     }
-                                } else if (obrigatorio == 2) {
-                                    obrigatoioUm = true;
+
+                                } else if (child2 instanceof Spinner) {
+                                    Spinner sp = (Spinner) child2;
+                                    if (sp.getSelectedItemPosition() > 0) {
+                                        nBoolean = true;
+                                    } else {
+                                        return false;
+                                    }
+                                } else if (child2 instanceof DatePicker) {
+                                    nBoolean = true;
+
                                 }
-                            }
-                        } else if (child2 instanceof Spinner) {
-                            Spinner sp = (Spinner) child2;
-                            if (sp.getSelectedItemPosition() > 0) {
-                                nBoolean = true;
-                            } else {
-                                return false;
                             }
                         }
                     }
@@ -4371,7 +4381,7 @@ public class Questionario extends Activity {
         } else {
             if (personalizado.length() > 3) {
                 String personalizadoTEMP = "";
-                if (personalizado.equals("COZIDO SEM GORDURA|COZIDO COM GORDURA|INDEFINIDO")) {
+                if (personalizado.equals("{{MODOS_PREPARO_ALIMENTO}}")) {
                     Cursor cursorMODO_PREPARACAO = bd.rawQuery(sql_select.GET_MODO_PREPARACAO, new String[]{numero_alimento_atual});
                     cursorMODO_PREPARACAO.moveToFirst();
                     cursorMODO_PREPARACAO.getCount();
@@ -4387,8 +4397,8 @@ public class Questionario extends Activity {
                     }
                     return personalizadoTEMP;
                 }
-                if (personalizado.equals("Você/a criança acrescentou algo neste alimento?")) {
-                    Cursor cursorADICAO = bd.rawQuery(sql_select.GET_ADICAO, new String[]{numero_alimento_atual});
+                if (personalizado.equals("{{ADICOES_ALIMENTO}}")) {
+                    Cursor cursorADICAO = bd.rawQuery(sql_select.GET_ADICOES, new String[]{numero_alimento_atual});
                     cursorADICAO.moveToFirst();
                     cursorADICAO.getCount();
 
@@ -4403,7 +4413,7 @@ public class Questionario extends Activity {
                     }
                     return personalizadoTEMP;
                 }
-                if (personalizado.equals("Exibir lista de porções possíveis.")) {
+                if (personalizado.equals("{{MEDIDAS_CASEIRAS_ALIMENTO}}")) {
                     Cursor cursorMEDIDAS_CASEIRAS = bd.rawQuery(sql_select.GET_MEDIDAS_CASEIRAS, new String[]{numero_alimento_atual});
                     cursorMEDIDAS_CASEIRAS.moveToFirst();
                     cursorMEDIDAS_CASEIRAS.getCount();
@@ -4442,6 +4452,72 @@ public class Questionario extends Activity {
 
             super.handleMessage(msg);
         }
+    }
+
+
+    protected void AdicionarYouTube() {
+        LinearLayout.LayoutParams paramsNovo = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        ImageButton imageButton = new ImageButton(this);
+        imageButton.setImageResource(R.mipmap.ic_youtube);
+        imageButton.setBackgroundColor(Color.WHITE);
+        imageButtons.add(imageButton); // adiciona a nova editText a lista.
+        ll.addView(imageButton, paramsNovo);
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                watchYoutubeVideo("syXd7kgLSN8");
+
+            }
+        });
+
+    }
+
+    public void watchYoutubeVideo(String id) {
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + id));
+        try {
+            startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            startActivity(webIntent);
+        }
+    }
+
+
+    public void colocarValorAmbiente(String valor) {
+
+        if (valor != null) {
+            if (valor.contains("{{EXIBIR_SOMENTE_DOMICILIAR}}")) {
+                ambienteTEMP = "{{EXIBIR_SOMENTE_DOMICILIAR}}";
+            } else if (valor.contains("{{EXIBIR_SOMENTE_ESCOLAR}}")) {
+                ambienteTEMP = "{{EXIBIR_SOMENTE_ESCOLAR}}";
+            }
+        }
+    }
+
+
+    public boolean mostraAmbiente(String valor) {
+
+        if (valor != null) {
+            if (valor.contains("{{EXIBIR_SOMENTE_DOMICILIAR}}")) {
+                if (ambienteTEMP.contains(valor)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (valor.contains("{{EXIBIR_SOMENTE_ESCOLAR}}")) {
+                if (ambienteTEMP.contains(valor)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+
+
+        return true;
+
     }
 
 }
