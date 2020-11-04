@@ -8,17 +8,23 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.ImageFormat;
+import android.graphics.Picture;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.hardware.Camera;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -66,20 +72,28 @@ import com.example.jorgealberto.researchmobile.modelJson.alimentos;
 import com.example.jorgealberto.researchmobile.service.DB;
 import com.example.jorgealberto.researchmobile.service.DataBase;
 import com.example.jorgealberto.researchmobile.service.DateValidator;
+import com.example.jorgealberto.researchmobile.util.CameraPreview;
 import com.example.jorgealberto.researchmobile.util.InterfaceRetrofit;
+import com.example.jorgealberto.researchmobile.util.PhotoHandler;
 import com.example.jorgealberto.researchmobile.util.Utility;
 import com.github.pinball83.maskededittext.MaskedEditText;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.vision.CameraSource;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.shuhart.stepview.StepView;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -89,11 +103,17 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+
 
 public class Questionario extends Activity {
+
+    int TAKE_PHOTO_CODE = 0;
+
     public static String  saltoTEMP_NOVO = "";
     public String saltoTEMP = saltoTEMP_NOVO;
-    public static String ambienteTEMP = "";
+    public static String ambienteTEMP = "{{EXIBIR_SOMENTE_DOMICILIAR}}";
 
     public boolean PassouPorAquiTextoTemp = false;
 
@@ -167,6 +187,7 @@ public class Questionario extends Activity {
     private boolean podedefechar = false;
     private InterfaceRetrofit mInterfaceObject;
     private StepView stepView;
+
 
     private GoogleApiClient client;
     private Callback<List<alimentos>> objectCallback = new Callback<List<alimentos>>() {
@@ -747,16 +768,15 @@ public class Questionario extends Activity {
                 while (!cursor.isAfterLast()) {
 
                     if (mostraAmbiente(cursor.getString(8))) {
-
-
-
-                        stepView.go(4,true);
-
+                        stepView.go(cursorPergunta.getInt(2),true);
 
                         try {
 
                             if (cursor.getInt(2) == 99) {
                                 AdicionarYouTube();
+                            }
+                            else if (cursor.getInt(2) == 98) {
+                                AdicionarIconeFoto();
                             }
                             // RADIONBUTTON
                             else if (cursor.getInt(2) == 0) {
@@ -803,6 +823,11 @@ public class Questionario extends Activity {
                                                 }
                                                 if ("Escolar".equals(((RadioButton) view).getText().toString())){
                                                     colocarValorAmbiente("{{EXIBIR_SOMENTE_ESCOLAR}}");
+                                                }
+                                                if (cursorPergunta.getString(7).equals("INICIO/1")) {
+                                                    if ("Sim".equals(((RadioButton) view).getText().toString())) {
+                                                        colocarValorAmbiente("{{EXIBIR_SOMENTE_PAPEL}}");
+                                                    }
                                                 }
 
 
@@ -859,13 +884,17 @@ public class Questionario extends Activity {
                             } else if (cursor.getInt(2) == 34) {
                                 String opcoes = cursor.getString(3);
                                 if (buttonPersonalizado.getVisibility() == View.INVISIBLE) {
-                                    buttonPersonalizado.setVisibility(View.VISIBLE);
-                                    buttonPersonalizado.setTag(cursor.getString(6));
-                                    buttonPersonalizado.setText(opcoes);
+                                    if (mostraAmbiente(cursor.getString(8))) {
+                                        buttonPersonalizado.setVisibility(View.VISIBLE);
+                                        buttonPersonalizado.setTag(cursor.getString(6));
+                                        buttonPersonalizado.setText(opcoes);
+                                    }
                                 } else {
-                                    buttonPersonalizado2.setVisibility(View.VISIBLE);
-                                    buttonPersonalizado2.setTag(cursor.getString(6));
-                                    buttonPersonalizado2.setText(opcoes);
+                                    if (mostraAmbiente(cursor.getString(8))) {
+                                        buttonPersonalizado2.setVisibility(View.VISIBLE);
+                                        buttonPersonalizado2.setTag(cursor.getString(6));
+                                        buttonPersonalizado2.setText(opcoes);
+                                    }
                                 }
                                 imageButtonAvancar.setVisibility(View.INVISIBLE);
                             }
@@ -4492,6 +4521,8 @@ public class Questionario extends Activity {
                 ambienteTEMP = "{{EXIBIR_SOMENTE_DOMICILIAR}}";
             } else if (valor.contains("{{EXIBIR_SOMENTE_ESCOLAR}}")) {
                 ambienteTEMP = "{{EXIBIR_SOMENTE_ESCOLAR}}";
+            } else if (valor.contains("{{EXIBIR_SOMENTE_PAPEL}}")) {
+                ambienteTEMP = "{{EXIBIR_SOMENTE_PAPEL}}";
             }
         }
     }
@@ -4512,11 +4543,70 @@ public class Questionario extends Activity {
                 } else {
                     return false;
                 }
+            }else if (valor.contains("{{EXIBIR_SOMENTE_PAPEL}}")) {
+                if (ambienteTEMP.contains(valor)) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
         }
 
 
         return true;
+
+    }
+
+    /** Check if this device has a camera */
+    private boolean checkCameraHardware(Context context) {
+        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
+            // this device has a camera
+            return true;
+        } else {
+            // no camera on this device
+            return false;
+        }
+    }
+
+
+
+    protected void AdicionarIconeFoto() {
+        LinearLayout.LayoutParams paramsNovo = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        ImageButton imageButton = new ImageButton(this);
+        imageButton.setImageResource(R.mipmap.ic_camera);
+        imageButton.setBackgroundColor(Color.WHITE);
+        imageButtons.add(imageButton); // adiciona a nova editText a lista.
+        ll.addView(imageButton, paramsNovo);
+
+
+        final String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/picFolder/";
+        File newdir = new File(dir);
+        newdir.mkdirs();
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // picture taken by camera will be stored as 1.jpg,2.jpg
+                // and likewise.
+/*                count++;
+                String file = dir+count+".jpg";
+                File newfile = new File(file);
+                try {
+                    newfile.createNewFile();
+                }
+                catch (IOException e)
+                {
+                }
+
+                Uri outputFileUri = Uri.fromFile(newfile);*/
+
+                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+               // cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+                cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
+
+            }
+        });
 
     }
 

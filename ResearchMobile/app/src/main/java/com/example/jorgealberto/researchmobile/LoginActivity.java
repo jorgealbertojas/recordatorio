@@ -479,6 +479,8 @@ public class LoginActivity extends AppCompatActivity
                                 opcao.setVALOR(0);
                             }else if (data.get(i).getItens().get(y).getTipo() == 10) {
                                 opcao.setVALOR(99);
+                            }else if (data.get(i).getItens().get(y).getTipo() == 11) {
+                                opcao.setVALOR(98);
                             }
 
                             opcao.setPERSONALIZACAO(data.get(i).getItens().get(y).getPersonalizacao());
