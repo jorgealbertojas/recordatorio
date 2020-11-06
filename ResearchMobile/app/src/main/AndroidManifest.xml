@@ -31,7 +31,7 @@
         android:theme="@style/AppTheme">
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider"
+            android:authorities="com.example.jorgealberto.researchmobile.fileprovider2"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

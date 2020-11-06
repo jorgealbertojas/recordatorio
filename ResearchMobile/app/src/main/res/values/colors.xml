@@ -10,6 +10,8 @@
     <color name="blue_ligth">#9FC1FB</color>
     <color name="pink">#F83F9B</color>
 
+    <color name="subtitle">#666666</color>
+
     <color name="DarkBlue">#00008B</color>
     <color name="DodgerBlue">#1e90ff</color>
     <color name="MediumOrchid">#ba55d3</color>

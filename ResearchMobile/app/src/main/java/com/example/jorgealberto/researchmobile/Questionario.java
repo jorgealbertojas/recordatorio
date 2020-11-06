@@ -12,6 +12,8 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Picture;
@@ -31,6 +33,7 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.format.Time;
+import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -62,6 +65,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.jorgealberto.researchmobile.SQL.sql_create;
 import com.example.jorgealberto.researchmobile.SQL.sql_delete;
 import com.example.jorgealberto.researchmobile.SQL.sql_select;
@@ -73,8 +78,10 @@ import com.example.jorgealberto.researchmobile.service.DB;
 import com.example.jorgealberto.researchmobile.service.DataBase;
 import com.example.jorgealberto.researchmobile.service.DateValidator;
 import com.example.jorgealberto.researchmobile.util.CameraPreview;
+import com.example.jorgealberto.researchmobile.util.ImageUtils;
 import com.example.jorgealberto.researchmobile.util.InterfaceRetrofit;
 import com.example.jorgealberto.researchmobile.util.PhotoHandler;
+import com.example.jorgealberto.researchmobile.util.SharedPreferencesService;
 import com.example.jorgealberto.researchmobile.util.Utility;
 import com.github.pinball83.maskededittext.MaskedEditText;
 import com.google.android.gms.appindexing.Action;
@@ -86,6 +93,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.shuhart.stepview.StepView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -97,6 +105,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.FileProvider;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -110,8 +120,13 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 public class Questionario extends Activity {
 
     int TAKE_PHOTO_CODE = 0;
+    private final int REQUEST_TAKE_PHOTO_CODE = 1;
 
-    public static String  saltoTEMP_NOVO = "";
+    public ImageButton fotoCamera = null;
+    public ImageButton fotoCamera2 = null;
+    public ImageButton fotoCameraElipse = null;
+
+    public static String  saltoTEMP_NOVO = "ALIMENTO/6";
     public String saltoTEMP = saltoTEMP_NOVO;
     public static String ambienteTEMP = "{{EXIBIR_SOMENTE_DOMICILIAR}}";
 
@@ -119,6 +134,7 @@ public class Questionario extends Activity {
 
     public String numero_alimento_atual = "0";
 
+    public String mCurrentPhotoPath  = "";
 
     public ArrayList<alimentos> data = null;
 
@@ -776,7 +792,11 @@ public class Questionario extends Activity {
                                 AdicionarYouTube();
                             }
                             else if (cursor.getInt(2) == 98) {
-                                AdicionarIconeFoto();
+                                if (cursor.getString(8).equals("{{fotografar}}")) {
+                                    AdicionarIconeFoto(true);
+                                }else{
+                                    AdicionarIconeFoto(false);
+                                }
                             }
                             // RADIONBUTTON
                             else if (cursor.getInt(2) == 0) {
@@ -2905,14 +2925,14 @@ public class Questionario extends Activity {
 
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+/*    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case 90:
                 tornarSUBFORMULARIOVisivel();
                 marcaCheckSUBFORMULARIO();
                 break;
         }
-    }
+    }*/
 
     private void onInsert(Context context, ContentValues obj, String nTabela) {
 
@@ -4570,44 +4590,197 @@ public class Questionario extends Activity {
 
 
 
-    protected void AdicionarIconeFoto() {
+    protected void AdicionarIconeFoto(Boolean tiraFoto) {
         LinearLayout.LayoutParams paramsNovo = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        ImageButton imageButton = new ImageButton(this);
+/*        ImageButton imageButton = new ImageButton(this);
         imageButton.setImageResource(R.mipmap.ic_camera);
         imageButton.setBackgroundColor(Color.WHITE);
         imageButtons.add(imageButton); // adiciona a nova editText a lista.
-        ll.addView(imageButton, paramsNovo);
+        ll.addView(imageButton, paramsNovo);*/
+
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View childLayout = inflater.inflate(R.layout.item_foto,
+                (ViewGroup) findViewById(R.id.contener));
+
+        ConstraintLayout contener = childLayout.findViewById(R.id.contener);
+
+
+        fotoCamera = childLayout.findViewById(R.id.foto_camera);
+        fotoCamera2 = childLayout.findViewById(R.id.foto_camera2);
+        fotoCameraElipse = childLayout.findViewById(R.id.foto_camera_elipse);
+        ImageView foto_camera_dentro = childLayout.findViewById(R.id.foto_camera_dentro);
+
+        if (!tiraFoto) {
+            foto_camera_dentro.setVisibility(View.INVISIBLE);
+            fotoCameraElipse.setVisibility(View.INVISIBLE);
+            carregarFoto(fotoCamera, Integer.toString(AlunoAtual));
+        }
+
+        imageButtons.add(fotoCamera);
+
+        // adiciona a nova editText a lista.
+        ll.addView(childLayout, paramsNovo);
 
 
         final String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/picFolder/";
         File newdir = new File(dir);
         newdir.mkdirs();
 
-        imageButton.setOnClickListener(new View.OnClickListener() {
+        contener.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // picture taken by camera will be stored as 1.jpg,2.jpg
-                // and likewise.
-/*                count++;
-                String file = dir+count+".jpg";
-                File newfile = new File(file);
-                try {
-                    newfile.createNewFile();
-                }
-                catch (IOException e)
-                {
-                }
-
-                Uri outputFileUri = Uri.fromFile(newfile);*/
-
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-               // cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-                cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
-
+                dispatchTakePictureIntent();
             }
         });
 
+        fotoCamera2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dispatchTakePictureIntent();
+            }
+        });
+
+        fotoCameraElipse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dispatchTakePictureIntent();
+            }
+        });
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        try {
+            switch (requestCode) {
+                case 1: {
+                    if (resultCode == RESULT_OK) {
+                        System.gc();
+                        File file = new File(mCurrentPhotoPath);
+                        Bitmap bitmap = ImageUtils.getInstant().getCompressedBitmap(file.getPath(),true);
+                        //  Bitmap bitmap = MediaStore.Images.Media
+                        //  .getBitmap(this.getContentResolver(), Uri.fromFile(file));
+                        if (bitmap != null) {
+
+
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                            byte[] decodedProfilePicture = stream.toByteArray();
+
+                            String fotoPerfilEncoded = "";
+
+                            try {
+                                fotoPerfilEncoded = Base64.encodeToString(decodedProfilePicture,
+                                        Base64.DEFAULT);
+                            }catch (OutOfMemoryError e) {
+                                e.printStackTrace();
+
+                                System.gc();
+
+                                try {
+                                    fotoPerfilEncoded = Base64.encodeToString(decodedProfilePicture,
+                                            Base64.DEFAULT);
+                                } catch (OutOfMemoryError e2) {
+                                    e2.printStackTrace();
+                                    // handle gracefully.
+                                }
+                            }
+
+                            setSharedPreferencesServiceVistoriaFoto(fotoPerfilEncoded,Integer.toString(AlunoAtual));
+
+                            fotoCamera.setImageBitmap(bitmap);
+
+                        }
+                    }
+                    break;
+                }
+            }
+
+        } catch (Exception error) {
+            error.printStackTrace();
+        }
+    }
+
+    private void setSharedPreferencesServiceVistoriaFoto(String fotoPerfilEncoded, String numero){
+        SharedPreferencesService shared = new SharedPreferencesService(this);
+        shared.setVistoriaFoto(fotoPerfilEncoded,numero);
+
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp ;
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(this.getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.jorgealberto.researchmobile.fileprovider2",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO_CODE);
+            }
+        }
+    }
+
+    private void carregarFoto(ImageView foto, String numero) {
+        SharedPreferencesService shared = new SharedPreferencesService(this);
+        String stringFoto = shared.getVistoriaFoto(numero);
+
+        Object fotoProfile = null;
+        if (!stringFoto.equals("0")) {
+            try {
+
+                byte[] decodedByte = null;
+
+                try {
+                    decodedByte = Base64.decode(stringFoto, Base64.DEFAULT);
+                    fotoProfile = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
+                }catch (OutOfMemoryError e) {
+                    e.printStackTrace();
+
+                    System.gc();
+
+                    try {
+                        fotoProfile = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
+                    } catch (OutOfMemoryError e2) {
+                        e2.printStackTrace();
+                        // handle gracefully.
+                    }
+                }
+
+                Glide.with(getApplicationContext())
+                        .load(fotoProfile)
+                        .apply(RequestOptions.centerInsideTransform())
+                        .into(foto);
+            }catch(Exception e){
+
+            }
+        }
     }
 
 }
