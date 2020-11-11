@@ -163,7 +163,7 @@ public class sql_create {
 	public static String CREATE_ALIMENTO =
 			" CREATE TABLE IF NOT EXISTS ALIMENTO (" +
 					" ID_ALUNO INTEGER, " +
-					" ID INTEGER, " +
+					" ID VARCHAR (250), " +
 					" CODIGO INTEGER, " +
 					" DESCRICAO VARCHAR (250)); ";
 
@@ -171,28 +171,28 @@ public class sql_create {
 	public static String CREATE_GRUPOS_ALIMENTOS =
 			" CREATE TABLE IF NOT EXISTS GRUPOS_ALIMENTOS (" +
 					" ID_ALUNO INTEGER, " +
-					" ID_ALIMENTO INTEGER, " +
+					" ID_ALIMENTO VARCHAR (250), " +
 					" DESCRICAO VARCHAR (250)); ";
 
 	public static String TABLE_MODO_PREPARACAO = "MODO_PREPARACAO";
 	public static String CREATE_MODO_PREPARACAO =
 			" CREATE TABLE IF NOT EXISTS MODO_PREPARACAO (" +
 					" ID_ALUNO INTEGER, " +
-					" ID_ALIMENTO INTEGER, " +
+					" ID_ALIMENTO VARCHAR (250), " +
 					" DESCRICAO VARCHAR (250)); ";
 
 	public static String TABLE_MEDIDAS_CASEIRAS = "MEDIDAS_CASEIRAS";
 	public static String CREATE_MEDIDAS_CASEIRAS =
 			" CREATE TABLE IF NOT EXISTS MEDIDAS_CASEIRAS (" +
 					" ID_ALUNO INTEGER, " +
-					" ID_ALIMENTO INTEGER, " +
+					" ID_ALIMENTO VARCHAR (250), " +
 					" DESCRICAO VARCHAR (250)); ";
 
 	public static String TABLE_ADICOES = "ADICOES";
 	public static String CREATE_ADICOES =
 			" CREATE TABLE IF NOT EXISTS ADICOES (" +
 					" ID_ALUNO INTEGER, " +
-					" ID_ALIMENTO INTEGER, " +
+					" ID_ALIMENTO VARCHAR (250), " +
 					" DESCRICAO VARCHAR (250)); ";
 
 }

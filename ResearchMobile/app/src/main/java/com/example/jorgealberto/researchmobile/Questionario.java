@@ -125,10 +125,19 @@ public class Questionario extends Activity {
     public ImageButton fotoCamera = null;
     public ImageButton fotoCamera2 = null;
     public ImageButton fotoCameraElipse = null;
+    public ImageView foto_camera_dentro = null;
 
-    public static String  saltoTEMP_NOVO = "ALIMENTO/6";
+    public boolean NaoENotificacao = false;
+
+    public static final String ConstAmbienteTEMP = "{{EXIBIR_SOMENTE_PAPEL}}";
+    //public static final String ConstAmbienteTEMP = "{{EXIBIR_SOMENTE_DOMICILIAR}}";
+    //public static final String ConstAmbienteTEMP = "{{EXIBIR_SOMENTE_ESCOLAR}}";
+
+    public static Integer idade = 0;
+
+    public static String  saltoTEMP_NOVO = "ALIMENTO/5";
     public String saltoTEMP = saltoTEMP_NOVO;
-    public static String ambienteTEMP = "{{EXIBIR_SOMENTE_DOMICILIAR}}";
+    public static String ambienteTEMP = ConstAmbienteTEMP;
 
     public boolean PassouPorAquiTextoTemp = false;
 
@@ -480,6 +489,10 @@ public class Questionario extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+        if (!NaoENotificacao) {
+            ambienteTEMP = ConstAmbienteTEMP;
+        }
 
         nDataBase = new DataBase(this);
         bd = nDataBase.getReadableDatabase();
@@ -911,6 +924,19 @@ public class Questionario extends Activity {
                                     }
                                 } else {
                                     if (mostraAmbiente(cursor.getString(8))) {
+                                        buttonPersonalizado2.setVisibility(View.VISIBLE);
+                                        buttonPersonalizado2.setTag(cursor.getString(6));
+                                        buttonPersonalizado2.setText(opcoes);
+                                    }
+                                }
+                                if (buttonPersonalizado.getVisibility() == View.INVISIBLE) {
+                                    if (idadeMaior7(cursor.getString(8),idade>7)) {
+                                        buttonPersonalizado.setVisibility(View.VISIBLE);
+                                        buttonPersonalizado.setTag(cursor.getString(6));
+                                        buttonPersonalizado.setText(opcoes);
+                                    }
+                                } else {
+                                    if (idadeMaior7(cursor.getString(8),idade>7)) {
                                         buttonPersonalizado2.setVisibility(View.VISIBLE);
                                         buttonPersonalizado2.setTag(cursor.getString(6));
                                         buttonPersonalizado2.setText(opcoes);
@@ -2832,6 +2858,7 @@ public class Questionario extends Activity {
     protected void AvancarQuestionario(String pergunta) {
         try {
 
+
             if (cursorPergunta.isAfterLast()) {
                 Intent WSActivity = new Intent(this, fim.class);
                 startActivity(WSActivity);
@@ -3338,6 +3365,13 @@ public class Questionario extends Activity {
                                     nBoolean = true;
 
                                 }
+                            }
+                        }else if (child2 instanceof Spinner) {
+                            Spinner sp = (Spinner) child2;
+                            if (sp.getSelectedItemPosition() > 0) {
+                                nBoolean = true;
+                            } else {
+                                return false;
                             }
                         }
                     }
@@ -4371,7 +4405,6 @@ public class Questionario extends Activity {
                 nButton2.setBackgroundResource(R.mipmap.ic_sum);
                 nButton2.setTag(cursorALIMENTO.getString(0));
 
-                numero_alimento_atual = cursorALIMENTO.getString(0);
 
                 Resources res = getResources();
                 final int newColor2 = res.getColor(R.color.abobora);
@@ -4380,6 +4413,9 @@ public class Questionario extends Activity {
                 nButton2.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
+                        numero_alimento_atual = view.getTag().toString();
+
                         AvancarQuestionario("");
                     }
                 });
@@ -4577,6 +4613,35 @@ public class Questionario extends Activity {
 
     }
 
+    public boolean idadeMaior7(String valor, boolean maior7) {
+
+
+
+        if (valor != null) {
+            if (valor.contains("{{EXIBIR_SOMENTE_CRIANCA_MAIOR_7ANOS}}")) {
+
+                    if (maior7) {
+                        return true;
+                    }else{
+                        return false;
+                    }
+
+            } else if (valor.contains("{{EXIBIR_SOMENTE_CRIANCA_MENOR_OU_IGUAL_7ANOS}}")) {
+
+                    if (!maior7) {
+                        return true;
+                    }else{
+                        return false;
+                    }
+
+            }
+        }
+
+
+        return true;
+
+    }
+
     /** Check if this device has a camera */
     private boolean checkCameraHardware(Context context) {
         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
@@ -4608,12 +4673,34 @@ public class Questionario extends Activity {
         fotoCamera = childLayout.findViewById(R.id.foto_camera);
         fotoCamera2 = childLayout.findViewById(R.id.foto_camera2);
         fotoCameraElipse = childLayout.findViewById(R.id.foto_camera_elipse);
-        ImageView foto_camera_dentro = childLayout.findViewById(R.id.foto_camera_dentro);
+        foto_camera_dentro = childLayout.findViewById(R.id.foto_camera_dentro);
+
+        foto_camera_dentro.setVisibility(View.INVISIBLE);
+        fotoCameraElipse.setVisibility(View.INVISIBLE);
 
         if (!tiraFoto) {
-            foto_camera_dentro.setVisibility(View.INVISIBLE);
-            fotoCameraElipse.setVisibility(View.INVISIBLE);
             carregarFoto(fotoCamera, Integer.toString(AlunoAtual));
+        }else{
+            contener.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dispatchTakePictureIntent();
+                }
+            });
+
+            fotoCamera2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dispatchTakePictureIntent();
+                }
+            });
+
+            fotoCameraElipse.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dispatchTakePictureIntent();
+                }
+            });
         }
 
         imageButtons.add(fotoCamera);
@@ -4626,26 +4713,7 @@ public class Questionario extends Activity {
         File newdir = new File(dir);
         newdir.mkdirs();
 
-        contener.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dispatchTakePictureIntent();
-            }
-        });
 
-        fotoCamera2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dispatchTakePictureIntent();
-            }
-        });
-
-        fotoCameraElipse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dispatchTakePictureIntent();
-            }
-        });
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -4660,10 +4728,10 @@ public class Questionario extends Activity {
                         //  Bitmap bitmap = MediaStore.Images.Media
                         //  .getBitmap(this.getContentResolver(), Uri.fromFile(file));
                         if (bitmap != null) {
-
+                            fotoCameraElipse.setVisibility(View.VISIBLE);
+                            foto_camera_dentro.setVisibility(View.VISIBLE);
 
                             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-
 
                             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                             byte[] decodedProfilePicture = stream.toByteArray();
@@ -4690,7 +4758,6 @@ public class Questionario extends Activity {
                             setSharedPreferencesServiceVistoriaFoto(fotoPerfilEncoded,Integer.toString(AlunoAtual));
 
                             fotoCamera.setImageBitmap(bitmap);
-
                         }
                     }
                     break;
@@ -4705,7 +4772,6 @@ public class Questionario extends Activity {
     private void setSharedPreferencesServiceVistoriaFoto(String fotoPerfilEncoded, String numero){
         SharedPreferencesService shared = new SharedPreferencesService(this);
         shared.setVistoriaFoto(fotoPerfilEncoded,numero);
-
     }
 
     private File createImageFile() throws IOException {
@@ -4731,6 +4797,7 @@ public class Questionario extends Activity {
             // Create the File where the photo should go
             File photoFile = null;
             try {
+
                 photoFile = createImageFile();
             } catch (IOException ex) {
                 // Error occurred while creating the File
