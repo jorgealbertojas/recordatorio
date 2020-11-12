@@ -29,9 +29,9 @@
             app:sv_doneCircleRadius="10dp"
             app:sv_selectedCircleRadius="12dp"
             android:pointerIcon="arrow"
-            app:sv_selectedStepNumberColor="@color/colorPrimary"
+            app:sv_selectedStepNumberColor="@color/color_primary"
             app:sv_stepViewStyle="@style/StepView"
-            app:sv_doneStepMarkColor="@color/colorPrimary"
+            app:sv_doneStepMarkColor="@color/color_primary"
             app:sv_stepNumberTextSize="10sp"
             app:sv_textSize="0sp"
             app:sv_animationType="Line" />

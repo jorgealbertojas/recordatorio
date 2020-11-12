@@ -4,10 +4,15 @@
     android:layout_width="match_parent"
     android:id="@+id/nRelative"
     android:layout_height="match_parent"
-    style="@style/background_all"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    tools:context="com.example.jorgealberto.researchmobile.InformationMain">
+    xmlns:card_view="http://schemas.android.com/apk/res-auto">
 
+    <ImageView
+        android:id="@+id/main_fundo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.2"
+        android:scaleType="centerCrop"
+        android:src="@drawable/recordatorio_fundo" />
 
     <ImageView
         android:id="@+id/main_icon_schedule_image_view3"

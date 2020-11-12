@@ -2,6 +2,9 @@ package com.example.jorgealberto.researchmobile.util;
 
 import android.content.Context;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 public class Utility {
     /** Base URL for get Json */
     public final static String BASE_URL =
@@ -41,6 +44,36 @@ public class Utility {
                 return i+1;
         }
         return position;
+    }
+
+    public static int getAge(int year, int month, int day) {
+
+        int ageCount = 0;
+
+        GregorianCalendar cal = new GregorianCalendar();
+        int y, m, d, noofyears;
+
+        y = cal.get(Calendar.YEAR);// current year ,
+        m = cal.get(Calendar.MONTH);// current month
+        d = cal.get(Calendar.DAY_OF_MONTH);// current day
+        cal.set(year, month, day);// here ur date
+        noofyears = (int) (y - cal.get(Calendar.YEAR));
+
+
+        if ((m < cal.get(Calendar.MONTH)) || ((m == cal.get(Calendar.MONTH)) && (d < cal.get(Calendar.DAY_OF_MONTH)))) {
+            --noofyears;
+        }
+
+        if (noofyears != 0) {
+            ageCount = noofyears;
+        } else {
+            ageCount = 0;
+        }
+        if (noofyears < 0){
+            return ageCount;
+        }
+
+        return noofyears;
     }
 
 }

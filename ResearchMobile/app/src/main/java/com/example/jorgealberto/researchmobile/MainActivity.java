@@ -216,7 +216,7 @@ public class MainActivity extends Activity {
     }
 
 
-    private void eventChangeColorStart(View v, MotionEvent motionEvent){
+/*    private void eventChangeColorStart(View v, MotionEvent motionEvent){
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN: {
                 imageViewStart.setColorFilter(imageViewStart.getContext().getResources().getColor(R.color.MediumOrchid), PorterDuff.Mode.SRC_ATOP);
@@ -231,7 +231,7 @@ public class MainActivity extends Activity {
                 break;
             }
         }
-    }
+    }*/
 
     @Override
     public void onBackPressed() {

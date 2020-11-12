@@ -15,11 +15,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.ImageFormat;
-import android.graphics.Picture;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.hardware.Camera;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -77,17 +74,14 @@ import com.example.jorgealberto.researchmobile.modelJson.alimentos;
 import com.example.jorgealberto.researchmobile.service.DB;
 import com.example.jorgealberto.researchmobile.service.DataBase;
 import com.example.jorgealberto.researchmobile.service.DateValidator;
-import com.example.jorgealberto.researchmobile.util.CameraPreview;
 import com.example.jorgealberto.researchmobile.util.ImageUtils;
 import com.example.jorgealberto.researchmobile.util.InterfaceRetrofit;
-import com.example.jorgealberto.researchmobile.util.PhotoHandler;
 import com.example.jorgealberto.researchmobile.util.SharedPreferencesService;
 import com.example.jorgealberto.researchmobile.util.Utility;
 import com.github.pinball83.maskededittext.MaskedEditText;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.vision.CameraSource;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -96,11 +90,10 @@ import com.shuhart.stepview.StepView;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -113,11 +106,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
-
-public class Questionario extends Activity {
+public class Questionario extends Activity  {
 
     int TAKE_PHOTO_CODE = 0;
     private final int REQUEST_TAKE_PHOTO_CODE = 1;
@@ -133,9 +123,14 @@ public class Questionario extends Activity {
     //public static final String ConstAmbienteTEMP = "{{EXIBIR_SOMENTE_DOMICILIAR}}";
     //public static final String ConstAmbienteTEMP = "{{EXIBIR_SOMENTE_ESCOLAR}}";
 
-    public static Integer idade = 0;
+    public static final String MAIOR_7ANO = "{{EXIBIR_SOMENTE_CRIANCA_MAIOR_7ANOS}}";
 
-    public static String  saltoTEMP_NOVO = "ALIMENTO/5";
+    public static final String MENOR_OU_IGUAL_7ANOS = "{{EXIBIR_SOMENTE_CRIANCA_MENOR_OU_IGUAL_7ANOS}}";
+
+    public static Integer idade = 8;
+    public static Boolean idadeBoolean = false;
+
+    public static String  saltoTEMP_NOVO = "";
     public String saltoTEMP = saltoTEMP_NOVO;
     public static String ambienteTEMP = ConstAmbienteTEMP;
 
@@ -497,6 +492,8 @@ public class Questionario extends Activity {
         nDataBase = new DataBase(this);
         bd = nDataBase.getReadableDatabase();
 
+        bd.execSQL(sql_delete.DEL_SALTO_TODOS, new String[]{});
+
         if (!saltoTEMP.equals("")) {
             bd.execSQL(sql_delete.DEL_SALTO_TODOS, new String[]{});
             InsereSalto(saltoTEMP, saltoTEMP);
@@ -739,6 +736,7 @@ public class Questionario extends Activity {
 
     protected void criarNovaEditText() {
 
+        idadeBoolean = false;
         boolean passou = false;
         nDataBase = new DataBase(this);
         bd = nDataBase.getReadableDatabase();
@@ -917,13 +915,13 @@ public class Questionario extends Activity {
                             } else if (cursor.getInt(2) == 34) {
                                 String opcoes = cursor.getString(3);
                                 if (buttonPersonalizado.getVisibility() == View.INVISIBLE) {
-                                    if (mostraAmbiente(cursor.getString(8))) {
+                                    if (mostraAmbiente(cursor.getString(8)) && (!temIdadeFrase(cursor.getString(8)))){
                                         buttonPersonalizado.setVisibility(View.VISIBLE);
                                         buttonPersonalizado.setTag(cursor.getString(6));
                                         buttonPersonalizado.setText(opcoes);
                                     }
                                 } else {
-                                    if (mostraAmbiente(cursor.getString(8))) {
+                                    if (mostraAmbiente(cursor.getString(8)) && (!temIdadeFrase(cursor.getString(8)))) {
                                         buttonPersonalizado2.setVisibility(View.VISIBLE);
                                         buttonPersonalizado2.setTag(cursor.getString(6));
                                         buttonPersonalizado2.setText(opcoes);
@@ -931,15 +929,19 @@ public class Questionario extends Activity {
                                 }
                                 if (buttonPersonalizado.getVisibility() == View.INVISIBLE) {
                                     if (idadeMaior7(cursor.getString(8),idade>7)) {
-                                        buttonPersonalizado.setVisibility(View.VISIBLE);
-                                        buttonPersonalizado.setTag(cursor.getString(6));
-                                        buttonPersonalizado.setText(opcoes);
+                                        if (temIdadeFrase(cursor.getString(8))){
+                                            buttonPersonalizado.setVisibility(View.VISIBLE);
+                                            buttonPersonalizado.setTag(cursor.getString(6));
+                                            buttonPersonalizado.setText(opcoes);
+                                        }
                                     }
                                 } else {
                                     if (idadeMaior7(cursor.getString(8),idade>7)) {
-                                        buttonPersonalizado2.setVisibility(View.VISIBLE);
-                                        buttonPersonalizado2.setTag(cursor.getString(6));
-                                        buttonPersonalizado2.setText(opcoes);
+                                        if (temIdadeFrase(cursor.getString(8))) {
+                                            buttonPersonalizado2.setVisibility(View.VISIBLE);
+                                            buttonPersonalizado2.setTag(cursor.getString(6));
+                                            buttonPersonalizado2.setText(opcoes);
+                                        }
                                     }
                                 }
                                 imageButtonAvancar.setVisibility(View.INVISIBLE);
@@ -2169,6 +2171,207 @@ public class Questionario extends Activity {
                             // Data
                             else if (cursor.getInt(2) == 10) {
                                 if (!((cursor.getString(0)).equals(igual))) {
+                                    nMin = cursor.getInt(4);
+                                    nMax = cursor.getInt(1);
+
+                                    igual = cursor.getString(0);
+                                    count++;
+
+                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                    params.setMargins(0, 10, 0, 30);
+                                    final EditText edit = new EditText(this);
+                                    MinhaTAG asTags = new MinhaTAG();
+
+                                    edit.setTag(cursor.getString(0));
+
+                                    if (cursor.getString(3).equals("Data de nascimento")) {
+                                        idadeBoolean = true;
+                                    }
+
+                                    edit.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fonts/Roboto-Regular.ttf"));
+                                    edit.setBackgroundResource(R.drawable.rounded_corner);
+
+                                    if (nFONTE.equals("P")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+                                    } else if (nFONTE.equals("M")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                                    } else if (nFONTE.equals("G")) {
+                                        edit.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
+                                    }
+
+                                    edit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(nMax)});
+
+                                    final Calendar c = Calendar.getInstance();
+                                    final int[] mYear = {c.get(Calendar.YEAR)};
+                                    final int[] mMonth = {c.get(Calendar.MONTH)};
+                                    final int[] mDay = {c.get(Calendar.DAY_OF_MONTH)};
+
+                                    //////
+
+                                    edit.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            DatePickerDialog dpd = new DatePickerDialog(Questionario.this,
+                                                    new DatePickerDialog.OnDateSetListener() {
+                                                        @Override
+                                                        public void onDateSet(DatePicker view, int year, int month, int day) {
+                                                            c.set(year, month, day);
+
+                                                            String date = new SimpleDateFormat("MM/dd/yyyy").format(c.getTime());
+                                                            edit.setText(date);
+
+                                                            mYear[0] = c.get(Calendar.YEAR);
+                                                            mMonth[0] = c.get(Calendar.MONTH);
+                                                            mDay[0] = c.get(Calendar.DAY_OF_MONTH);
+
+                                                            if (idadeBoolean) {
+                                                                idade = Utility.getAge(mYear[0], mMonth[0], mDay[0]);
+                                                            }
+                                                        }
+                                                    }, mYear[0], mMonth[0], mDay[0]);
+                                            dpd.getDatePicker().setMaxDate(System.currentTimeMillis());
+                                            Calendar d = Calendar.getInstance();
+                                            dpd.updateDate(d.get(Calendar.YEAR),d.get(Calendar.MONTH),d.get(Calendar.DAY_OF_MONTH));
+                                            dpd.show();
+                                        }
+                                    });
+                                    ////////////
+
+                                    TemEditText = edit;
+
+                                    edit.setInputType(InputType.TYPE_NULL);
+
+                                    TagText.add(edit.getTag().toString());
+
+
+                                    PERSONALIZAOText.add(edit.getTag().toString());
+                                    MaxText.add(Integer.toString(nMax));
+                                    AtualMax = nMax;
+                                    PassouPorAquiTextoTemp = false;
+
+                                    edit.setOnFocusChangeListener(new OnFocusChangeListener() {
+                                        @Override
+                                        public void onFocusChange(View v, boolean hasFocus) {
+                                            if (hasFocus) {
+                                                AtualMax = locazinaEditText((EditText) v);
+                                                TemEditText = ((EditText) v);
+                                                PassouPorAquiTextoTemp = true;
+
+                                                DatePickerDialog dpd = new DatePickerDialog(Questionario.this,
+                                                        new DatePickerDialog.OnDateSetListener() {
+                                                            @Override
+                                                            public void onDateSet(DatePicker view, int year, int month, int day) {
+                                                                c.set(year, month, day);
+
+                                                                String date = new SimpleDateFormat("MM/dd/yyyy").format(c.getTime());
+                                                                edit.setText(date);
+
+                                                                mYear[0] = c.get(Calendar.YEAR);
+                                                                mMonth[0] = c.get(Calendar.MONTH);
+                                                                mDay[0] = c.get(Calendar.DAY_OF_MONTH);
+
+                                                                if (idadeBoolean) {
+                                                                    idade = Utility.getAge(mYear[0], mMonth[0], mDay[0]);
+                                                                }
+                                                            }
+                                                        }, mYear[0], mMonth[0], mDay[0]);
+                                                dpd.getDatePicker().setMaxDate(System.currentTimeMillis());
+                                                Calendar d = Calendar.getInstance();
+                                                dpd.updateDate(d.get(Calendar.YEAR),d.get(Calendar.MONTH),d.get(Calendar.DAY_OF_MONTH));
+                                                dpd.show();
+
+                                                edit.clearFocus();
+                                            }
+                                        }
+                                    });
+                                    edit.setOnTouchListener(new View.OnTouchListener() {
+                                        public boolean onTouch(View v, MotionEvent event) {
+                                            AtualMax = locazinaEditText((EditText) v);
+                                            TemEditText = ((EditText) v);
+                                            ((EditText) v).setInputType(InputType.TYPE_CLASS_TEXT);
+                                            PassouPorAquiTextoTemp = true;
+
+                                            if (AtualMax == 111111) {
+                                                ((EditText) v).setInputType(InputType.TYPE_CLASS_NUMBER);
+                                            }
+
+
+
+                                            return false;
+                                        }
+                                    });
+
+                                    TextWatcher textWatcher = new TextWatcher() {
+                                        public void afterTextChanged(Editable s) {
+                                            for (int i = 0; i < radionbuttons.size(); i++) {
+                                                if (radionbuttons.get(i).isChecked()) {
+                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString()});
+                                                }
+                                                radionbuttons.get(i).setChecked(false);
+                                            }
+                                            bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{Integer.toString(NumeroPerguntaAtual)});
+
+                                            bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual), (TemEditText.getTag().toString())});
+                                            if (s.length() > 0) {
+                                                insereRegistro((TemEditText.getTag().toString()), s.toString(), 0);
+                                                Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{Integer.toString(NumeroPerguntaAtual), TemEditText.getTag().toString()});
+                                                cursorSALTO.moveToFirst();
+                                                cursorSALTO.getCount();
+                                                if (cursorSALTO.getCount() > 0) {
+                                                    String n = cursorSALTO.getString(6);
+                                                    if (!cursorSALTO.getString(6).equals("0")) {
+                                                        InsereSalto(cursorSALTO.getString(6), TemEditText.getTag().toString());
+                                                    }
+                                                }
+                                            }
+                                            if (!((s.toString().equals("")))) {
+                                                if (s.toString().length() + 1 > AtualMax) {
+                                                    Toast.makeText(Questionario.this, "Atenção! Máximo permitido:" + Integer.toString(AtualMax), Toast.LENGTH_LONG).show();
+                                                }
+                                            }
+
+                                            if (!s.toString().equals("")) {
+                                                if (s.toString().length() > 2) {
+                                                    if (cursorPergunta.getString(7).equals("ALIMENTO/3")) {
+                                                        String alimento = s.toString();
+                                                        callApiAlimentos();
+                                                        mInterfaceObject.getAlimentos(alimento).enqueue(objectCallback);
+                                                    }
+                                                } else {
+                                                    DestruirStringAlimento();
+                                                }
+
+                                            }
+                                        }
+
+                                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                        }
+
+                                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                        }
+                                    };
+
+                                    LinearLayout.LayoutParams paramsTextHelp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                    paramsTextHelp.setMargins(0, 0, 0, 0);
+                                    TextInputLayout editAnimation = new TextInputLayout(this);
+                                    editAnimation.setTag(cursor.getString(0));
+                                    editAnimation.setHelperText("  " + cursor.getString(3));
+                                    editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
+                                    editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
+
+
+
+                                    edit.addTextChangedListener(textWatcher);
+                                    edit.setBackground(null);
+                                    editAnimation.addView(edit, paramsTextHelp);
+                                    edits.add(editAnimation); // adiciona a nova editText a lista.
+                                    ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
+                                }
+                            }
+                           /* else if (cursor.getInt(2) == 10) {
+                                if (!((cursor.getString(0)).equals(igual))) {
                                     igual = cursor.getString(0);
                                     count++;
                                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -2177,13 +2380,56 @@ public class Questionario extends Activity {
                                     Integer nDia = (now.monthDay);
                                     Integer nMes = (now.month) + 1;
                                     Integer nAno = (now.year);
-                                    DatePickerDialog datePicker = new DatePickerDialog(
+
+                                   *//* final DatePickerDialog datePicker = new DatePickerDialog(
                                             this,
                                             android.R.style.Theme_Holo_Light_Dialog_MinWidth,
                                             null,
                                             nAno,
                                             nMes,
                                             nDia);
+
+                                    datePicker.setCancelable(true);
+                                    datePicker.setCanceledOnTouchOutside(true);
+                                    datePicker.setButton(DialogInterface.BUTTON_POSITIVE, "OK",
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+
+                                                    int dayOfMonth = datePicker.getDatePicker().getDayOfMonth();
+                                                    int monthOfYear = datePicker.getDatePicker().getMonth() ;
+                                                    int year = datePicker.getDatePicker().getYear();
+
+
+                                                   idade =  Utility.getAge(year,monthOfYear,dayOfMonth);
+                                                }
+                                            });
+*//*
+                                    final Calendar c = Calendar.getInstance();
+                                    final int[] mYear = {c.get(Calendar.YEAR)};
+                                    final int[] mMonth = {c.get(Calendar.MONTH)};
+                                    final int[] mDay = {c.get(Calendar.DAY_OF_MONTH)};
+
+                                    textView.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            DatePickerDialog dpd = new DatePickerDialog(this,
+                                                    new DatePickerDialog.OnDateSetListener() {
+                                                        @Override
+                                                        public void onDateSet(DatePicker view, int year, int month, int day) {
+                                                            c.set(year, month, day);
+
+                                                            mYear[0] = c.get(Calendar.YEAR);
+                                                            mMonth[0] = c.get(Calendar.MONTH);
+                                                            mDay[0] = c.get(Calendar.DAY_OF_MONTH);
+                                                        }
+                                                    }, mYear[0], mMonth[0], mDay[0]);
+                                            dpd.getDatePicker().setMaxDate(System.currentTimeMillis());
+                                            Calendar d = Calendar.getInstance();
+                                            dpd.updateDate(d.get(Calendar.YEAR),d.get(Calendar.MONTH),d.get(Calendar.DAY_OF_MONTH));
+                                            dpd.show();
+                                        }
+                                    });
 
                                     Cursor cursorTEMP = bd.rawQuery(sql_select.GET_RESPOSTA_3, new String[]{Integer.toString(AlunoAtual), Integer.toString(NumeroPerguntaAtual)});
                                     cursorTEMP.moveToFirst();
@@ -2215,7 +2461,7 @@ public class Questionario extends Activity {
 
                               }
 
-                            }
+                            }*/
                             // NUMERO
                             else if (cursor.getInt(2) == 1) {
                                 if (!((cursor.getString(0)).equals(igual))) {
@@ -4614,11 +4860,8 @@ public class Questionario extends Activity {
     }
 
     public boolean idadeMaior7(String valor, boolean maior7) {
-
-
-
         if (valor != null) {
-            if (valor.contains("{{EXIBIR_SOMENTE_CRIANCA_MAIOR_7ANOS}}")) {
+            if (valor.contains(MAIOR_7ANO)) {
 
                     if (maior7) {
                         return true;
@@ -4626,7 +4869,7 @@ public class Questionario extends Activity {
                         return false;
                     }
 
-            } else if (valor.contains("{{EXIBIR_SOMENTE_CRIANCA_MENOR_OU_IGUAL_7ANOS}}")) {
+            } else if (valor.contains(MENOR_OU_IGUAL_7ANOS)) {
 
                     if (!maior7) {
                         return true;
@@ -4636,9 +4879,18 @@ public class Questionario extends Activity {
 
             }
         }
-
-
         return true;
+    }
+
+    public boolean temIdadeFrase(String valor) {
+        if (valor != null) {
+            if (valor.contains(MAIOR_7ANO)) {
+                return true;
+            } else if (valor.contains(MENOR_OU_IGUAL_7ANOS)) {
+                return true;
+            }
+        }
+        return false;
 
     }
 

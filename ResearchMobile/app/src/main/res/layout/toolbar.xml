@@ -13,11 +13,5 @@
     local:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     >
 
-
-
-
-
-    <!--local:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
-
 </androidx.appcompat.widget.Toolbar>
 

@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black_semi_transparent">#B2000000</color>
-    <color name="color_primary">#3F51B5</color>
+    <color name="color_primary">#33cc33</color>
     <color name="color_primary_dark">#A8A6A1</color>
-    <color name="color_accent">#3F51B5</color>
+    <color name="color_accent">#33cc33</color>
     <color name="white">#ffffff</color>
-    <color name="blue_dark">#283593</color>
+    <color name="blue_dark">#33cc33</color>
 
     <color name="blue_ligth">#9FC1FB</color>
     <color name="pink">#F83F9B</color>
 
     <color name="subtitle">#666666</color>
 
-    <color name="DarkBlue">#00008B</color>
+    <color name="DarkBlue">#33cc33</color>
     <color name="DodgerBlue">#1e90ff</color>
-    <color name="MediumOrchid">#ba55d3</color>
-    <color name="DarkOrchid">#9932cc</color>
+
     <color name="yellow">#ffff00</color>
 
     <color name="black">#000000</color>
@@ -39,10 +38,8 @@
 
     <color name="green_button">#27B193</color>
 
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#cfc391</color>
+    <color name="colorAccent">#1e90ff</color>
+    <color name="colorAccent2">#99ff99</color>
     <color name="colortext">#e1e5ee</color>
-    <color name="colordevider">#cfc391</color>
-    <color name="signintext">#cfc391</color>
+
 </resources>
