@@ -130,7 +130,7 @@ public class Questionario extends Activity  {
     public static Integer idade = 8;
     public static Boolean idadeBoolean = false;
 
-    public static String  saltoTEMP_NOVO = "";
+    public static String saltoTEMP_NOVO = "";
     public String saltoTEMP = saltoTEMP_NOVO;
     public static String ambienteTEMP = ConstAmbienteTEMP;
 
@@ -221,7 +221,8 @@ public class Questionario extends Activity  {
                     Questionario.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            DestruirStringAlimento();
+                            DestruirTextView();
+                            Log.d("bebeto", "teste" + data.size());
                             if (data.size() > 0) {
                                 for (int i = 0; i < data.size(); i++) {
                                     TextView textView = new TextView(getApplicationContext());
@@ -764,6 +765,8 @@ public class Questionario extends Activity  {
                     String pergunta = cursorPergunta.getString(1);
                     if (pergunta.toString() != null) {
                         if (pergunta.length() > 0) {
+                            pergunta = pergunta.replace("          ", " ");
+                            pergunta = pergunta.replace("\\n", "\n");
                             pergunta = pergunta.replace("{{nome_crianca}}", " Jorge Alberto");
                         }
                     }
@@ -801,11 +804,10 @@ public class Questionario extends Activity  {
 
                             if (cursor.getInt(2) == 99) {
                                 AdicionarYouTube();
-                            }
-                            else if (cursor.getInt(2) == 98) {
+                            } else if (cursor.getInt(2) == 98) {
                                 if (cursor.getString(8).equals("{{fotografar}}")) {
                                     AdicionarIconeFoto(true);
-                                }else{
+                                } else {
                                     AdicionarIconeFoto(false);
                                 }
                             }
@@ -916,30 +918,46 @@ public class Questionario extends Activity  {
                                 String opcoes = cursor.getString(3);
                                 if (buttonPersonalizado.getVisibility() == View.INVISIBLE) {
                                     if (mostraAmbiente(cursor.getString(8)) && (!temIdadeFrase(cursor.getString(8)))){
+                                        if (eParaFechar(cursor.getString(8))){
+                                            buttonPersonalizado.setTag(cursor.getString(8));
+                                        }else{
+                                            buttonPersonalizado.setTag(cursor.getString(6));
+                                        }
                                         buttonPersonalizado.setVisibility(View.VISIBLE);
-                                        buttonPersonalizado.setTag(cursor.getString(6));
                                         buttonPersonalizado.setText(opcoes);
                                     }
                                 } else {
                                     if (mostraAmbiente(cursor.getString(8)) && (!temIdadeFrase(cursor.getString(8)))) {
+                                        if (eParaFechar(cursor.getString(8))){
+                                            buttonPersonalizado2.setTag(cursor.getString(8));
+                                        }else{
+                                            buttonPersonalizado2.setTag(cursor.getString(6));
+                                        }
                                         buttonPersonalizado2.setVisibility(View.VISIBLE);
-                                        buttonPersonalizado2.setTag(cursor.getString(6));
                                         buttonPersonalizado2.setText(opcoes);
                                     }
                                 }
                                 if (buttonPersonalizado.getVisibility() == View.INVISIBLE) {
                                     if (idadeMaior7(cursor.getString(8),idade>7)) {
                                         if (temIdadeFrase(cursor.getString(8))){
+                                            if (eParaFechar(cursor.getString(8))){
+                                                buttonPersonalizado.setTag(cursor.getString(8));
+                                            }else{
+                                                buttonPersonalizado.setTag(cursor.getString(6));
+                                            }
                                             buttonPersonalizado.setVisibility(View.VISIBLE);
-                                            buttonPersonalizado.setTag(cursor.getString(6));
                                             buttonPersonalizado.setText(opcoes);
                                         }
                                     }
                                 } else {
                                     if (idadeMaior7(cursor.getString(8),idade>7)) {
                                         if (temIdadeFrase(cursor.getString(8))) {
+                                            if (eParaFechar(cursor.getString(8))){
+                                                buttonPersonalizado2.setTag(cursor.getString(8));
+                                            }else{
+                                                buttonPersonalizado2.setTag(cursor.getString(6));
+                                            }
                                             buttonPersonalizado2.setVisibility(View.VISIBLE);
-                                            buttonPersonalizado2.setTag(cursor.getString(6));
                                             buttonPersonalizado2.setText(opcoes);
                                         }
                                     }
@@ -1544,7 +1562,9 @@ public class Questionario extends Activity  {
                                                 if (s.toString().length() > 2) {
                                                     if (cursorPergunta.getString(7).equals("ALIMENTO/3")) {
                                                         String alimento = s.toString();
+                                                        DestruirTextView();
                                                         callApiAlimentos();
+
                                                         mInterfaceObject.getAlimentos(alimento).enqueue(objectCallback);
                                                     }
                                                 } else {
@@ -2910,6 +2930,24 @@ public class Questionario extends Activity  {
         }
     }
 
+    public void DestruirTextView() {
+        try {
+            //for (int i = 0; i < ll.getChildCount(); i++){
+            int i = ll.getChildCount();
+            while (-2 < i - 1) {
+                View child = ll.getChildAt(i);
+                if (child instanceof TextView) {
+                    TextView et = (TextView) child;
+                    ViewGroup parent = (ViewGroup) et.getParent();
+                    parent.removeView(et);
+                }
+                i--;
+            }
+        } catch (Throwable ex) {
+
+        }
+    }
+
     public void apagarValores() {
         try {
 
@@ -3156,6 +3194,11 @@ public class Questionario extends Activity  {
                         break;
                     } else if ((cursorSALTO.getString(1).equals(cursorPergunta.getString(7)))) {
                         // BREAKPOINT N�O PARA NO BREAK
+                        break;
+                    }  else if (eParaFechar(cursorSALTO.getString(1))) {
+                        Intent WSActivity = new Intent(this, fim.class);
+                        startActivity(WSActivity);
+                        this.finish();
                         break;
                     }
                     cursorPergunta.moveToNext();
@@ -4859,23 +4902,33 @@ public class Questionario extends Activity  {
 
     }
 
+    public boolean eParaFechar(String valor) {
+
+        if (valor != null) {
+            if (valor.contains("{{FECHAR_APLICATIVO}}")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean idadeMaior7(String valor, boolean maior7) {
         if (valor != null) {
             if (valor.contains(MAIOR_7ANO)) {
 
-                    if (maior7) {
-                        return true;
-                    }else{
-                        return false;
-                    }
+                if (maior7) {
+                    return true;
+                } else {
+                    return false;
+                }
 
             } else if (valor.contains(MENOR_OU_IGUAL_7ANOS)) {
 
-                    if (!maior7) {
-                        return true;
-                    }else{
-                        return false;
-                    }
+                if (!maior7) {
+                    return true;
+                } else {
+                    return false;
+                }
 
             }
         }
@@ -4894,9 +4947,11 @@ public class Questionario extends Activity  {
 
     }
 
-    /** Check if this device has a camera */
+    /**
+     * Check if this device has a camera
+     */
     private boolean checkCameraHardware(Context context) {
-        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
+        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             // this device has a camera
             return true;
         } else {
@@ -4904,7 +4959,6 @@ public class Questionario extends Activity  {
             return false;
         }
     }
-
 
 
     protected void AdicionarIconeFoto(Boolean tiraFoto) {
@@ -4932,7 +4986,7 @@ public class Questionario extends Activity  {
 
         if (!tiraFoto) {
             carregarFoto(fotoCamera, Integer.toString(AlunoAtual));
-        }else{
+        } else {
             contener.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -4976,7 +5030,7 @@ public class Questionario extends Activity  {
                     if (resultCode == RESULT_OK) {
                         System.gc();
                         File file = new File(mCurrentPhotoPath);
-                        Bitmap bitmap = ImageUtils.getInstant().getCompressedBitmap(file.getPath(),true);
+                        Bitmap bitmap = ImageUtils.getInstant().getCompressedBitmap(file.getPath(), true);
                         //  Bitmap bitmap = MediaStore.Images.Media
                         //  .getBitmap(this.getContentResolver(), Uri.fromFile(file));
                         if (bitmap != null) {
@@ -4993,7 +5047,7 @@ public class Questionario extends Activity  {
                             try {
                                 fotoPerfilEncoded = Base64.encodeToString(decodedProfilePicture,
                                         Base64.DEFAULT);
-                            }catch (OutOfMemoryError e) {
+                            } catch (OutOfMemoryError e) {
                                 e.printStackTrace();
 
                                 System.gc();
@@ -5007,7 +5061,7 @@ public class Questionario extends Activity  {
                                 }
                             }
 
-                            setSharedPreferencesServiceVistoriaFoto(fotoPerfilEncoded,Integer.toString(AlunoAtual));
+                            setSharedPreferencesServiceVistoriaFoto(fotoPerfilEncoded, Integer.toString(AlunoAtual));
 
                             fotoCamera.setImageBitmap(bitmap);
                         }
@@ -5021,15 +5075,15 @@ public class Questionario extends Activity  {
         }
     }
 
-    private void setSharedPreferencesServiceVistoriaFoto(String fotoPerfilEncoded, String numero){
+    private void setSharedPreferencesServiceVistoriaFoto(String fotoPerfilEncoded, String numero) {
         SharedPreferencesService shared = new SharedPreferencesService(this);
-        shared.setVistoriaFoto(fotoPerfilEncoded,numero);
+        shared.setVistoriaFoto(fotoPerfilEncoded, numero);
     }
 
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp ;
+        String imageFileName = "JPEG_" + timeStamp;
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -5079,7 +5133,7 @@ public class Questionario extends Activity  {
                 try {
                     decodedByte = Base64.decode(stringFoto, Base64.DEFAULT);
                     fotoProfile = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
-                }catch (OutOfMemoryError e) {
+                } catch (OutOfMemoryError e) {
                     e.printStackTrace();
 
                     System.gc();
@@ -5096,10 +5150,10 @@ public class Questionario extends Activity  {
                         .load(fotoProfile)
                         .apply(RequestOptions.centerInsideTransform())
                         .into(foto);
-            }catch(Exception e){
+            } catch (Exception e) {
 
             }
         }
     }
 
-}
+    }

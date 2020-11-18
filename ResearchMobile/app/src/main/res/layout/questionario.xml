@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:configChanges=""
     android:orientation="vertical">
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -68,13 +72,14 @@
     <ScrollView
         android:id="@+id/nScrollView"
         android:layout_width="fill_parent"
-        android:layout_height="88dp"
-        android:layout_weight="0.03"
+        android:layout_height="match_parent"
+
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
         android:focusableInTouchMode="false" >
 
         <LinearLayout
+            android:paddingBottom="80dp"
             android:id="@+id/edits_ll"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -82,101 +87,112 @@
         </LinearLayout>
     </ScrollView>
 
-	<TableLayout
-	    xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:layout_width="fill_parent"
-	    android:layout_height="80dp"
-	    android:background="#000000" >
-        <View android:layout_height="2dp"
+
+</LinearLayout>
+    <com.github.mmin18.widget.RealtimeBlurView
+        android:id="@+id/blurLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="80dp"
+        app:realtimeBlurRadius="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:realtimeOverlayColor="#2000" />
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="80dp"
+        android:gravity="bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TableRow
             android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_weight="2"
+            android:orientation="horizontal"
+            android:stretchColumns="*">
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+ />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+>
+
+                <Button
+                    android:id="@+id/buttonPersonalizado2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/buttonborder"
+                    android:onClick="Avancar"
+                    android:padding="15dp"
+                    android:scaleType="fitXY"
+                    android:text="teste"
+                    android:textColor="@color/black"
+                    android:visibility="invisible" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+ />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+>
+
+                <Button
+                    android:id="@+id/buttonPersonalizado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/buttonborder"
+                    android:onClick="Avancar"
+                    android:padding="15dp"
+                    android:scaleType="fitXY"
+                    android:text="teste"
+                    android:textColor="@color/black"
+                    android:visibility="invisible" />
+
+                <ImageButton
+                    android:id="@+id/imageButtonAvancar"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:background="@null"
+                    android:onClick="Avancar"
+                    android:padding="15dp"
+                    android:scaleType="fitXY"
+                    android:src="@mipmap/iconappsetaesquerda" />
+            </RelativeLayout>
+        </TableRow>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
             android:background="@color/gray_lighter">
 
         </View>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_weight="2"
-        android:orientation="horizontal"
-        android:stretchColumns="*" >
-
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="#ffffff" />
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="80dp"
-            android:background="#ffffff" >
-
-            <Button
-                android:id="@+id/buttonPersonalizado2"
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_alignParentLeft="true"
-                android:background="@drawable/buttonborder"
-                android:onClick="Avancar"
-                android:text="teste"
-                android:visibility="invisible"
-                android:layout_marginStart="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/black"
-                android:padding="15dp"
-                android:scaleType="fitXY" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="80dp"
-            android:layout_weight="1"
-            android:background="#ffffff" />
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="80dp"
-            android:background="#ffffff" >
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:background="#ffffff" >
-
-
-            <Button
-                android:id="@+id/buttonPersonalizado"
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_alignParentRight="true"
-                android:background="@drawable/buttonborder"
-                android:onClick="Avancar"
-                android:text="teste"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                android:visibility="invisible"
-                android:textColor="@color/black"
-                android:padding="15dp"
-                android:scaleType="fitXY" />
-
-            <ImageButton
-                android:id="@+id/imageButtonAvancar"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:background="@null"
-                android:onClick="Avancar"
-                android:padding="15dp"
-                android:scaleType="fitXY"
-                android:src="@mipmap/iconappsetaesquerda" />
-        </RelativeLayout>
-    </TableRow>
-
-</TableLayout>
-
-    </LinearLayout>
+    </TableLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
