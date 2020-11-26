@@ -13,15 +13,10 @@
     <string name="create">Crie sua conta</string>
     <string name="login_email_null">Entre com e-mail cadastrado!</string>
 
-    <string name="opcao_2">Recordatório</string>
-    <string name="opcao_3">Verificar Conexão</string>
-    <string name="opcao_4">Informação Sistema</string>
-    <string name="opcao_5">Logout</string>
-
     <string name="read">Iniciando</string>
     <string name="end">Finalizando</string>
 
-    <string name="main">Recordatório</string>
+
     <string name="mainlista">    Lista Ocorrência</string>
     <string name="chat">Chat</string>
     <string name="map">Mapa</string>

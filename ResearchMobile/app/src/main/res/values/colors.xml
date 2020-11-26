@@ -41,5 +41,6 @@
     <color name="colorAccent">#1e90ff</color>
     <color name="colorAccent2">#99ff99</color>
     <color name="colortext">#e1e5ee</color>
+    <color name="colorRedStart">#AA091B</color>
 
 </resources>

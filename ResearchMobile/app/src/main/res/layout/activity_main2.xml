@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:alpha="0.2"
         android:scaleType="centerCrop"
-        android:src="@drawable/recordatorio_fundo" />
+        android:src="@drawable/salada" />
 
     <ImageView
         android:id="@+id/main_icon_schedule_image_view3"
@@ -21,9 +21,9 @@
         android:layout_centerHorizontal="true"
         android:scaleType="centerCrop"
         android:src="@mipmap/ic_icon"
+        card_view:layout_constraintBottom_toTopOf="@+id/criar"
         card_view:layout_constraintEnd_toEndOf="parent"
         card_view:layout_constraintStart_toStartOf="parent"
-        card_view:layout_constraintTop_toTopOf="parent"
         card_view:srcCompat="@mipmap/ic_icon" />
 
     <ImageView
@@ -46,13 +46,14 @@
         android:background="#0000"
         android:paddingTop="110dp"
         android:text="Iniciar"
-        android:textColor="#2a4c73"
+        android:textColor="@color/colorRedStart"
         android:textSize="17sp"
         android:textStyle="normal"
         card_view:layout_constraintBottom_toBottomOf="parent"
         card_view:layout_constraintEnd_toEndOf="parent"
         card_view:layout_constraintStart_toStartOf="parent"
         card_view:layout_constraintTop_toTopOf="parent" />
+
 
 
     <ImageView

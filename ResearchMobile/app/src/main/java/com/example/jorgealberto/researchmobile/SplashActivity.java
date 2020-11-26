@@ -49,11 +49,6 @@ public class SplashActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_splash);
 
-
-
-
-
-
         ImageView ceg = (ImageView) findViewById(R.id.ceg);
 
         //Bitmap bMap = BitmapFactory.decodeFile(MyConstant.storageCliente+"cliente.png");

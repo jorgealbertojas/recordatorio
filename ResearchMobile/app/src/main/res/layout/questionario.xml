@@ -12,33 +12,146 @@
     android:orientation="vertical">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@color/color_primary"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_text_view_border"
         android:padding="2dp">
 
-        <com.shuhart.stepview.StepView
+        <LinearLayout
             android:id="@+id/step_view"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="2dp"
-            app:sv_selectedCircleColor="@color/white"
-            app:sv_selectedTextColor="@color/white"
-            app:sv_stepLineWidth="1dp"
-            app:sv_stepPadding="4dp"
-            app:sv_nextTextColor="@color/colorAccent"
-            app:sv_nextStepLineColor="@color/colorAccent"
-            app:sv_nextStepCircleColor="@color/gray"
-            app:sv_doneCircleColor="@color/colorAccent"
-            app:sv_doneStepLineColor="@color/colorAccent"
-            app:sv_doneCircleRadius="10dp"
-            app:sv_selectedCircleRadius="12dp"
-            android:pointerIcon="arrow"
-            app:sv_selectedStepNumberColor="@color/color_primary"
-            app:sv_stepViewStyle="@style/StepView"
-            app:sv_doneStepMarkColor="@color/color_primary"
-            app:sv_stepNumberTextSize="10sp"
-            app:sv_textSize="0sp"
-            app:sv_animationType="Line" />
+            android:background="@drawable/rounded_text_view_border"
+            android:layout_height="wrap_content"
+            android:padding="0dp">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout1"
+                android:layout_width="fill_parent"
+                android:background="@color/color_primary"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/imageView1"
+                    android:layout_width="15dp"
+                    android:background="@color/white"
+                    android:scaleType="centerCrop"
+                    android:layout_height="50dp"
+                    android:src="@mipmap/ic_arrow_foreground"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"></ImageView>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/ic_arrow_foreground"
+                    android:text="criança"
+                    android:textSize="12sp"
+                    android:textAlignment="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/imageView1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"></TextView>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="15dp"
+                    android:background="@color/white"
+                    android:scaleType="centerCrop"
+                    android:layout_height="50dp"
+                    android:src="@mipmap/ic_arrow_foreground"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"></ImageView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="alimentação"
+                    android:textSize="14sp"
+                    android:textAlignment="center"
+
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/imageView2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"></TextView>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="fill_parent"
+                android:id="@+id/constraintLayout3"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:background="@color/white"
+                    android:layout_width="15dp"
+                    android:scaleType="centerCrop"
+                    android:layout_height="50dp"
+                    android:src="@mipmap/ic_arrow_foreground"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"></ImageView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/ic_arrow_foreground"
+                    android:text="detalhes"
+                    android:textSize="14sp"
+                    android:textAlignment="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/imageView3"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"></TextView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="fill_parent"
+                android:id="@+id/constraintLayout4"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/imageView4"
+                    android:layout_width="15dp"
+                    android:background="@color/white"
+                    android:scaleType="centerCrop"
+                    android:layout_height="50dp"
+                    android:src="@mipmap/ic_arrow_foreground"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"></ImageView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/ic_arrow_foreground"
+                    android:text="revisão"
+                    android:textSize="14sp"
+                    android:textAlignment="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/imageView4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"></TextView>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
     </RelativeLayout>
 
@@ -69,24 +182,22 @@
         android:background="@color/gray_lighter">
 
     </View>
+
     <ScrollView
         android:id="@+id/nScrollView"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-
+        android:focusableInTouchMode="false"
         android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:focusableInTouchMode="false" >
+        android:paddingRight="15dp">
 
         <LinearLayout
-            android:paddingBottom="80dp"
             android:id="@+id/edits_ll"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:orientation="vertical" >
-        </LinearLayout>
+            android:orientation="vertical"
+            android:paddingBottom="80dp"></LinearLayout>
     </ScrollView>
-
 
 </LinearLayout>
     <com.github.mmin18.widget.RealtimeBlurView
@@ -98,101 +209,59 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:realtimeOverlayColor="#2000" />
-    <TableLayout
-        android:layout_width="fill_parent"
-        android:layout_height="80dp"
-        android:gravity="bottom"
+
+    <Button
+        android:id="@+id/buttonPersonalizado2"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/buttonborder"
+        android:onClick="Avancar"
+        android:padding="15dp"
+        android:layout_marginStart="4dp"
+        android:scaleType="fitXY"
+        android:text="teste"
+        android:textColor="@color/black"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/blurLayout" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_weight="2"
-            android:orientation="horizontal"
-            android:stretchColumns="*">
+    <Button
+        android:id="@+id/buttonPersonalizado"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/buttonborder"
+        android:onClick="Avancar"
+        android:layout_marginEnd="4dp"
+        android:padding="15dp"
+        android:scaleType="fitXY"
+        android:text="teste"
+        android:textColor="@color/black"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/blurLayout"
+        app:layout_constraintTop_toTopOf="@+id/blurLayout" />
 
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
- />
+    <Button
+        android:id="@+id/imageButtonAvancar"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/buttonborder"
+        android:onClick="Avancar"
+        android:layout_marginEnd="4dp"
+        android:padding="15dp"
+        android:scaleType="fitXY"
+        android:text="Avançar"
+        android:textColor="@color/black"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/blurLayout"
+        app:layout_constraintTop_toTopOf="@+id/blurLayout" />
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="80dp"
->
 
-                <Button
-                    android:id="@+id/buttonPersonalizado2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/buttonborder"
-                    android:onClick="Avancar"
-                    android:padding="15dp"
-                    android:scaleType="fitXY"
-                    android:text="teste"
-                    android:textColor="@color/black"
-                    android:visibility="invisible" />
 
-            </RelativeLayout>
 
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="80dp"
-                android:layout_weight="1"
- />
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="80dp"
->
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
->
-
-                <Button
-                    android:id="@+id/buttonPersonalizado"
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/buttonborder"
-                    android:onClick="Avancar"
-                    android:padding="15dp"
-                    android:scaleType="fitXY"
-                    android:text="teste"
-                    android:textColor="@color/black"
-                    android:visibility="invisible" />
-
-                <ImageButton
-                    android:id="@+id/imageButtonAvancar"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:background="@null"
-                    android:onClick="Avancar"
-                    android:padding="15dp"
-                    android:scaleType="fitXY"
-                    android:src="@mipmap/iconappsetaesquerda" />
-            </RelativeLayout>
-        </TableRow>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/gray_lighter">
-
-        </View>
-    </TableLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

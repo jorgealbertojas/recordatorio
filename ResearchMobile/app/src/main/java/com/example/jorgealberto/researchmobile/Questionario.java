@@ -7,6 +7,7 @@ import android.app.DatePickerDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -31,6 +32,7 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.format.Time;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -43,6 +45,7 @@ import android.view.View.OnFocusChangeListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -85,7 +88,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.shuhart.stepview.StepView;
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -111,11 +114,25 @@ public class Questionario extends Activity  {
 
     int TAKE_PHOTO_CODE = 0;
     private final int REQUEST_TAKE_PHOTO_CODE = 1;
+    private DisplayMetrics dm;
+
+    public EditText llPergunta;
 
     public ImageButton fotoCamera = null;
     public ImageButton fotoCamera2 = null;
     public ImageButton fotoCameraElipse = null;
     public ImageView foto_camera_dentro = null;
+
+    public ImageView imageView1 = null;
+    public ImageView imageView2 = null;
+    public ImageView imageView3 = null;
+    public ImageView imageView4 = null;
+
+    public ConstraintLayout constraintLayout1 = null;
+    public ConstraintLayout constraintLayout2 = null;
+    public ConstraintLayout constraintLayout3 = null;
+    public ConstraintLayout constraintLayout4 = null;
+
 
     public boolean NaoENotificacao = false;
 
@@ -146,7 +163,7 @@ public class Questionario extends Activity  {
     MyHandlerNovo blinker = null;
     private Button buttonPersonalizado = null;
     private Button buttonPersonalizado2 = null;
-    private ImageButton imageButtonAvancar = null;
+    private Button imageButtonAvancar = null;
     private String opcao = "";
     private String opcaoQuestionario = "";
     private String opcaoQuestionarioFINAL = "";
@@ -171,7 +188,6 @@ public class Questionario extends Activity  {
     private Boolean nTIME = false;
     private String nGPS = "";
     private LinearLayout ll;
-    private LinearLayout llPergunta;
     private int count = 0;
     //private ArrayList<EditText> edits;
     private ArrayList<TextInputLayout> edits;
@@ -206,7 +222,7 @@ public class Questionario extends Activity  {
     private List<String> steps = null;
     private boolean podedefechar = false;
     private InterfaceRetrofit mInterfaceObject;
-    private StepView stepView;
+
 
 
     private GoogleApiClient client;
@@ -256,7 +272,6 @@ public class Questionario extends Activity  {
                     public void run() {
 
                         Context context = getApplicationContext();
-
                     }
                 });
             }
@@ -486,6 +501,9 @@ public class Questionario extends Activity  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
+        dm = getResources().getDisplayMetrics();
+
+
         if (!NaoENotificacao) {
             ambienteTEMP = ConstAmbienteTEMP;
         }
@@ -506,19 +524,20 @@ public class Questionario extends Activity  {
         setContentView(R.layout.questionario);
         this.ll = (LinearLayout) this.findViewById(R.id.edits_ll);
 
-        imageButtonAvancar = (ImageButton) findViewById(R.id.imageButtonAvancar);
+        llPergunta = (EditText) findViewById(R.id.editEntrevistado);
+        imageButtonAvancar = (Button) findViewById(R.id.imageButtonAvancar);
         buttonPersonalizado = (Button) findViewById(R.id.buttonPersonalizado);
         buttonPersonalizado2 = (Button) findViewById(R.id.buttonPersonalizado2);
 
-        stepView = findViewById(R.id.step_view);
-        stepView.setStepsNumber(5);
-        steps = new ArrayList<>();
-        steps.add("");
-        steps.add("");
-        steps.add("");
-        steps.add("");
-        steps.add("");
-        stepView.setSteps(steps);
+        imageView1 = (ImageView) findViewById(R.id.imageView1);
+        imageView2 = (ImageView) findViewById(R.id.imageView2);
+        imageView3 = (ImageView) findViewById(R.id.imageView3);
+        imageView4 = (ImageView) findViewById(R.id.imageView4);
+
+        constraintLayout1 = (ConstraintLayout) findViewById(R.id.constraintLayout1);
+        constraintLayout2 = (ConstraintLayout) findViewById(R.id.constraintLayout2);
+        constraintLayout3 = (ConstraintLayout) findViewById(R.id.constraintLayout3);
+        constraintLayout4 = (ConstraintLayout) findViewById(R.id.constraintLayout4);
 
         Bundle extras = getIntent().getExtras();
         filtro_id_cliente = extras.getString("filtro_id_cliente");
@@ -631,7 +650,8 @@ public class Questionario extends Activity  {
         buttonPersonalizado.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                if ((estaPreenchido())) {
+                if ((estaPreenchido() || estaPreenchidoDESCRICAO(buttonPersonalizado.getText().toString()))) {
+                    bd.execSQL(sql_delete.DEL_SALTO_TODOS, new String[]{});
                     InsereSalto(buttonPersonalizado.getTag().toString(), buttonPersonalizado.getTag().toString());
                     AvancarQuestionario(buttonPersonalizado.getTag().toString());
                 } else {
@@ -643,7 +663,8 @@ public class Questionario extends Activity  {
         buttonPersonalizado2.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                if ((estaPreenchido())) {
+                if ((estaPreenchido() || estaPreenchidoDESCRICAO(buttonPersonalizado2.getText().toString()))) {
+                    bd.execSQL(sql_delete.DEL_SALTO_TODOS, new String[]{});
                     InsereSalto(buttonPersonalizado2.getTag().toString(), buttonPersonalizado2.getTag().toString());
                     AvancarQuestionario(buttonPersonalizado.getTag().toString());
                 } else {
@@ -742,13 +763,24 @@ public class Questionario extends Activity  {
         nDataBase = new DataBase(this);
         bd = nDataBase.getReadableDatabase();
 
+        llPergunta.animate().translationY(dm.heightPixels).setStartDelay(0).setDuration(0).start();
+        llPergunta.animate().translationY(0).setDuration(500).alpha(1).setStartDelay(1500).start();
+
+        buttonPersonalizado.animate().translationX(dm.widthPixels + buttonPersonalizado.getMeasuredWidth()).setDuration(0).setStartDelay(0).start();
+        buttonPersonalizado.animate().translationX(0).setStartDelay(500).setDuration(1500).setInterpolator(new OvershootInterpolator()).start();
+
+        buttonPersonalizado2.animate().translationX(dm.widthPixels + buttonPersonalizado2.getMeasuredWidth()).setDuration(0).setStartDelay(0).start();
+        buttonPersonalizado2.animate().translationX(0).setStartDelay(500).setDuration(1500).setInterpolator(new OvershootInterpolator()).start();
+
+        imageButtonAvancar.animate().translationX(dm.widthPixels + imageButtonAvancar.getMeasuredWidth()).setDuration(0).setStartDelay(0).start();
+        imageButtonAvancar.animate().translationX(0).setStartDelay(500).setDuration(1500).setInterpolator(new OvershootInterpolator()).start();
+
         NumeroPerguntaAtual = Integer.parseInt(cursorPergunta.getString(0));
 
         subformulario = Integer.parseInt(cursorPergunta.getString(5));
 
         if (subformulario == 0) {
             subPerguntaAluno = 0;
-            final EditText llPergunta = (EditText) findViewById(R.id.editEntrevistado);
 
             if (nFONTE.equals("P")) {
                 llPergunta.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
@@ -789,8 +821,6 @@ public class Questionario extends Activity  {
                 String igual = "0";
 
                 Resources res = getResources();
-                final int newColor = res.getColor(R.color.DodgerBlue);
-                imageButtonAvancar.setColorFilter(newColor, PorterDuff.Mode.SRC_ATOP);
 
                 buttonPersonalizado.setVisibility(View.INVISIBLE);
                 buttonPersonalizado2.setVisibility(View.INVISIBLE);
@@ -798,7 +828,7 @@ public class Questionario extends Activity  {
                 while (!cursor.isAfterLast()) {
 
                     if (mostraAmbiente(cursor.getString(8))) {
-                        stepView.go(cursorPergunta.getInt(2),true);
+                        pintaSeta(cursorPergunta.getInt(2));
 
                         try {
 
@@ -3556,6 +3586,15 @@ public class Questionario extends Activity  {
 
     }
 
+    public boolean estaPreenchidoDESCRICAO(String valor) {
+        if (valor.equals("Não encontrei o alimento/bebida")) {
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
     public boolean estaPreenchido() {
         try {
 
@@ -5155,5 +5194,63 @@ public class Questionario extends Activity  {
             }
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle(getString(R.string.app_name))
+                .setMessage("Deseja voltar para a tela inicial?")
+                .setNegativeButton("Não", null)
+                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        Questionario.super.onBackPressed();
+                    }
+                }).create().show();
+    }
+
+
+    public void pintaSeta(int seta){
+        Resources res = getResources();
+        final int newColor1 = res.getColor(R.color.white);
+
+        imageView1.setColorFilter(newColor1, PorterDuff.Mode.SRC_ATOP);
+        imageView2.setColorFilter(newColor1, PorterDuff.Mode.SRC_ATOP);
+        imageView3.setColorFilter(newColor1, PorterDuff.Mode.SRC_ATOP);
+        imageView4.setColorFilter(newColor1, PorterDuff.Mode.SRC_ATOP);
+
+        constraintLayout1.setBackgroundColor(getResources().getColor(R.color.white));
+        constraintLayout2.setBackgroundColor(getResources().getColor(R.color.white));
+        constraintLayout3.setBackgroundColor(getResources().getColor(R.color.white));
+        constraintLayout4.setBackgroundColor(getResources().getColor(R.color.white));
+
+        final int newColor2 = res.getColor(R.color.color_primary);
+        if (seta == 0) {
+            imageView1.setColorFilter(newColor2, PorterDuff.Mode.SRC_ATOP);
+            constraintLayout1.setBackgroundColor(getResources().getColor(R.color.color_primary));
+        }else if (seta == 1) {
+            imageView1.setColorFilter(newColor2, PorterDuff.Mode.SRC_ATOP);
+            imageView2.setColorFilter(newColor2, PorterDuff.Mode.SRC_ATOP);
+            constraintLayout1.setBackgroundColor(getResources().getColor(R.color.color_primary));
+            constraintLayout2.setBackgroundColor(getResources().getColor(R.color.color_primary));
+        }else if (seta == 2) {
+            imageView1.setColorFilter(newColor2, PorterDuff.Mode.SRC_ATOP);
+            imageView2.setColorFilter(newColor2, PorterDuff.Mode.SRC_ATOP);
+            imageView3.setColorFilter(newColor2, PorterDuff.Mode.SRC_ATOP);
+            constraintLayout1.setBackgroundColor(getResources().getColor(R.color.color_primary));
+            constraintLayout2.setBackgroundColor(getResources().getColor(R.color.color_primary));
+            constraintLayout3.setBackgroundColor(getResources().getColor(R.color.color_primary));
+        }else if (seta == 3) {
+            imageView1.setColorFilter(newColor2, PorterDuff.Mode.SRC_ATOP);
+            imageView2.setColorFilter(newColor2, PorterDuff.Mode.SRC_ATOP);
+            imageView3.setColorFilter(newColor2, PorterDuff.Mode.SRC_ATOP);
+            imageView4.setColorFilter(newColor2, PorterDuff.Mode.SRC_ATOP);
+            constraintLayout1.setBackgroundColor(getResources().getColor(R.color.color_primary));
+            constraintLayout2.setBackgroundColor(getResources().getColor(R.color.color_primary));
+            constraintLayout3.setBackgroundColor(getResources().getColor(R.color.color_primary));
+            constraintLayout4.setBackgroundColor(getResources().getColor(R.color.color_primary));
+        }
+
+    }
+
 
     }

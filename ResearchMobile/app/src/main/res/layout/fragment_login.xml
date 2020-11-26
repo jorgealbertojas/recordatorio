@@ -9,7 +9,7 @@
     <com.flaviofaria.kenburnsview.KenBurnsView
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:src="@drawable/recordatorio_fundo"
+        android:src="@drawable/salada"
         android:id="@+id/fragmentloginKenBurnsView1"/>
 
     <View
@@ -81,7 +81,7 @@
             android:textColor="#FFFFFF"
             android:id="@+id/mainEditText1"
             android:hint="e-mail"
-            android:textColorHint="@color/colorAccent"
+            android:textColorHint="@color/colorRedStart"
             android:typeface="serif"/>
 
         <View
@@ -104,7 +104,7 @@
             android:layout_alignBottom="@id/mainImageView2"
             android:textColor="#FFFFFF"
             android:id="@+id/mainEditText2"
-            android:textColorHint="@color/colorAccent"
+            android:textColorHint="@color/colorRedStart"
             android:hint="senha"
             android:typeface="serif"/>
 
@@ -121,7 +121,7 @@
             android:layout_alignBottom="@id/mainImageView3"
             android:textColor="#FFFFFF"
             android:id="@+id/mainEditText3"
-            android:textColorHint="@color/colorAccent"
+            android:textColorHint="@color/colorRedStart"
             android:visibility="gone"
             android:hint="corfirmar senha"
             android:typeface="serif"/>
