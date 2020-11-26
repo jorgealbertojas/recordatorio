@@ -1,6 +1,7 @@
 package com.example.jorgealberto.researchmobile.util;
 
 
+import com.example.jorgealberto.researchmobile.model.AlimentosCompletos;
 import com.example.jorgealberto.researchmobile.modelJson.ListPerguntas;
 import com.example.jorgealberto.researchmobile.modelJson.alimentos;
 import com.example.jorgealberto.researchmobile.modelJson.perguntas;
@@ -19,6 +20,6 @@ public interface InterfaceRetrofit {
 
         /** Get Data Assets Json with Retrofit */
         @GET(Utility.COMPLEMENT_URL_ALIMENTO + "{alimento_parte}")
-        Call<List<alimentos>> getAlimentos(@Path("alimento_parte") String alimento_parte);
+        Call<AlimentosCompletos> getAlimentos(@Path("alimento_parte") String alimento_parte);
 
     }

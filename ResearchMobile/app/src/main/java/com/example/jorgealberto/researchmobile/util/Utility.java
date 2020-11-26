@@ -13,7 +13,7 @@ public class Utility {
     /** Base URL for get Json */
     public final static String COMPLEMENT_URL = "/RecordatorioFunc/questionario";
 
-    public final static String COMPLEMENT_URL_ALIMENTO = "/RecordatorioFunc/alimento/";
+    public final static String COMPLEMENT_URL_ALIMENTO = "/RecordatorioFunc/alimentoV2/";
 
     public static int countCaracter(String string){
         int count = 1;

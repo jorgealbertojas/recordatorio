@@ -72,8 +72,11 @@ import com.example.jorgealberto.researchmobile.SQL.sql_delete;
 import com.example.jorgealberto.researchmobile.SQL.sql_select;
 import com.example.jorgealberto.researchmobile.library.MinhaTAG;
 import com.example.jorgealberto.researchmobile.library.MyConstant;
+import com.example.jorgealberto.researchmobile.model.AlimentosCompletos;
 import com.example.jorgealberto.researchmobile.model.Pergunta;
+import com.example.jorgealberto.researchmobile.model.contagemGrupoAlimentar;
 import com.example.jorgealberto.researchmobile.modelJson.alimentos;
+import com.example.jorgealberto.researchmobile.modelJson.perguntas;
 import com.example.jorgealberto.researchmobile.service.DB;
 import com.example.jorgealberto.researchmobile.service.DataBase;
 import com.example.jorgealberto.researchmobile.service.DateValidator;
@@ -147,7 +150,7 @@ public class Questionario extends Activity  {
     public static Integer idade = 8;
     public static Boolean idadeBoolean = false;
 
-    public static String saltoTEMP_NOVO = "";
+    public static String saltoTEMP_NOVO = "ALIMENTO/2";
     public String saltoTEMP = saltoTEMP_NOVO;
     public static String ambienteTEMP = ConstAmbienteTEMP;
 
@@ -158,6 +161,7 @@ public class Questionario extends Activity  {
     public String mCurrentPhotoPath  = "";
 
     public ArrayList<alimentos> data = null;
+    public ArrayList<contagemGrupoAlimentar> grupo = null;
 
     public DateValidator dateValidator = null;
     MyHandlerNovo blinker = null;
@@ -226,19 +230,58 @@ public class Questionario extends Activity  {
 
 
     private GoogleApiClient client;
-    private Callback<List<alimentos>> objectCallback = new Callback<List<alimentos>>() {
+    private Callback<AlimentosCompletos> objectCallback = new Callback<AlimentosCompletos>() {
         @Override
-        public void onResponse(Call<List<alimentos>> call, Response<List<alimentos>> response) {
+        public void onResponse(Call<AlimentosCompletos> call, Response<AlimentosCompletos> response) {
             try {
                 if (response.isSuccessful()) {
                     data = new ArrayList<>();
-                    data.addAll(response.body());
+                    data.addAll(response.body().alimentos);
+
+                    grupo = new ArrayList<>();
+                    grupo.addAll(response.body().contagemGrupoAlimentar);
 
                     Questionario.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             DestruirTextView();
                             Log.d("bebeto", "teste" + data.size());
+
+
+                            if (grupo.size() > 0) {
+                                for (int i = 0; i < grupo.size(); i++) {
+                                    CheckBox checkBox = new CheckBox(getApplicationContext());
+                                    checkBox.setText( grupo.get(i).getGrupoAlimentar() + " (" + grupo.get(i).getTotalAlimentos() +")" );
+                                    checkBox.setTag(grupo.get(i).getGrupoAlimentar());
+                                    checkBox.setTextColor(getResources().getColor(R.color.black));
+                                    checkBox.setBackgroundColor(getResources().getColor(R.color.white));
+                                    checkBox.setPadding(20, 2, 20, 2);
+                                    checkBox.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            TornaInvisivelTextView(false);
+                                           if (((CheckBox) view).isChecked()) {
+                                               TornaVisivelTextViewGrupo(listaGrupoCheckbox(), true);
+                                            }else{
+                                               if (estaUmMarcadoCheckbox()) {
+                                                   TornaVisivelTextViewGrupo(listaGrupoCheckbox(), true);
+                                               }else{
+                                                   TornaInvisivelTextView(true);
+                                               }
+
+                                            }
+
+
+                                        }
+                                    });
+
+                                    LinearLayout.LayoutParams params;
+                                    params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                    params.setMargins(10, 2, 10, 2);
+                                    ll.addView(checkBox, params);
+                                }
+                            }
+
                             if (data.size() > 0) {
                                 for (int i = 0; i < data.size(); i++) {
                                     TextView textView = new TextView(getApplicationContext());
@@ -278,7 +321,7 @@ public class Questionario extends Activity  {
         }
 
         @Override
-        public void onFailure(Call<List<alimentos>
+        public void onFailure(Call<AlimentosCompletos
                 > call, Throwable t) {
             Context context = getApplicationContext();
 
@@ -3885,6 +3928,106 @@ public class Questionario extends Activity  {
                             et.setVisibility(View.INVISIBLE);
                             et.setText("");
                             et.setHeight(0);
+                        }
+                    }
+                }
+            }
+        } catch (Throwable ex) {
+
+        }
+    }
+
+
+    public void TornaInvisivelTextView(boolean visible) {
+        try {
+            for (int i = 0; i < ll.getChildCount(); i++) {
+                View child = ll.getChildAt(i);
+                if (!(child instanceof CheckBox)) {
+                    if (child instanceof TextView) {
+                        TextView et = (TextView) child;
+                        if (visible) {
+                            et.setVisibility(View.VISIBLE);
+                        }else{
+                            et.setVisibility(View.GONE);
+                        }
+                    } else {
+                        Log.d("bebeto12", "teste" + child.getTag());
+                    }
+                }
+            }
+        } catch (Throwable ex) {
+
+        }
+    }
+
+    public boolean estaUmMarcadoCheckbox() {
+        try {
+            int count = 0;
+            for (int i = 0; i < ll.getChildCount(); i++) {
+                View child = ll.getChildAt(i);
+                if ((child instanceof CheckBox)) {
+                    CheckBox et = (CheckBox) child;
+                    if (et.isChecked()) {
+                        count++;
+                    }
+
+                }
+            }
+            if (count > 0 ) {
+                return true;
+            }else{
+                return false;
+            }
+
+        } catch (Throwable ex) {
+            return false;
+        }
+    }
+
+    public List<String> listaGrupoCheckbox() {
+        try {
+
+            List<String> list = new ArrayList<String>();
+            for (int i = 0; i < ll.getChildCount(); i++) {
+                View child = ll.getChildAt(i);
+                if ((child instanceof CheckBox)) {
+                    CheckBox et = (CheckBox) child;
+                    if (et.isChecked()) {
+                        list.add(et.getTag().toString());
+                    }
+
+                }
+            }
+          return list;
+
+        } catch (Throwable ex) {
+            return null;
+        }
+    }
+
+
+    public void TornaVisivelTextViewGrupo(List<String> listaGrupoCheckbox, boolean visible) {
+        try {
+            for (int y = 0; y < listaGrupoCheckbox.size(); y++) {
+                for (int i = 0; i < ll.getChildCount(); i++) {
+                    View child = ll.getChildAt(i);
+                    if (!(child instanceof CheckBox)) {
+                        if (child instanceof TextView) {
+                            TextView et = (TextView) child;
+                            if (data.get(((int) et.getTag())).getGruposAlimentares() != null)
+                                for (int x = 0; x < data.get(((int) et.getTag())).getGruposAlimentares().size(); x++) {
+                                    if (data.get(((int) et.getTag())).getGruposAlimentares().get(x).equals(listaGrupoCheckbox.get(y))) {
+                                        if (visible) {
+                                            et.setVisibility(View.VISIBLE);
+                                        } else {
+                                            et.setVisibility(View.GONE);
+                                        }
+                                        Log.d("bebeto12", "ok" + child.getTag());
+                                    }
+                                }
+
+                        } else {
+                            Log.d("bebeto12", "teste" + child.getTag());
                         }
                     }
                 }
