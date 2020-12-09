@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:ellipsize="marquee"
-    android:background="@drawable/border_top_text_view"
+    android:background="@drawable/border_text_view"
     android:textSize="24sp"
     android:singleLine="false"
     android:paddingBottom="10dp"

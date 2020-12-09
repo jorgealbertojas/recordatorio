@@ -15,6 +15,8 @@ public class Utility {
 
     public final static String COMPLEMENT_URL_ALIMENTO = "/RecordatorioFunc/alimentoV2/";
 
+    public final static String COMPLEMENT_URL_USUARIO = "/RecordatorioFunc/usuario/login/";
+
     public static int countCaracter(String string){
         int count = 1;
         for(int i = 0; i < string.length(); i++) {

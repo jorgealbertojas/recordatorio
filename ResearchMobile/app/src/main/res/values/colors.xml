@@ -2,6 +2,7 @@
 <resources>
     <color name="black_semi_transparent">#B2000000</color>
     <color name="color_primary">#33cc33</color>
+    <color name="color_primary2">#9BF39B</color>
     <color name="color_primary_dark">#A8A6A1</color>
     <color name="color_accent">#33cc33</color>
     <color name="white">#ffffff</color>
@@ -19,7 +20,7 @@
 
     <color name="black">#000000</color>
     <color name="gray_more_dark">#4f4f4f</color>
-    <color name="gray_dark">#6d6d6d</color>
+    <color name="gray_dark">#4f4f4f</color>
     <color name="gray">#837F78</color>
     <color name="gray_soft">#A8A6A1</color>
     <color name="gray_light">#CDCCC9</color>

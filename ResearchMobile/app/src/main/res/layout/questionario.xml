@@ -33,7 +33,7 @@
                 <ImageView
                     android:id="@+id/imageView1"
                     android:layout_width="15dp"
-                    android:background="@color/white"
+                    android:background="@color/color_primary2"
                     android:scaleType="centerCrop"
                     android:layout_height="50dp"
                     android:src="@mipmap/ic_arrow_foreground"
@@ -59,13 +59,14 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout2"
                 android:layout_width="fill_parent"
+                android:background="@color/color_primary2"
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
                 <ImageView
                     android:id="@+id/imageView2"
                     android:layout_width="15dp"
-                    android:background="@color/white"
+                    android:background="@color/color_primary2"
                     android:scaleType="centerCrop"
                     android:layout_height="50dp"
                     android:src="@mipmap/ic_arrow_foreground"
@@ -91,13 +92,14 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="fill_parent"
                 android:id="@+id/constraintLayout3"
+                android:background="@color/color_primary2"
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
 
                 <ImageView
                     android:id="@+id/imageView3"
-                    android:background="@color/white"
+                    android:background="@color/color_primary2"
                     android:layout_width="15dp"
                     android:scaleType="centerCrop"
                     android:layout_height="50dp"
@@ -124,12 +126,13 @@
                 android:layout_width="fill_parent"
                 android:id="@+id/constraintLayout4"
                 android:layout_height="wrap_content"
+                android:background="@color/color_primary2"
                 android:layout_weight="1">
 
                 <ImageView
                     android:id="@+id/imageView4"
                     android:layout_width="15dp"
-                    android:background="@color/white"
+                    android:background="@color/color_primary2"
                     android:scaleType="centerCrop"
                     android:layout_height="50dp"
                     android:src="@mipmap/ic_arrow_foreground"
@@ -212,24 +215,25 @@
 
     <Button
         android:id="@+id/buttonPersonalizado2"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_alignParentLeft="true"
+        android:layout_marginStart="4dp"
         android:background="@drawable/buttonborder"
         android:onClick="Avancar"
-        android:padding="15dp"
-        android:layout_marginStart="4dp"
+        android:padding="5dp"
         android:scaleType="fitXY"
-        android:text="teste"
+        android:text="teste "
         android:textColor="@color/black"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/blurLayout" />
 
     <Button
         android:id="@+id/buttonPersonalizado"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_alignParentRight="true"
         android:background="@drawable/buttonborder"
@@ -239,29 +243,36 @@
         android:scaleType="fitXY"
         android:text="teste"
         android:textColor="@color/black"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/blurLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/view"
         app:layout_constraintTop_toTopOf="@+id/blurLayout" />
 
     <Button
         android:id="@+id/imageButtonAvancar"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_alignParentRight="true"
         android:background="@drawable/buttonborder"
         android:onClick="Avancar"
-        android:layout_marginEnd="4dp"
         android:padding="15dp"
         android:scaleType="fitXY"
         android:text="Avançar"
         android:textColor="@color/black"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/blurLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/view"
         app:layout_constraintTop_toTopOf="@+id/blurLayout" />
 
-
+    <View
+        android:id="@+id/view"
+        android:layout_width="8dp"
+        android:layout_height="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/buttonPersonalizado"
+        app:layout_constraintStart_toStartOf="parent"></View>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -430,7 +430,7 @@ public class DataBase extends SQLiteOpenHelper{
 
 		try
 		{
-			pergunta.setID_PERGUNTAS(ncursor.getInt(0));
+			pergunta.setID_PERGUNTAS(ncursor.getString(0));
 			pergunta.setDESCRICAO(ncursor.getString(1));
 			pergunta.setID_BLOCO(ncursor.getInt(2));
 		}

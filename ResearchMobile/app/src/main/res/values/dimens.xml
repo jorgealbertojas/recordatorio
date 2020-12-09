@@ -7,7 +7,7 @@
 
     <dimen name="space_opcao">5dp</dimen>
 
-    <dimen name="text_size_help">16sp</dimen>
+    <dimen name="text_size_help">20sp</dimen>
 
 
     <dimen name="activity_horizontal_margin_content">4dp</dimen>

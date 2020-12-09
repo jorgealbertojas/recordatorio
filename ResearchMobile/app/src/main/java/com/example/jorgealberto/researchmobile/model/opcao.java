@@ -10,7 +10,7 @@ public class opcao implements Serializable{
 	 private String OPCAO;
 	 private String PERSONALIZACAO;
 	 private int MINIMO;
-	 private int ID_PERGUNTA;
+	 private String ID_PERGUNTA;
 	 private String SALTO;
 	 private int ORDENA;
 	 
@@ -22,7 +22,7 @@ public class opcao implements Serializable{
 		 this.OPCAO = "";
 		 this.PERSONALIZACAO = "";
 		 this.MINIMO = 0;
-		 this.ID_PERGUNTA = 0;
+		 this.ID_PERGUNTA = "0";
 		 this.SALTO = "0";
 		 this.ORDENA = 0;
 	 }
@@ -65,10 +65,10 @@ public class opcao implements Serializable{
 	public void setMINIMO(int mINIMO) {
 		MINIMO = mINIMO;
 	}
-	public long getID_PERGUNTA() {
+	public String getID_PERGUNTA() {
 		return ID_PERGUNTA;
 	}
-	public void setID_PERGUNTA(int iD_PERGUNTA) {
+	public void setID_PERGUNTA(String iD_PERGUNTA) {
 		ID_PERGUNTA = iD_PERGUNTA;
 	}
 	public String getSALTO() {

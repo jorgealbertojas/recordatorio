@@ -577,7 +577,7 @@ public class confirmar extends Activity {
 			WSActivity.putExtra("NomeGravacaoArquivo",NomeGravacaoArquivo);
 			WSActivity.putExtra("opcao",Integer.toString(1));
 			WSActivity.putExtra("opcaoQuestionario",Integer.toString(opcaoQuestionario));
-			WSActivity.putExtra("opcaoQuestionarioFINAL",Integer.toString(opcaoQuestionarioFINAL));
+			WSActivity.putExtra("opcaoQuestionarioFINAL",(opcaoQuestionarioFINAL));
 			if (nTIME) {
 				WSActivity.putExtra("nTIME", "1");
 			}
