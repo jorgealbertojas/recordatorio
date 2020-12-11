@@ -5,7 +5,6 @@ public class sql_create {
 	public static final int DBVERSION = 1;
 	public static String DBNAME = "DBSOFTJADSPESQUISA.db";
 
-
 	public static String TABLE_CONTROLE_INICIO = "CONTROLE_INICIO";
 	public static String CREATE_CONTROLE_INICIO =
 			"CREATE TABLE IF NOT EXISTS CONTROLE_INICIO (" +
@@ -116,8 +115,6 @@ public class sql_create {
 					" AUTOMATICO INTEGER, " +
 					" PREVISAO VARCHAR(100) )" ;
 
-
-
 	public static String TABLE_USUARIOS = "USUARIO";
 	public static String CREATE_USUARIO =
 			" CREATE TABLE IF NOT EXISTS USUARIO (" +
@@ -165,7 +162,8 @@ public class sql_create {
 					" ID_ALUNO INTEGER, " +
 					" ID VARCHAR (250), " +
 					" CODIGO INTEGER, " +
-					" DESCRICAO VARCHAR (250)); ";
+					" DESCRICAO VARCHAR (250), " +
+					" ALIMENTO_REFEICAO VARCHAR (250) ); ";
 
 	public static String TABLE_GRUPOS_ALIMENTOS = "GRUPOS_ALIMENTOS";
 	public static String CREATE_GRUPOS_ALIMENTOS =

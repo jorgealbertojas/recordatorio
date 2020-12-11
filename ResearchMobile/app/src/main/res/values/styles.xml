@@ -38,6 +38,11 @@
         <item name="android:textColor">@color/gray_dark</item>
     </style>
 
+    <style name="TextHelp10">
+        <item name="android:textSize">@dimen/text_size_help10</item>
+        <item name="android:textColor">@color/gray_dark</item>
+    </style>
+
     <style name="form_label">
         <item name="android:layout_marginRight">10dp</item>
         <item name="android:layout_width">match_parent</item>

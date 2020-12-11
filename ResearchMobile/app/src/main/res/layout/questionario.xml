@@ -223,6 +223,7 @@
         android:onClick="Avancar"
         android:padding="5dp"
         android:scaleType="fitXY"
+        android:textSize="16sp"
         android:text="teste "
         android:textColor="@color/black"
         android:visibility="visible"
@@ -242,6 +243,7 @@
         android:padding="15dp"
         android:scaleType="fitXY"
         android:text="teste"
+        android:textSize="16sp"
         android:textColor="@color/black"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -259,6 +261,7 @@
         android:padding="15dp"
         android:scaleType="fitXY"
         android:text="Avançar"
+        android:textSize="16sp"
         android:textColor="@color/black"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -268,7 +271,7 @@
 
     <View
         android:id="@+id/view"
-        android:layout_width="8dp"
+        android:layout_width="20dp"
         android:layout_height="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/buttonPersonalizado"

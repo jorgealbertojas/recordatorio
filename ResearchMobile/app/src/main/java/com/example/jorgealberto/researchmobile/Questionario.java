@@ -155,11 +155,9 @@ public class Questionario extends Activity  {
     public static Integer idade = 8;
     public static Boolean idadeBoolean = false;
 
-    public static String saltoTEMP_NOVO = "";
+    public static String saltoTEMP_NOVO = "ALIMENTO/1";
     public String saltoTEMP = saltoTEMP_NOVO;
     public static String ambienteTEMP = ConstAmbienteTEMP;
-
-    
 
     public static String nomeCrianca = "Jorge Alberto";
     public static String nomeAlimento = "Jorge Alberto";
@@ -239,8 +237,6 @@ public class Questionario extends Activity  {
     private List<String> steps = null;
     private boolean podedefechar = false;
     private InterfaceRetrofit mInterfaceObject;
-
-
 
     private GoogleApiClient client;
     private Callback<AlimentosCompletos> objectCallback = new Callback<AlimentosCompletos>() {
@@ -976,12 +972,11 @@ public class Questionario extends Activity  {
                                                 if ("Escola".equals(((RadioButton) view).getText().toString())) {
                                                     colocarValorAmbiente("{{EXIBIR_SOMENTE_ESCOLAR}}");
                                                 }
-                                                if (cursorPergunta.getString(7).equals("INICIO/1")) {
+                                                if (cursorPergunta.getString(7).equals("INICIO/2")) {
                                                     if ("Sim".equals(((RadioButton) view).getText().toString())) {
                                                         colocarValorAmbiente("{{EXIBIR_SOMENTE_PAPEL}}");
                                                     }
                                                 }
-
 
                                                 bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual)});
                                                 bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{(NumeroPerguntaAtual)});
@@ -1135,9 +1130,17 @@ public class Questionario extends Activity  {
                                         public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                                             if (((TextView) selectedItemView).getText() != constanteSelecione) {
                                                 if (((TextView) selectedItemView).getText().toString() != null) {
-                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), parentView.getTag().toString(),idAlimento});
+
+
+                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), parentView.getTag().toString(), idAlimento});
 
                                                     insereRegistro(parentView.getTag().toString(), ((TextView) selectedItemView).getText().toString(), 0);
+
+                                                    if (cursorPergunta.getString(7) != null && cursorPergunta.getString(7) != "") {
+                                                        if (cursorPergunta.getString(7).equals("FIM/1")) {
+                                                            bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'");
+                                                        }
+                                                    }
                                                 }
                                             } else {
                                                 // pega resposta
@@ -3058,12 +3061,12 @@ public class Questionario extends Activity  {
 
             for (int i = 0; i < ll.getChildCount(); i++) {
                 View child = ll.getChildAt(i);
-                if (child instanceof LinearLayout) {
+                if (child instanceof TextInputLayout) {
                     int ii = ll.getChildCount();
                     while (-2 < ii - 1) {
                         View child1 = ((LinearLayout) child).getChildAt(ii);
-                        if (child1 instanceof ImageView) {
-                            ImageView et = (ImageView) child1;
+                        if (child1 instanceof LinearLayout) {
+                            LinearLayout et = (LinearLayout) child1;
                             ViewGroup parent = (ViewGroup) et.getParent();
                             parent.removeView(et);
                         } else if (child1 instanceof TextView) {
@@ -4848,13 +4851,32 @@ public class Questionario extends Activity  {
                 linearLayout.setLayoutParams(params);
                 linearLayout.setOrientation(LinearLayout.HORIZONTAL);
                 linearLayout.setGravity(Gravity.CENTER);
-
-
                 paramsButton.gravity = Gravity.CENTER;
 
                 linearLayout.addView(textView, params);
                 linearLayout.addView(nButton2, paramsButton);
-                ll.addView(linearLayout);
+
+                //
+
+                LinearLayout.LayoutParams paramsTextHelp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                paramsTextHelp.setMargins(0, 0, 0, 0);
+                TextInputLayout editAnimation = new TextInputLayout(this);
+                editAnimation.setTag(cursorALIMENTO.getString(0));
+                if (cursorALIMENTO.getString(4)  != null) {
+                    editAnimation.setHelperText(" Refeição:" + cursorALIMENTO.getString(4));
+                    editAnimation.setHelperTextTextAppearance(R.style.TextHelp10);
+                }else{
+                    editAnimation.setHelperText("");
+                    editAnimation.setHelperTextTextAppearance(R.style.TextHelp10);
+                }
+
+                editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
+
+                editAnimation.addView(linearLayout, paramsTextHelp);
+                edits.add(editAnimation); // adiciona a nova editText a lista.
+                ll.addView(editAnimation, params);
+                //
+             //   ll.addView(linearLayout);
 
                 cursorALIMENTO.moveToNext();
             }
@@ -5619,10 +5641,10 @@ public class Questionario extends Activity  {
     }
 
     private boolean nestaPerguntaNãoColocaResposta(){
-       if (!cursorPergunta.getString(7).equals("ALIMENTO/2")){
+       if (cursorPergunta.getString(7).equals("ALIMENTO/2")){
           return false;
        }
-       if (!cursorPergunta.getString(7).equals("ALIMENTO/10")){
+       if (cursorPergunta.getString(7).equals("ALIMENTO/10")){
            return false;
        }
        return true;
