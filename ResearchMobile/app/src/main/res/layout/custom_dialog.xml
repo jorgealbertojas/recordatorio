@@ -30,7 +30,7 @@
             android:layout_height="30dp"
             android:background="@android:color/white"
             android:clickable="true"
-            android:text="Yes"
+            android:text="Sim"
             android:textColor="#5DBCD2"
             android:textStyle="bold" />
 
@@ -41,7 +41,7 @@
             android:layout_marginLeft="5dp"
             android:background="@android:color/white"
             android:clickable="true"
-            android:text="No"
+            android:text="Não"
             android:textColor="#5DBCD2"
             android:textStyle="bold" />
     </LinearLayout>

@@ -148,14 +148,14 @@ public class Questionario extends Activity  {
     public static final String ConstAmbienteTEMP = "{{EXIBIR_SOMENTE_DOMICILIAR}}";
     //public static final String ConstAmbienteTEMP = "{{EXIBIR_SOMENTE_ESCOLAR}}";
 
-    public static final String MAIOR_7ANO = "{{EXIBIR_SOMENTE_CRIANCA_MAIOR_7ANOS}}";
+    public static final String MAIOR_7ANO = "{{EXIBIR_SOMENTE_CRIANCA_MAIOR_OU_IGUAL_7ANOS}}";
 
-    public static final String MENOR_OU_IGUAL_7ANOS = "{{EXIBIR_SOMENTE_CRIANCA_MENOR_OU_IGUAL_7ANOS}}";
+    public static final String MENOR_OU_IGUAL_7ANOS = "{{EXIBIR_SOMENTE_CRIANCA_MENOR_7ANOS}}";
 
-    public static Integer idade = 8;
+    public static Integer idade = 6;
     public static Boolean idadeBoolean = false;
 
-    public static String saltoTEMP_NOVO = "ALIMENTO/1";
+    public static String saltoTEMP_NOVO = "";
     public String saltoTEMP = saltoTEMP_NOVO;
     public static String ambienteTEMP = ConstAmbienteTEMP;
 
@@ -1062,11 +1062,11 @@ public class Questionario extends Activity  {
                                     }
                                 }
                                 if (buttonPersonalizado.getVisibility() == View.INVISIBLE) {
-                                    if (idadeMaior7(cursor.getString(8),idade>7)) {
-                                        if (temIdadeFrase(cursor.getString(8))){
-                                            if (eParaFechar(cursor.getString(8))){
+                                    if (idadeMaior7(cursor.getString(8), idade >= 7)) {
+                                        if (temIdadeFrase(cursor.getString(8))) {
+                                            if (eParaFechar(cursor.getString(8))) {
                                                 buttonPersonalizado.setTag(cursor.getString(8));
-                                            }else{
+                                            } else {
                                                 buttonPersonalizado.setTag(cursor.getString(6));
                                             }
                                             buttonPersonalizado.setVisibility(View.VISIBLE);
@@ -1074,11 +1074,11 @@ public class Questionario extends Activity  {
                                         }
                                     }
                                 } else {
-                                    if (idadeMaior7(cursor.getString(8),idade>7)) {
+                                    if (idadeMaior7(cursor.getString(8), idade >= 7)) {
                                         if (temIdadeFrase(cursor.getString(8))) {
-                                            if (eParaFechar(cursor.getString(8))){
+                                            if (eParaFechar(cursor.getString(8))) {
                                                 buttonPersonalizado2.setTag(cursor.getString(8));
-                                            }else{
+                                            } else {
                                                 buttonPersonalizado2.setTag(cursor.getString(6));
                                             }
                                             buttonPersonalizado2.setVisibility(View.VISIBLE);
@@ -1131,14 +1131,14 @@ public class Questionario extends Activity  {
                                             if (((TextView) selectedItemView).getText() != constanteSelecione) {
                                                 if (((TextView) selectedItemView).getText().toString() != null) {
 
-
                                                     bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), parentView.getTag().toString(), idAlimento});
 
                                                     insereRegistro(parentView.getTag().toString(), ((TextView) selectedItemView).getText().toString(), 0);
-
-                                                    if (cursorPergunta.getString(7) != null && cursorPergunta.getString(7) != "") {
-                                                        if (cursorPergunta.getString(7).equals("FIM/1")) {
-                                                            bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'");
+                                                    if ((!cursorPergunta.isAfterLast())) {
+                                                        if (cursorPergunta.getString(7) != null && cursorPergunta.getString(7) != "") {
+                                                            if (cursorPergunta.getString(7).equals("FIM/1")) {
+                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'");
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -3230,11 +3230,12 @@ public class Questionario extends Activity  {
         try {
 
 
-            if (cursorPergunta.isAfterLast()) {
+           /* if (cursorPergunta.isAfterLast()) {
+                if (pergunta.contains(""))
                 Intent WSActivity = new Intent(this, fim.class);
                 startActivity(WSActivity);
                 this.finish();
-            }
+            }*/
 
             TagText = null;
             MaxText = null;
@@ -3278,8 +3279,9 @@ public class Questionario extends Activity  {
                         // BREAKPOINT N�O PARA NO BREAK
                         break;
                     }  else if (eParaFechar(cursorSALTO.getString(1))) {
-                        Intent WSActivity = new Intent(this, fim.class);
-                        startActivity(WSActivity);
+                        //   util.nome_crianca = nomeCrianca;
+                        // Intent WSActivity = new Intent(this, fim.class);
+                        //  startActivity(WSActivity);
                         this.finish();
                         break;
                     }
@@ -3646,9 +3648,13 @@ public class Questionario extends Activity  {
     }
 
     public boolean estaPreenchidoDESCRICAO() {
-        if (cursorPergunta.getString(7).equals("ALIMENTO/3")) {
-            return true;
-        }else{
+        if (!cursorPergunta.isAfterLast()) {
+            if (cursorPergunta.getString(7).equals("ALIMENTO/3")) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
             return false;
         }
 
@@ -4922,7 +4928,7 @@ public class Questionario extends Activity  {
                     Cursor cursorTUDO_ALIMENTO_CHECADO = bd.rawQuery(sql_select.GET_RESPOSTA_OPCAO_TOTAS_MAIOR_3, new String[]{Integer.toString(AlunoAtual), idPerguntaParaAliemnto, idAlimento});
                     cursorTUDO_ALIMENTO_CHECADO.moveToFirst();
                     cursorTUDO_ALIMENTO_CHECADO.getCount();
-                    if (cursorTUDO_ALIMENTO_CHECADO.getCount() > 3) {
+                    if (cursorTUDO_ALIMENTO_CHECADO.getCount() > 2) {
                         mostarCheck = true;
                     }
                 }
@@ -5072,6 +5078,22 @@ public class Questionario extends Activity  {
                     }
                     return personalizadoTEMP;
                 }
+
+                if ((personalizado.substring(0, 2).equals("{{"))) {
+                    if (personalizado.contains("}}")) {
+                        if (personalizado.indexOf("}") > 0) {
+                            personalizado = personalizado.substring(personalizado.indexOf("}") + 2, personalizado.length());
+                        }
+                    }
+                } else {
+                    if (personalizado.contains("{{")) {
+                        if (personalizado.indexOf("{") > 0) {
+                            personalizado = personalizado.substring(0, personalizado.indexOf("{") - 1);
+                        }
+                    }
+                }
+
+
                 return personalizado;
             } else {
                 return personalizado;
@@ -5145,20 +5167,32 @@ public class Questionario extends Activity  {
     public boolean mostraAmbiente(String valor) {
 
         if (valor != null) {
-            if (valor.contains("{{EXIBIR_SOMENTE_DOMICILIAR}}")) {
-                if (ambienteTEMP.contains(valor)) {
+            if (valor.contains("{{EXIBIR_SOMENTE_DOMICILIAR}}{{EXIBIR_SOMENTE_CRIANCA_MENOR_7ANOS}}")) {
+                if (idade < 7) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (valor.contains("{{EXIBIR_SOMENTE_DOMICILIAR}}{{EXIBIR_SOMENTE_CRIANCA_MAIOR_OU_IGUAL_7ANOS}}")) {
+                if (idade >= 7) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (valor.contains("{{EXIBIR_SOMENTE_DOMICILIAR}}")) {
+                if (valor.contains(ambienteTEMP)) {
                     return true;
                 } else {
                     return false;
                 }
             } else if (valor.contains("{{EXIBIR_SOMENTE_ESCOLAR}}")) {
-                if (ambienteTEMP.contains(valor)) {
+                if (valor.contains(ambienteTEMP)) {
                     return true;
                 } else {
                     return false;
                 }
-            }else if (valor.contains("{{EXIBIR_SOMENTE_PAPEL}}")) {
-                if (ambienteTEMP.contains(valor)) {
+            } else if (valor.contains("{{EXIBIR_SOMENTE_PAPEL}}")) {
+                if (valor.contains(ambienteTEMP)) {
                     return true;
                 } else {
                     return false;
@@ -5631,7 +5665,7 @@ public class Questionario extends Activity  {
                 InsereSalto("ALIMENTO/3", "ALIMENTO/3");
                 saltoTEMP = "";
                 AvancarQuestionario("");
-            }else{
+            } else {
                 Toast.makeText(this, "Preencha todos os dados", Toast.LENGTH_LONG).show();
             }
 
@@ -5640,14 +5674,16 @@ public class Questionario extends Activity  {
         }
     }
 
-    private boolean nestaPerguntaNãoColocaResposta(){
-       if (cursorPergunta.getString(7).equals("ALIMENTO/2")){
-          return false;
-       }
-       if (cursorPergunta.getString(7).equals("ALIMENTO/10")){
-           return false;
-       }
-       return true;
+    private boolean nestaPerguntaNãoColocaResposta() {
+        if (!cursorPergunta.isAfterLast()) {
+            if (cursorPergunta.getString(7).equals("ALIMENTO/2")) {
+                return false;
+            }
+            if (cursorPergunta.getString(7).equals("ALIMENTO/10")) {
+                return false;
+            }
+        }
+        return true;
     }
 
 

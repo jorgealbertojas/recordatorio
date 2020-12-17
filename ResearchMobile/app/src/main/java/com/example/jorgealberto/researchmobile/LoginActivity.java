@@ -162,8 +162,8 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
 
 
-       // email.setText(sharedPref.getString("preference_key_email", null));
-     //   password.setText(sharedPref.getString("preference_key_password", null));
+     //   email.setText(sharedPref.getString("preference_key_email", null));
+      //  password.setText(sharedPref.getString("preference_key_password", null));
 
          email.setText("marina");
          password.setText("senha");

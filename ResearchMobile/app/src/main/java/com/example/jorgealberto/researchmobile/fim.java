@@ -87,7 +87,8 @@ public class fim extends Activity{
 	Handler mHandler;
 	int LIMITE = 10;
 	Boolean nboolean = false;
-	
+
+
 	private XmlSerializer serializer = Xml.newSerializer();
 	private StringWriter writer;
 	
@@ -101,7 +102,10 @@ public class fim extends Activity{
         nDataBase = new DataBase(this);
 		bd = nDataBase.getReadableDatabase();
 		nDataBase.onCreate(bd);
-        
+
+
+
+
         /*if (modulo.nGPS){
         	GPSTracker gps;
     		gps = new GPSTracker(this);

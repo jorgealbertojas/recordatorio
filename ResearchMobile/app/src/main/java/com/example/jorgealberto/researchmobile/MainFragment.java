@@ -257,7 +257,7 @@ public class MainFragment extends Fragment {
 
         main_icon_schedule_image_view = (ImageView) fragmentView.findViewById(R.id.main_icon_schedule_image_view);
         imageviewEnviar = (ImageView) fragmentView.findViewById(R.id.imageviewEnviar);
-        main_icon_schedule_image_view.setColorFilter(main_icon_schedule_image_view.getContext().getResources().getColor(R.color.colorRedStart), PorterDuff.Mode.SRC_ATOP);
+        main_icon_schedule_image_view.setColorFilter(main_icon_schedule_image_view.getContext().getResources().getColor(R.color.green_dark), PorterDuff.Mode.SRC_ATOP);
 
         ImageView main_icon_schedule_image_view3 = fragmentView.findViewById(R.id.main_icon_schedule_image_view3 );
         main_icon_schedule_image_view3.setColorFilter(main_icon_schedule_image_view3.getContext().getResources().getColor(R.color.color_primary), PorterDuff.Mode.SRC_ATOP);
