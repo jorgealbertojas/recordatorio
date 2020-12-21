@@ -1058,19 +1058,8 @@ public class MainFragment extends Fragment {
         gps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //mMapFragment = MapFragment.newInstance();
-                //FragmentTransaction fragmentTransaction =
-                //        getFragmentManager().beginTransaction();
-                //fragmentTransaction.add(, mMapFragment);
-                //fragmentTransaction.commit();
-
-                 Intent WSActivity = new Intent(fragmentView.getContext(), MapsActivity.class);
+                 Intent WSActivity = new Intent(fragmentView.getContext(), CriarUsuario.class);
                  startActivity(WSActivity);
-
-
-
-
 
             }
         });
