@@ -17,6 +17,12 @@ public class Utility {
 
     public final static String COMPLEMENT_URL_USUARIO = "/RecordatorioFunc/usuario/login/";
 
+    public final static String COMPLEMENT_URL_CRIANCA = "/RecordatorioFunc/crianca/";
+
+    public final static String COMPLEMENT_URL_CRIANCA_FULL = "/RecordatorioFunc/crianca/todas/full/";
+
+    public final static String COMPLEMENT_URL_CRIANCA_DELETE = "/RecordatorioFunc/crianca/";
+
     public static int countCaracter(String string){
 
 

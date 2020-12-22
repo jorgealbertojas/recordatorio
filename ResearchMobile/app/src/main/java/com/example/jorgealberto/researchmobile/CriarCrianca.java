@@ -1,18 +1,14 @@
 package com.example.jorgealberto.researchmobile;
 
-import android.animation.Animator;
 import android.app.ActionBar;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,9 +17,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.jorgealberto.researchmobile.SQL.sql_delete;
-import com.example.jorgealberto.researchmobile.SQL.sql_select;
-import com.example.jorgealberto.researchmobile.modelJson.Usuario;
+import com.example.jorgealberto.researchmobile.modelJson.Crianca;
 import com.example.jorgealberto.researchmobile.util.InterfaceRetrofit;
 import com.example.jorgealberto.researchmobile.util.Utility;
 import com.google.android.material.textfield.TextInputLayout;
@@ -33,20 +27,18 @@ import com.google.gson.GsonBuilder;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class CriarUsuario extends AppCompatActivity {
+public class CriarCrianca extends AppCompatActivity {
 
     private Spinner spinner;
     private Button cancelar;
     private Button salvar;
-    private EditText edtSenha;
-    private EditText edtLogin;
+    private EditText edtEscola;
     private EditText edtNome;
 
     private String perfil = "0";
@@ -58,35 +50,14 @@ public class CriarUsuario extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_criar_usuario);
+        setContentView(R.layout.activity_criar_crianca);
 
-        edtSenha = (EditText) findViewById(R.id.edtSenha);
-        edtLogin = (EditText) findViewById(R.id.edtLogin);
+        createStackOverflowAPI();
+        mInterfaceObject.getCriancaFull().enqueue(objectCriancaCallback);
+
+        edtEscola = (EditText) findViewById(R.id.edtEscola);
         edtNome = (EditText) findViewById(R.id.edtNome);
         ll = (LinearLayout) this.findViewById(R.id.edits_ll);
-
-        spinner = (Spinner) findViewById(R.id.spinnerperfil);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-               perfil = ((TextView) selectedItemView).getText().toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-
-
-        });
-        String array_spinner[];
-        array_spinner = new String[3];
-        array_spinner[0] = "Usuario Escolar";
-        array_spinner[1] = "Usuario Domiciliar";
-        array_spinner[2] = "Coordenador";
-        ArrayAdapter adapter = new ArrayAdapter(this,
-                R.layout.textview_spinner_item, array_spinner);
-        spinner.setAdapter(adapter);
 
         cancelar = (Button) findViewById(R.id.cancelar);
         cancelar.setOnClickListener(new View.OnClickListener() {
@@ -102,18 +73,16 @@ public class CriarUsuario extends AppCompatActivity {
             public void onClick(View view) {
                 if (validateEmailAndPassword()) {
 
-                    Usuario usuario = new Usuario();
-                    usuario.setNome(edtNome.getText().toString());
-                    usuario.setSenha(edtSenha.getText().toString());
-                    usuario.setLogin(edtLogin.getText().toString());
-                    usuario.setPerfil(perfil);
+                    Crianca crianca = new Crianca();
+                    crianca.setNome(edtNome.getText().toString());
+                    crianca.setNomeEscola(edtEscola.getText().toString());
 
                     createStackOverflowAPI();
-                    mInterfaceObject.getUsuario(usuario).enqueue(cadatrarUsuarioCallback);
+                    mInterfaceObject.postCrianca(crianca).enqueue(cadatrarCriancaCallback);
 
 
                 } else {
-                    Toast.makeText(CriarUsuario.this, "Entre com login e senha!",
+                    Toast.makeText(CriarCrianca.this, "Entre com login e senha!",
                             Toast.LENGTH_SHORT).show();
                 }
             }
@@ -124,10 +93,9 @@ public class CriarUsuario extends AppCompatActivity {
     public boolean validateEmailAndPassword() {
 
         String nome = edtNome.getText().toString();
-        String senha = edtSenha.getText().toString();
-        String login = edtLogin.getText().toString();
+        String escola = edtEscola.getText().toString();
 
-        if (perfil != null && nome != null && (!senha.equals("")) && (!login.equals(""))) {
+        if (perfil != null && nome != null  && (!escola.equals(""))) {
             return true;
         } else {
             return false;
@@ -135,21 +103,24 @@ public class CriarUsuario extends AppCompatActivity {
     }
 
     /**
-     * Call Get InformationNew OBJECTS .
+     * Call post cadatrar CriancaCallback .
      */
-    private Callback<Usuario> cadatrarUsuarioCallback = new Callback<Usuario>() {
+    private Callback<Crianca> cadatrarCriancaCallback = new Callback<Crianca>() {
         @Override
-        public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+        public void onResponse(Call<Crianca> call, Response<Crianca> response) {
             try {
                 if (response.isSuccessful()) {
 
-
-
-                    Toast.makeText(CriarUsuario.this, "Cadastrado com sucesso!",
+                    Toast.makeText(CriarCrianca.this, "Cadastrado com sucesso!",
                             Toast.LENGTH_SHORT).show();
 
+                    apagarValoresLinearLayout();
+                    createStackOverflowAPI();
+                    mInterfaceObject.getCriancaFull().enqueue(objectCriancaCallback);
+
+
                 } else {
-                    Toast.makeText(CriarUsuario.this, "Login ou senha invalida!",
+                    Toast.makeText(CriarCrianca.this, "Cadastro invalido!",
                             Toast.LENGTH_SHORT).show();
                 }
             } catch (NullPointerException e) {
@@ -165,8 +136,8 @@ public class CriarUsuario extends AppCompatActivity {
         }
 
         @Override
-        public void onFailure(Call<Usuario> call, Throwable t) {
-            Toast.makeText(CriarUsuario.this, "Entre com login e senha!",
+        public void onFailure(Call<Crianca> call, Throwable t) {
+            Toast.makeText(CriarCrianca.this, "Entre com login e senha!",
                     Toast.LENGTH_SHORT).show();
         }
     };
@@ -184,12 +155,12 @@ public class CriarUsuario extends AppCompatActivity {
     }
 
     // personalizado
-    private void criarAlimentosInseridos(List<String> usuarios) {
+    private void criarGridCriancaInseridas(List<Crianca> listaCrianca) {
 
-        if (usuarios.size() > 0) {
-            for (int i = 0; i < usuarios.size(); i++) {
+        if (listaCrianca.size() > 0) {
+            for (int i = 0; i < listaCrianca.size(); i++) {
                 TextView textView = new TextView(getApplicationContext());
-                textView.setText(usuarios.get(i));
+                textView.setText(listaCrianca.get(i).getCodigo() + " " +  listaCrianca.get(i).getNome() + " - " + listaCrianca.get(i).getNomeEscola());
                 textView.setTag(i);
 
                 textView.setPadding(20, 20, 20, 20);
@@ -207,11 +178,15 @@ public class CriarUsuario extends AppCompatActivity {
 
                 final int newColor2 = res.getColor(R.color.red);
                 nButton2.setColorFilter(newColor2, PorterDuff.Mode.SRC_ATOP);
-                nButton2.setTag(usuarios.get(i));
+                nButton2.setTag(listaCrianca.get(i).getId());
 
                 nButton2.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
+                        createStackOverflowAPI();
+                        mInterfaceObject.deleteCrianca(view.getTag().toString()).enqueue(deletarCriancaCallback);
+
                         apagarValoresLinearLayout();
                     }
                 });
@@ -238,7 +213,7 @@ public class CriarUsuario extends AppCompatActivity {
                 LinearLayout.LayoutParams paramsTextHelp = new LinearLayout.LayoutParams(ActionBar.LayoutParams.FILL_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
                 paramsTextHelp.setMargins(0, 0, 0, 0);
                 TextInputLayout editAnimation = new TextInputLayout(this);
-                editAnimation.setTag(usuarios.get(i));
+                editAnimation.setTag(listaCrianca.get(i).getId());
 
                 editAnimation.setHelperText("");
                 editAnimation.setHelperTextTextAppearance(R.style.TextHelp10);
@@ -278,6 +253,77 @@ public class CriarUsuario extends AppCompatActivity {
 
         }
     }
+
+
+    private Callback<List<Crianca>> objectCriancaCallback = new Callback<List<Crianca>>() {
+        @Override
+        public void onResponse(Call<List<Crianca>> call, Response<List<Crianca>> response) {
+            try {
+                if (response.isSuccessful()) {
+                    criarGridCriancaInseridas(response.body());
+                } else {
+                    Log.d("QuestionsCallback", "Code: " + response.code() + " Message: " + response.message());
+                }
+            } catch (NullPointerException e) {
+                System.out.println("onActivityResult consume crashed");
+                runOnUiThread(new Runnable() {
+                    public void run() {
+
+                        Context context = getApplicationContext();
+
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onFailure(Call<List<Crianca>> call, Throwable t) {
+            System.out.println("onActivityResult consume crashed");
+        }
+    };
+
+
+    /**
+     * Call post cadatrar CriancaCallback .
+     */
+    private Callback<Boolean>deletarCriancaCallback = new Callback<Boolean>() {
+        @Override
+        public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+            try {
+                if (response.isSuccessful()) {
+
+                    Toast.makeText(CriarCrianca.this, "Deletado com sucesso!",
+                            Toast.LENGTH_SHORT).show();
+
+                    apagarValoresLinearLayout();
+                    createStackOverflowAPI();
+                    mInterfaceObject.getCriancaFull().enqueue(objectCriancaCallback);
+
+
+                } else {
+                    Toast.makeText(CriarCrianca.this, "Deleção invalida!",
+                            Toast.LENGTH_SHORT).show();
+                }
+            } catch (NullPointerException e) {
+                System.out.println("onActivityResult consume crashed");
+                runOnUiThread(new Runnable() {
+                    public void run() {
+
+                        Context context = getApplicationContext();
+
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onFailure(Call<Boolean> call, Throwable t) {
+            Toast.makeText(CriarCrianca.this, "Entre com login e senha!",
+                    Toast.LENGTH_SHORT).show();
+        }
+    };
+
+
 
 
 }

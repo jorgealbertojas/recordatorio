@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CriarUsuario">
+    tools:context=".CriarCrianca">
 
     <TextView
         android:id="@+id/textView14"
@@ -45,24 +45,24 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:id="@+id/nome"
+        android:id="@+id/escola"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginStart="20dp"
-        android:text="Login:"
+        android:text="Escola:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
     <EditText
-        android:id="@+id/edtLogin"
+        android:id="@+id/edtEscola"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="login"
+        android:hint="Escola"
         android:layout_marginStart="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/login"
-        app:layout_constraintStart_toEndOf="@+id/login"
-        app:layout_constraintTop_toTopOf="@+id/login">
+        app:layout_constraintBottom_toBottomOf="@+id/escola"
+        app:layout_constraintStart_toEndOf="@+id/escola"
+        app:layout_constraintTop_toTopOf="@+id/escola">
 
     </EditText>
 
@@ -74,7 +74,7 @@
         android:layout_marginTop="20dp"
         android:text="Nome"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login" />
+        app:layout_constraintTop_toBottomOf="@+id/escola" />
 
     <EditText
         android:id="@+id/edtNome"
@@ -89,57 +89,16 @@
     </EditText>
 
 
-    <TextView
-        android:id="@+id/senha"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:text="Senha:"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nome" />
-
-    <EditText
-        android:id="@+id/edtSenha"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="senha"
-        android:layout_marginStart="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/senha"
-        app:layout_constraintStart_toEndOf="@+id/senha"
-        app:layout_constraintTop_toTopOf="@+id/senha">
-
-    </EditText>
-
-    <TextView
-        android:id="@+id/perfil"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:text="Perfil:"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/senha" />
-
-    <Spinner
-        android:id="@+id/spinnerperfil"
-        android:layout_width="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        app:layout_constraintStart_toEndOf="@+id/perfil"
-        app:layout_constraintTop_toBottomOf="@+id/senha"></Spinner>
-
     <ScrollView
+        android:layout_marginTop="30dp"
         android:id="@+id/nScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="20dp"
         android:focusableInTouchMode="false"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
         app:layout_constraintBottom_toTopOf="@+id/cancelar"
-        app:layout_constraintTop_toBottomOf="@+id/perfil">
+        app:layout_constraintTop_toBottomOf="@+id/nome">
 
         <LinearLayout
             android:id="@+id/edits_ll"

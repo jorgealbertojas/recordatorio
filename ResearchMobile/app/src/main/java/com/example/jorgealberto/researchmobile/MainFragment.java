@@ -1045,12 +1045,12 @@ public class MainFragment extends Fragment {
     private void buttonAnimation() {
         // https://github.com/futuresimple/android-floating-action-button
 
-        final FloatingActionButton chat = (FloatingActionButton) fragmentView.findViewById(R.id.buscar);
+        final FloatingActionButton chat = (FloatingActionButton) fragmentView.findViewById(R.id.chat);
         chat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //((FloatingActionsMenu) findViewById(R.id.multiple_actions_down)).removeButton(removeAction);
-                calcular();
+                Intent WSActivity = new Intent(fragmentView.getContext(), CriarCrianca.class);
+                startActivity(WSActivity);
             }
         });
 
