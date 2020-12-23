@@ -2,10 +2,10 @@ package com.example.jorgealberto.researchmobile.util;
 
 
 import com.example.jorgealberto.researchmobile.model.AlimentosCompletos;
+import com.example.jorgealberto.researchmobile.model.Resposta;
 import com.example.jorgealberto.researchmobile.modelJson.Crianca;
-import com.example.jorgealberto.researchmobile.modelJson.ListPerguntas;
+import com.example.jorgealberto.researchmobile.modelJson.RespostaAdd;
 import com.example.jorgealberto.researchmobile.modelJson.Usuario;
-import com.example.jorgealberto.researchmobile.modelJson.alimentos;
 import com.example.jorgealberto.researchmobile.modelJson.perguntas;
 
 import java.util.List;
@@ -37,5 +37,14 @@ public interface InterfaceRetrofit {
 
         @DELETE(Utility.COMPLEMENT_URL_CRIANCA_DELETE + "{id_crianca}")
         Call<Boolean> deleteCrianca(@Path("id_crianca") String id_crianca);
+
+        @GET(Utility.COMPLEMENT_URL_CRIANCA_CODIGO + "{id_crianca}")
+        Call<Crianca> getCriancaCodigo(@Path("id_crianca") String id_crianca);
+
+        @POST(Utility.COMPLEMENT_URL_ADICIONA_RESPOSTA + "{id_crianca}")
+        Call<Crianca> postAdicionaCrianca(@Body RespostaAdd respostaAdd, @Path("id_crianca") String id_crianca);
+
+        @DELETE(Utility.COMPLEMENT_URL_RESPOSTA_CRIANCA_DELETE + "{id_crianca}" + "/{id_pergunta}")
+        Call<Boolean> deleteRespostaCrianca(@Path("id_crianca") String id_crianca, @Path("id_pergunta") String id_pergunta);
 
     }

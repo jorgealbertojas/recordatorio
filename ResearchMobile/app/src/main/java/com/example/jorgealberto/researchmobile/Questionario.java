@@ -76,6 +76,8 @@ import com.example.jorgealberto.researchmobile.library.MyConstant;
 import com.example.jorgealberto.researchmobile.model.AlimentosCompletos;
 import com.example.jorgealberto.researchmobile.model.Pergunta;
 import com.example.jorgealberto.researchmobile.model.contagemGrupoAlimentar;
+import com.example.jorgealberto.researchmobile.modelJson.Crianca;
+import com.example.jorgealberto.researchmobile.modelJson.RespostaAdd;
 import com.example.jorgealberto.researchmobile.modelJson.alimentos;
 import com.example.jorgealberto.researchmobile.service.DB;
 import com.example.jorgealberto.researchmobile.service.DataBase;
@@ -191,6 +193,7 @@ public class Questionario extends Activity  {
     private String NumeroPerguntaAtual = "0";
     private String nFONTE = "";
     private int AlunoAtual = 0;
+    private String AlunoAtualID = "0";
     private String usuario = "";
     private String Nomeusuario = "";
     private String NomeGravacaoArquivo = "";
@@ -415,6 +418,8 @@ public class Questionario extends Activity  {
 
         arrayVoltar = new ArrayList<>();
 
+        Bundle extras = getIntent().getExtras();
+        saltoTEMP = (extras.getString("saltoTEMP_NOVO"));
         if (!NaoENotificacao) {
             ambienteTEMP = ConstAmbienteTEMP;
         }
@@ -450,7 +455,7 @@ public class Questionario extends Activity  {
         constraintLayout3 = (ConstraintLayout) findViewById(R.id.constraintLayout3);
         constraintLayout4 = (ConstraintLayout) findViewById(R.id.constraintLayout4);
 
-        Bundle extras = getIntent().getExtras();
+
         filtro_id_cliente = extras.getString("filtro_id_cliente");
         filtro_id_pesquisa = extras.getString("filtro_id_pesquisa");
         filtro_automatico = extras.getString("filtro_automatico");
@@ -459,6 +464,8 @@ public class Questionario extends Activity  {
         usuario = extras.getString("usuario");
         Nomeusuario = extras.getString("Nomeusuario");
         AlunoAtual = Integer.parseInt(extras.getString("AlunoAtual"));
+        AlunoAtualID = (extras.getString("AlunoAtualID"));
+
         nFONTE = extras.getString("nFONTE");
         nGPS = extras.getString("nGPS").toString();
         opcao = extras.getString("opcao");
@@ -789,6 +796,9 @@ public class Questionario extends Activity  {
                                                 }
 
                                                 bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual)});
+                                                createStackOverflowAPI();
+                                                mInterfaceObject.deleteRespostaCrianca(AlunoAtualID,(NumeroPerguntaAtual)).enqueue(deletarRespostaCriancaCallback);
+
                                                 bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{(NumeroPerguntaAtual)});
 
                                                 if (getPersonalizacaoBOOLEAN((NumeroPerguntaAtual), ((RadioButton) view).getTag().toString())) {
@@ -822,9 +832,18 @@ public class Questionario extends Activity  {
                                         radionbuttons.add(radionbutton); // adiciona a nova editText a lista.
 
                                         // coloca resposta
-                                     //   if (colocaValorRadio(radionbutton.getTag().toString())){
-                                    //        radionbutton.setChecked(true);
-                                    //    }
+                                        if (colocaValorRadio(radionbutton.getTag().toString())){
+                                            radionbutton.setChecked(true);
+                                            Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{(NumeroPerguntaAtual), cursor.getString(0)});
+                                            cursorSALTO.moveToFirst();
+                                            cursorSALTO.getCount();
+
+                                            if (cursorSALTO.getCount() > 0) {
+                                                if (!cursorSALTO.getString(6).equals("0")) {
+                                                    InsereSalto(cursorSALTO.getString(6), cursor.getString(0));
+                                                }
+                                            }
+                                        }
 
                                         ll.addView(radionbutton, params); // adiciona a editText ao ViewGroup
                                     } else if (cursor.getString(3).equals("{{lista_alimentos_cadastrados_com_opcoes_editar_e_excluir}}")) {
@@ -2385,6 +2404,10 @@ public class Questionario extends Activity  {
                                                 int nMax = asTags.nTAGMAX;
 
                                                 bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual)});
+
+                                                createStackOverflowAPI();
+                                                mInterfaceObject.deleteRespostaCrianca(AlunoAtualID,(NumeroPerguntaAtual)).enqueue(deletarRespostaCriancaCallback);
+
                                                 insereRegistro(Integer.toString(ntag), Integer.toString(picker.getValue()), 0);
 
                                             } catch (Exception e) {
@@ -3109,20 +3132,35 @@ public class Questionario extends Activity  {
 
     public void insereRegistro(String pTag, String pvalue, int pPessoa) {
 
-        ContentValues obj = new ContentValues();
-        obj.put("ID_ALUNO", AlunoAtual);
-        obj.put("ID_PERGUNTA", NumeroPerguntaAtual);
-        obj.put("ID_OPCAO", pTag);
-        obj.put("VALOR", pvalue);
-        obj.put("ID_OPCAO_PESSOA", pPessoa);
-        if (colocaIDAlimento()) {
-            obj.put("ID_ALIMENTO", idAlimento);
-        } else {
-            obj.put("ID_ALIMENTO", "");
-        }
+        try {
 
-        this.onInsert(this, obj, sql_create.TABLE_RESPOSTA);
+            ContentValues obj = new ContentValues();
+            obj.put("ID_ALUNO", AlunoAtual);
+            obj.put("ID_PERGUNTA", NumeroPerguntaAtual);
+            obj.put("ID_OPCAO", pTag);
+            obj.put("VALOR", pvalue);
+            obj.put("ID_OPCAO_PESSOA", pPessoa);
+            if (colocaIDAlimento()) {
+                obj.put("ID_ALIMENTO", idAlimento);
+            } else {
+                obj.put("ID_ALIMENTO", "");
+            }
+
+            RespostaAdd respostaAdd = new RespostaAdd();
+            respostaAdd.setIdPergunta(NumeroPerguntaAtual);
+            respostaAdd.setIdItemPergunta(pTag);
+            respostaAdd.setValor(pvalue);
+
+            createStackOverflowAPI();
+            mInterfaceObject.postAdicionaCrianca(respostaAdd, AlunoAtualID).enqueue(cadatrarRespostaCallback);
+
+            this.onInsert(this, obj, sql_create.TABLE_RESPOSTA);
+
+        } catch (Throwable ex) {
+            System.out.println(ex.getMessage());
+        }
     }
+
 
     public void InsereSalto(String pSalto, String nItemPergunta) {
         ContentValues obj = new ContentValues();
@@ -5184,6 +5222,77 @@ public class Questionario extends Activity  {
         }
         return true;
     }
+
+    // Inserir resposta
+    private Callback<Crianca> cadatrarRespostaCallback = new Callback<Crianca>() {
+        @Override
+        public void onResponse(Call<Crianca> call, Response<Crianca> response) {
+            try {
+                if (response.isSuccessful()) {
+
+
+                }
+
+            } catch (NullPointerException e) {
+                System.out.println("onActivityResult consume crashed");
+                runOnUiThread(new Runnable() {
+                    public void run() {
+
+                        Context context = getApplicationContext();
+
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onFailure(Call<Crianca> call, Throwable t) {
+            Toast.makeText(Questionario.this, "Entre com login e senha!",
+                    Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    private void createStackOverflowAPI() {
+        Gson gson = new GsonBuilder()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Utility.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        mInterfaceObject = retrofit.create(InterfaceRetrofit.class);
+    }
+
+    /**
+     * Call post cadatrar CriancaCallback .
+     */
+    private Callback<Boolean>deletarRespostaCriancaCallback = new Callback<Boolean>() {
+        @Override
+        public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+            try {
+                if (response.isSuccessful()) {
+
+                }
+            } catch (NullPointerException e) {
+                System.out.println("onActivityResult consume crashed");
+                runOnUiThread(new Runnable() {
+                    public void run() {
+
+                        Context context = getApplicationContext();
+
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onFailure(Call<Boolean> call, Throwable t) {
+            Toast.makeText(Questionario.this, "Entre com login e senha!",
+                    Toast.LENGTH_SHORT).show();
+        }
+    };
+
 
 
 }

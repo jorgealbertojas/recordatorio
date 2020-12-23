@@ -91,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
         //bd.execSQL(sql_delete.DEL_MODO_PREPARACAO);
         //bd.execSQL(sql_delete.DEL_ADICOES);
         bd.execSQL(sql_delete.DEL_BLOCO_TODOS);
-        // bd.execSQL(sql_delete.DEL_RESPOSTA_TODOS);
+        bd.execSQL(sql_delete.DEL_RESPOSTA_TODOS);
         bd.execSQL(sql_delete.DEL_CONTROLE_INICIO);
         bd.execSQL(sql_delete.DEL_CONTROLE_FIM);
         bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ALUNO);

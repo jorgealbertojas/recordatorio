@@ -23,6 +23,12 @@ public class Utility {
 
     public final static String COMPLEMENT_URL_CRIANCA_DELETE = "/RecordatorioFunc/crianca/";
 
+    public final static String COMPLEMENT_URL_CRIANCA_CODIGO = "/RecordatorioFunc/crianca/codigo/";
+
+    public final static String COMPLEMENT_URL_ADICIONA_RESPOSTA = "/RecordatorioFunc/resposta/";
+
+    public final static String COMPLEMENT_URL_RESPOSTA_CRIANCA_DELETE = "/RecordatorioFunc/crianca_delete/";
+
     public static int countCaracter(String string){
 
 

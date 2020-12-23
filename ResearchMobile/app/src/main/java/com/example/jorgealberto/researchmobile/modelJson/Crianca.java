@@ -1,12 +1,16 @@
 package com.example.jorgealberto.researchmobile.modelJson;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Crianca implements Serializable {
+
     private String nome;
     private String nomeEscola;
     private String codigo;
     private String id;
+    private RespostaAdd ultimaResposta;
+    private List<RespostaAdd> todasRespostas;
 
     public String getNome() {
         return nome;
@@ -38,5 +42,21 @@ public class Crianca implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public List<RespostaAdd> getTodasRespostas() {
+        return todasRespostas;
+    }
+
+    public void setTodasRespostas(List<RespostaAdd> todasRespostas) {
+        this.todasRespostas = todasRespostas;
+    }
+
+    public RespostaAdd getUltimaResposta() {
+        return ultimaResposta;
+    }
+
+    public void setUltimaResposta(RespostaAdd ultimaResposta) {
+        this.ultimaResposta = ultimaResposta;
     }
 }
