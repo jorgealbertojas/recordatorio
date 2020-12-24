@@ -77,6 +77,7 @@ import com.example.jorgealberto.researchmobile.model.AlimentosCompletos;
 import com.example.jorgealberto.researchmobile.model.Pergunta;
 import com.example.jorgealberto.researchmobile.model.contagemGrupoAlimentar;
 import com.example.jorgealberto.researchmobile.modelJson.Crianca;
+import com.example.jorgealberto.researchmobile.modelJson.Imagens;
 import com.example.jorgealberto.researchmobile.modelJson.RespostaAdd;
 import com.example.jorgealberto.researchmobile.modelJson.alimentos;
 import com.example.jorgealberto.researchmobile.service.DB;
@@ -94,6 +95,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -107,6 +109,7 @@ import java.util.List;
 import java.util.Properties;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.FileProvider;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -126,6 +129,8 @@ public class Questionario extends Activity  {
     public EditText llPergunta;
 
     public boolean isBackPressed = false;
+
+    private List<Imagens> listimagens = null;
 
     public ImageButton fotoCamera = null;
     public ImageButton fotoCamera2 = null;
@@ -723,7 +728,9 @@ public class Questionario extends Activity  {
 
                         try {
 
-                            if (cursor.getInt(2) == 99) {
+                            if (true) {
+                                colocarasImagens();
+                            } else if (cursor.getInt(2) == 99) {
                                 AdicionarYouTube();
                             } else if (cursor.getInt(2) == 98) {
                                 if (cursor.getString(8).equals(VariavelAPI.constante_variavel_fotografar)) {
@@ -2722,6 +2729,117 @@ public class Questionario extends Activity  {
             AdicionarRegistro();
             mostrarnaGrid();
             cursorPergunta.moveToPrevious();
+        }
+
+    }
+
+    public static float convertDpToPixel(float dp, Context context){
+        return dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
+
+    private void colocarasImagens() {
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;// - (convertPixelsToDp(15f,this) * 2);
+
+
+        listimagens = new ArrayList();
+
+        Imagens imagens1 = new Imagens();
+        imagens1.setId("image1");
+        imagens1.setUrl("https://i.picsum.photos/id/834/200/200.jpg?hmac=vcoSQ7O6i2vxWANscm-9EGrw0MNqLzU3X0pQZ1o5ovI");
+        listimagens.add(imagens1);
+
+        Imagens imagens2 = new Imagens();
+        imagens2.setId("image2");
+        imagens2.setUrl("https://i.picsum.photos/id/979/200/200.jpg?hmac=WcPMB8O2ujsPsQzJm14ISP-kXmQ59P6G82VPGNwql4I");
+        listimagens.add(imagens2);
+
+        Imagens imagens3 = new Imagens();
+        imagens3.setId("image3");
+        imagens3.setUrl("https://i.picsum.photos/id/809/200/200.jpg?hmac=2U0kkZGtbw4L4bQc3aC8cZA6ywfn2MvR0d-YC4ITcI8");
+        listimagens.add(imagens3);
+
+        Imagens imagens4 = new Imagens();
+        imagens4.setId("image4");
+        imagens4.setUrl("https://i.picsum.photos/id/960/200/200.jpg?hmac=jBtZLcx2FwawGC7rwl0dNWTD3q1uuB7CjJmALIF9pIg");
+        listimagens.add(imagens4);
+
+        int tempImageID = 0;
+        ConstraintLayout constraintLayout = new ConstraintLayout(this);
+        ConstraintSet constraintSet = new ConstraintSet();
+
+
+        int tempWidth = (((width - ((int) convertDpToPixel(getResources().getDimension(R.dimen.imageTamanho),this)))) / 2);;
+        int temHeight = height / listimagens.size();
+
+        for (int i = 0; i < listimagens.size(); i++) {
+
+            if (i % 2 == 0) {
+                constraintLayout = new ConstraintLayout(this);
+                constraintSet = new ConstraintSet();
+
+                ImageView imageView1 = new ImageView(this);
+                imageView1.setId(View.generateViewId());
+                imageView1.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView1.setLayoutParams(new ConstraintLayout.LayoutParams(
+                        tempWidth, temHeight));
+
+                Picasso.get().load(listimagens.get(i).getUrl()).into(imageView1);
+                imageView1.setTag(Integer.toString(i));
+
+
+                constraintLayout.addView(imageView1);
+
+                LinearLayout.LayoutParams params;
+                params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+                params.setMargins(0, 0, 0, 0);
+                ll.addView(constraintLayout, params);
+
+                imageView1.setOnClickListener(new View.OnClickListener() {
+                                                   @Override
+                                                   public void onClick(View view) {
+                                                       ((ImageView) view).setBackground(getResources().getDrawable(R.drawable.image_select));
+                                                       Intent imageActivity = new Intent(Questionario.this, ImageActivity.class);
+                                                       imageActivity.putExtra("imagem_url", listimagens.get(Integer.parseInt(view.getTag().toString())).getUrl());
+                                                       startActivity(imageActivity);
+                                                   }
+                                               }
+                );
+
+                tempImageID = imageView1.getId();
+            } else  {
+                ImageView imageView2 = new ImageView(this);
+                imageView2.setId(View.generateViewId());
+                imageView2.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView2.setLayoutParams(new ConstraintLayout.LayoutParams(
+                        tempWidth, temHeight));
+
+                imageView2.setOnClickListener(new View.OnClickListener() {
+                                                  @Override
+                                                  public void onClick(View view) {
+                                                      ((ImageView) view).setBackground(getResources().getDrawable(R.drawable.image_select));
+
+                                                  }
+                                              }
+                );
+
+                Picasso.get().load(listimagens.get(i).getUrl()).into(imageView2);
+
+                imageView2.setTag(Integer.toString(i));
+
+                constraintLayout.addView(imageView2);
+                constraintSet.clone(constraintLayout);
+                constraintSet.connect(imageView2.getId(), ConstraintSet.START, tempImageID, ConstraintSet.END);
+
+                tempImageID = imageView2.getId();
+
+            }
+
+            constraintSet.applyTo(constraintLayout);
+
         }
 
     }

@@ -12,6 +12,8 @@
 
     <dimen name="text_size_help10">12sp</dimen>
 
+    <dimen name="imageTamanho">10dp</dimen>
+
 
     <dimen name="activity_horizontal_margin_content">4dp</dimen>
 
