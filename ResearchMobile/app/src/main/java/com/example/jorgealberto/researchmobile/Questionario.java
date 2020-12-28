@@ -147,11 +147,10 @@ public class Questionario extends Activity  {
     public ConstraintLayout constraintLayout3 = null;
     public ConstraintLayout constraintLayout4 = null;
 
-
     public boolean NaoENotificacao = false;
 
-    //public static final String ConstAmbienteTEMP = VariavelAPI.constante_variavel_papel;
-    public static final String ConstAmbienteTEMP = VariavelAPI.constante_variavel_domiciliar;
+    public static final String ConstAmbienteTEMP = VariavelAPI.constante_variavel_papel;
+    //public static final String ConstAmbienteTEMP = VariavelAPI.constante_variavel_domiciliar;
     //public static final String ConstAmbienteTEMP = VariavelAPI.constante_variavel_escolar;
 
     public static final String MAIOR_7ANO = VariavelAPI.constante_variavel_idade1;
@@ -160,7 +159,7 @@ public class Questionario extends Activity  {
     public static Integer idade = 6;
     public static Boolean idadeBoolean = false;
 
-    public static String saltoTEMP_NOVO = "";
+    public static String saltoTEMP_NOVO = "DETALIM/1/DOMINIC";
     public String saltoTEMP = saltoTEMP_NOVO;
     public static String ambienteTEMP = ConstAmbienteTEMP;
 
@@ -436,6 +435,15 @@ public class Questionario extends Activity  {
 
         if (!saltoTEMP.equals("")) {
             bd.execSQL(sql_delete.DEL_SALTO_TODOS, new String[]{});
+
+            if (VariavelAPI.contant_chave_inicair_anterior_DETALIMDOMIC2.equals(saltoTEMP)){
+                saltoTEMP = VariavelAPI.contant_chave_inicair_anterior_DETALIMDOMIC1;
+            }
+
+            if (VariavelAPI.contant_chave_inicair_anterior_DETALIMESC2.equals(saltoTEMP)){
+                saltoTEMP = VariavelAPI.contant_chave_inicair_anterior_DETALIMESC1;
+            }
+
             InsereSalto(saltoTEMP, saltoTEMP);
             saltoTEMP = "";
         }
@@ -483,6 +491,20 @@ public class Questionario extends Activity  {
             nTIME = true;
         } else {
             nTIME = false;
+        }
+
+
+        Cursor cursorQualAmbiente;
+        cursorQualAmbiente = bd.rawQuery(sql_select.GET_AMBIENTE_CASA, new String[]{(Integer.toString(AlunoAtual))});
+        cursorQualAmbiente.moveToFirst();
+        if (cursorQualAmbiente.getCount() > 0) {
+            ambienteTEMP = VariavelAPI.constante_variavel_domiciliar;
+        }
+
+        cursorQualAmbiente = bd.rawQuery(sql_select.GET_AMBIENTE_ESCOLAR, new String[]{(Integer.toString(AlunoAtual))});
+        cursorQualAmbiente.moveToFirst();
+        if (cursorQualAmbiente.getCount() > 0) {
+            ambienteTEMP = VariavelAPI.constante_variavel_escolar;
         }
 
         //edits = new ArrayList<EditText>();
@@ -728,9 +750,7 @@ public class Questionario extends Activity  {
 
                         try {
 
-                            if (true) {
-                                colocarasImagens();
-                            } else if (cursor.getInt(2) == 99) {
+                            if (cursor.getInt(2) == 99) {
                                 AdicionarYouTube();
                             } else if (cursor.getInt(2) == 98) {
                                 if (cursor.getString(8).equals(VariavelAPI.constante_variavel_fotografar)) {
@@ -853,9 +873,15 @@ public class Questionario extends Activity  {
                                         }
 
                                         ll.addView(radionbutton, params); // adiciona a editText ao ViewGroup
-                                    } else if (cursor.getString(3).equals("{{lista_alimentos_cadastrados_com_opcoes_editar_e_excluir}}")) {
+                                    } else if (cursor.getString(3).equals(VariavelAPI.constante_variavel_alimento_excluir_editar)) {
                                         criarAlimentosInseridos();
-                                    } else if (cursor.getString(3).equals("{{lista_alimentos_cadastrados_com_opcao_mais}}")) {
+                                    } else if (cursor.getString(3).equals(VariavelAPI.constante_variavel_alimento_porcoes)) {
+                                        colocarasImagens();
+
+                                    } else if (cursor.getString(3).equals(VariavelAPI.constante_variavel__refeicao)) {
+                                        criarRefeicaoInseridos();
+                                    }
+                                    else if (cursor.getString(3).equals(VariavelAPI.constante_variavel_alimento_cadastrado)) {
 
                                         Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{(NumeroPerguntaAtual), cursor.getString(0)});
                                         cursorSALTO.moveToFirst();
@@ -972,8 +998,14 @@ public class Questionario extends Activity  {
                                                     insereRegistro(parentView.getTag().toString(), ((TextView) selectedItemView).getText().toString(), 0);
                                                     if ((!cursorPergunta.isAfterLast())) {
                                                         if (cursorPergunta.getString(7) != null && cursorPergunta.getString(7) != "") {
-                                                            if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_101)) {
-                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'");
+                                                            if (VariavelAPI.constante_variavel_domiciliar.equals(ambienteTEMP)) {
+                                                                if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_101_domic)) {
+                                                                    bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'");
+                                                                }
+                                                            }else if (VariavelAPI.constante_variavel_escolar.equals(ambienteTEMP)) {
+                                                                if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_101_domic)) {
+                                                                    bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'");
+                                                                }
                                                             }
                                                         }
                                                     }
@@ -984,7 +1016,7 @@ public class Questionario extends Activity  {
                                                 if (!retornoTexto.equals("")) {
                                                     for (int i = 0; i < parentView.getAdapter().getCount(); i++) {
                                                         if (retornoTexto.equals(parentView.getAdapter().getItem(i).toString())) {
-                                                            if (nestaPerguntaNãoColocaResposta()) {
+                                                            if (nestaPerguntaNaoColocaResposta()) {
                                                                 spinner.setSelection(i);
                                                             }
                                                         }
@@ -1122,9 +1154,11 @@ public class Questionario extends Activity  {
                                     edit.setTag(cursor.getString(0));
 
                                     // colocar respostas
-                                    if (nestaPerguntaNãoColocaResposta()) {
+                                    if (nestaPerguntaNaoColocaResposta()) {
                                         edit.setText(colocaValor(edit.getTag().toString()));
                                     }
+
+
 
                                     if (cursor.getString(3).indexOf("]]") > 0) {
                                         PERSONALIZACAOHint.add(cursor.getString(3));
@@ -1205,6 +1239,10 @@ public class Questionario extends Activity  {
                                                         String n = cursorSALTO.getString(6);
 
                                                         String varAtualHint = AtualPERSONALIZACAOHint;
+
+                                                        if (AtualPERSONALIZACAOHint.contains(VariavelAPI.constante_descricao_nascimento)) {
+                                                            idade = Integer.parseInt(s.toString());
+                                                        }
 
                                                         String varAtualHintCompletoTM = "";
 
@@ -1378,7 +1416,7 @@ public class Questionario extends Activity  {
                                     edit.setBackgroundResource(R.drawable.rounded_corner);
 
                                     // colocar respostas
-                                    if (nestaPerguntaNãoColocaResposta()) {
+                                    if (nestaPerguntaNaoColocaResposta()) {
                                         edit.setText(colocaValor(edit.getTag().toString()));
                                     }
 
@@ -4545,6 +4583,84 @@ public class Questionario extends Activity  {
         }
     }
 
+
+
+
+    // personalizado
+    private void criarRefeicaoInseridos() {
+        Cursor cursorALIMENTO = bd.rawQuery(sql_select.GET_ALIMENTOS, new String[]{Integer.toString(AlunoAtual)});
+        cursorALIMENTO.moveToFirst();
+        cursorALIMENTO.getCount();
+
+        if (cursorALIMENTO.getCount() > 0) {
+            for (int i = 0; i < cursorALIMENTO.getCount(); i++) {
+                TextView textView = new TextView(getApplicationContext());
+                textView.setText(cursorALIMENTO.getString(4));
+                textView.setTag(i);
+
+                textView.setPadding(20, 20, 20, 20);
+                textView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                    }
+                });
+
+                Resources res = getResources();
+
+                ImageView nButton2 = new ImageView(this);
+                nButton2.setImageResource(R.mipmap.ic_delete);
+
+                final int newColor2 = res.getColor(R.color.red);
+                nButton2.setColorFilter(newColor2, PorterDuff.Mode.SRC_ATOP);
+                nButton2.setTag(cursorALIMENTO.getString(0));
+
+                nButton2.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        bd.execSQL(sql_delete.DEL_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (view.getTag().toString())});
+                        apagarValoresLinearLayout();
+                        criarAlimentosInseridos();
+                    }
+                });
+
+                LinearLayout.LayoutParams params;
+                params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+                params.setMargins(10, 0, 10, 0);
+                params.weight = 8f;
+
+                LinearLayout.LayoutParams paramsButton = new LinearLayout.LayoutParams((int) 200d, (int) 170d);
+                paramsButton.weight = 1f;
+
+                LinearLayout linearLayout = new LinearLayout(this);
+                linearLayout.setLayoutParams(params);
+                linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+                linearLayout.setGravity(Gravity.CENTER);
+                paramsButton.gravity = Gravity.CENTER;
+
+                linearLayout.addView(textView, params);
+                linearLayout.addView(nButton2, paramsButton);
+
+                //
+
+                LinearLayout.LayoutParams paramsTextHelp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                paramsTextHelp.setMargins(0, 0, 0, 0);
+                TextInputLayout editAnimation = new TextInputLayout(this);
+                editAnimation.setTag(cursorALIMENTO.getString(0));
+
+
+                editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
+
+                editAnimation.addView(linearLayout, paramsTextHelp);
+                edits.add(editAnimation); // adiciona a nova editText a lista.
+                ll.addView(editAnimation, params);
+
+
+                cursorALIMENTO.moveToNext();
+            }
+        }
+    }
+
     private void criarAlimentosInseridosDetahles() {
         Cursor cursorALIMENTO = bd.rawQuery(sql_select.GET_ALIMENTOS, new String[]{Integer.toString(AlunoAtual)});
         cursorALIMENTO.moveToFirst();
@@ -4651,16 +4767,31 @@ public class Questionario extends Activity  {
     }
 
     public boolean colocaIDAlimento() {
-        Cursor cursorID_ALIEMNTO_DETALHE = bd.rawQuery(sql_select.GET_TUDO_ALIMENTO_CHECADO, null);
-        cursorID_ALIEMNTO_DETALHE.moveToFirst();
-        cursorID_ALIEMNTO_DETALHE.getCount();
+        Cursor cursorID_ALIEMNTO_DETALHE;
 
-        if (cursorID_ALIEMNTO_DETALHE.getCount() > 0) {
-            idPerguntaParaAliemnto = cursorID_ALIEMNTO_DETALHE.getString(0);
-            return true;
-        } else {
+        if (ambienteTEMP != "") {
+            if (ambienteTEMP.equals(VariavelAPI.constante_variavel_domiciliar)) {
+                cursorID_ALIEMNTO_DETALHE = bd.rawQuery(sql_select.GET_TUDO_ALIMENTO_CHECADO_DOMIC, null);
+            }else if (ambienteTEMP.equals(VariavelAPI.constante_variavel_escolar)) {
+                cursorID_ALIEMNTO_DETALHE = bd.rawQuery(sql_select.GET_TUDO_ALIMENTO_CHECADO_ESC, null);
+            }else{
+                cursorID_ALIEMNTO_DETALHE = bd.rawQuery(sql_select.GET_TUDO_ALIMENTO_CHECADO_PAPEL, null);
+            }
+
+
+            cursorID_ALIEMNTO_DETALHE.moveToFirst();
+            cursorID_ALIEMNTO_DETALHE.getCount();
+
+            if (cursorID_ALIEMNTO_DETALHE.getCount() > 0) {
+                idPerguntaParaAliemnto = cursorID_ALIEMNTO_DETALHE.getString(0);
+                return true;
+            } else {
+                return false;
+            }
+        }else{
             return false;
         }
+
 
     }
 
@@ -5329,7 +5460,7 @@ public class Questionario extends Activity  {
         }
     }
 
-    private boolean nestaPerguntaNãoColocaResposta() {
+    private boolean nestaPerguntaNaoColocaResposta() {
         if (!cursorPergunta.isAfterLast()) {
             if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_103)) {
                 return false;

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CriarCrianca">
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/color_primary2"
+        android:text="Termo de condição"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </TextView>
+    <Button
+        android:id="@+id/cancelar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="20dp"
+        android:padding="20dp"
+        android:text="Cancelar"
+        android:background="@drawable/buttonborder"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/aceitar"
+        android:enabled="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:text="Aceitar termo"
+        android:padding="20dp"
+        android:background="@drawable/buttonborder"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+    <ScrollView
+
+        android:id="@+id/nScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:focusableInTouchMode="false"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/cancelar"
+        app:layout_constraintTop_toBottomOf="@+id/textView14">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+       <TextView
+           android:layout_width="match_parent"
+           android:text="	Lorem ipsum mauris sapien inceptos et sed sollicitudin, malesuada venenatis proin sit primis libero dolor, aliquet integer nostra inceptos torquent litora. consequat viverra ullamcorper lorem donec tincidunt gravida lacinia diam cras, dapibus a nullam convallis lacus cubilia tempor luctus suspendisse, augue vulputate habitant per pulvinar porta posuere gravida. a aliquet vulputate gravida iaculis praesent curabitur non, aliquam purus donec arcu eros cubilia habitasse aenean, aliquam venenatis tincidunt conubia gravida aenean. sapien eleifend integer rutrum feugiat himenaeos pulvinar dictum, egestas augue imperdiet elit in eleifend torquent consectetur, felis arcu amet justo sapien nullam.
+\n\n
+	Hendrerit mauris fusce lectus egestas elit sagittis hac netus, nisi himenaeos nec aliquam torquent condimentum augue imperdiet, lacinia purus hac sollicitudin integer nullam commodo. tincidunt et senectus neque velit et nisi, ad amet consequat aliquet lacus aenean quisque, pretium et egestas enim habitasse. lorem eu aliquam auctor himenaeos cursus enim, amet sapien fermentum rhoncus lectus netus, conubia posuere vehicula habitant facilisis, himenaeos sapien hendrerit cubilia porttitor. ultrices sodales hendrerit ullamcorper ultricies nam fermentum sagittis, ac integer risus hendrerit viverra etiam et, ut varius felis neque in primis. porttitor ornare lobortis at nam quisque per, accumsan eleifend nisi nunc fusce molestie platea, semper urna nulla lectus senectus.
+\n\n
+	Rhoncus primis nisi phasellus taciti augue ullamcorper, blandit taciti non massa blandit, sociosqu a fermentum condimentum dictumst. vestibulum ut et amet rutrum quisque felis congue tincidunt, aliquam arcu aenean massa ipsum porttitor habitant ultrices, euismod venenatis etiam condimentum augue inceptos dapibus. tincidunt ipsum turpis semper fusce sem rhoncus vestibulum, libero tortor urna egestas blandit euismod, consequat cubilia pretium tortor etiam habitant. enim consectetur vestibulum facilisis consectetur habitant tristique etiam phasellus, id ac fringilla scelerisque eget faucibus fringilla suscipit ultricies, gravida commodo morbi erat gravida nam convallis. luctus sed ad hendrerit ornare elementum cras duis conubia libero eget vestibulum lacinia habitasse massa, posuere eget porttitor gravida consectetur inceptos amet massa aptent auctor ipsum volutpat aliquet.
+\n\n
+	Velit lacus placerat luctus id mauris laoreet metus eros, pretium pulvinar curae accumsan volutpat interdum risus semper sodales, ultrices sapien aptent mi nisi sagittis phasellus. faucibus duis morbi potenti diam netus orci dolor, etiam duis commodo aptent scelerisque aliquam, cursus platea magna nulla ornare libero. feugiat lectus euismod iaculis sollicitudin tempus vitae nullam, proin mattis litora congue nam aenean eros, ultricies dictum ut tempus luctus ornare. quis himenaeos laoreet taciti pretium magna et aenean erat, eu gravida tincidunt taciti orci faucibus lectus himenaeos habitant, gravida nostra per hendrerit congue dolor curabitur.
+\n\n
+	Torquent vulputate aptent id elementum lorem lobortis phasellus, metus sit nibh pretium sodales nullam magna orci, platea luctus commodo laoreet metus augue. conubia id curabitur nisi elementum pretium senectus, tempor duis eget senectus euismod eros fermentum, nullam bibendum consequat vel arcu. non sagittis consectetur semper amet curabitur nec quam conubia sodales massa ultricies nam, urna vel a aenean donec massa et egestas elit volutpat aptent. posuere nec nisl lorem justo sociosqu in, sagittis congue dolor leo enim accumsan tellus, fusce ipsum gravida venenatis ligula. velit urna tristique massa molestie quisque ornare convallis, ad dui quis lacus dui. "
+           android:layout_height="wrap_content">
+
+       </TextView>
+
+        <CheckBox
+            android:id="@+id/checkTermo"
+            android:layout_width="match_parent"
+            android:text="Aceitar termo de uso."
+            android:layout_height="wrap_content">
+
+        </CheckBox>
+</LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

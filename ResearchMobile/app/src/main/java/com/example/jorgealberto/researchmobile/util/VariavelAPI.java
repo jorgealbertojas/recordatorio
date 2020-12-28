@@ -16,12 +16,16 @@ public class VariavelAPI {
 
     // Personalização especifica
     public static final String getConstante_variavel_fechar = "{{FECHAR_APLICATIVO}}";
-    public static final String constante_variavel_entrevistado = "{{nome_crianca}}";
-    public static final String contante_variavel_detalhar_alimento = "{{nome_alimento_selecionado_para_detalhar}}";
-    public static final String constante_variavel_fotografar = "{{fotografar}}";
+    public static final String constante_variavel_entrevistado = "{{NOME_CRIANCA}}";
+    public static final String contante_variavel_detalhar_alimento = "{{NOME_ALIMENTO_SELECIONADO_PARA_DETALHAR}}";
+    public static final String constante_variavel_fotografar = "{{FOTOGRAFAR}}";
     public static final String constante_variavel_modo_preparo  = "{{MODOS_PREPARO_ALIMENTO}}";
     public static final String constante_variavel_adicoes  = "{{ADICOES_ALIMENTO}}";
     public static final String constante_variavel_medida  = "{{MEDIDAS_CASEIRAS_ALIMENTO}}";
+    public static final String constante_variavel_alimento_excluir_editar = "{{LISTA_ALIMENTOS_CADASTRADOS_COM_OPCOES_EDITAR_E_EXCLUIR}}";
+    public static final String constante_variavel_alimento_cadastrado = "{{LISTA_ALIMENTOS_CADASTRADOS_COM_OPCAO_MAIS}}";
+    public static final String constante_variavel_alimento_porcoes = "{{FOTOS_PORCOES_ALIMENTO}}";
+    public static final String constante_variavel__refeicao = "{{LISTAR_REFEICOES_CADASTRADAS_COM_OPCAO_MAIS}}";
 
     // Extras
     public static final String constanteSelecione = "Selecione";
@@ -30,7 +34,7 @@ public class VariavelAPI {
     public static final String constante_descricao_acrescentou = "Você/a criança acrescentou algo neste alimento?";
     public static final String  constante_descricao_domiciliar = "Casa";
     public static final String  constante_descricao_escolar = "Escola";
-    public static final String constante_descricao_nascimento = "Data de nascimento";
+    public static final String constante_descricao_nascimento = "Idade";
     public static final String constante_descricoa_gravar = "Gravar";
     public static final String constante_descricao_alimento = "Nome do alimento";
     public static final String constante_descricao_medida = "Medida caseira";
@@ -47,6 +51,19 @@ public class VariavelAPI {
     public static final String constant_chave_104 =  "ALIMENTO/10";
     public static final String constant_chave_105 =  "INICIO/1";
     public static final String constant_chave_106 =  "DETALIM/2";
+
+    // caso iniciar
+    public static final String contant_chave_inicair_anterior_DETALIMDOMIC2 = "DETALIM/2/DOMIC";
+    public static final String contant_chave_inicair_anterior_DETALIMDOMIC1 = "DETALIM/1/DOMIC";
+
+    public static final String contant_chave_inicair_anterior_DETALIMESC2 = "DETALIM/2/ESC";
+    public static final String contant_chave_inicair_anterior_DETALIMESC1 = "DETALIM/1/ESC";
+
+    public static final String contant_chave_inicair_anterior_DETALIMPAPEL2 = "DETALIM/2/PAPEL";
+    public static final String contant_chave_inicair_anterior_DETALIMPAPEL1 = "DETALIM/1/PAPEL";
+
+    public static final String constant_chave_101_domic =  "FIMPAPEL/5";
+
 
 
 }

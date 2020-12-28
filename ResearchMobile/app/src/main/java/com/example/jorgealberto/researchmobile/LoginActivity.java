@@ -37,6 +37,7 @@ import com.example.jorgealberto.researchmobile.service.DB;
 import com.example.jorgealberto.researchmobile.service.DataBase;
 import com.example.jorgealberto.researchmobile.util.InterfaceRetrofit;
 import com.example.jorgealberto.researchmobile.util.ListWrapper;
+import com.example.jorgealberto.researchmobile.util.SharedPreferencesService;
 import com.example.jorgealberto.researchmobile.util.Utility;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -534,6 +535,15 @@ public class LoginActivity extends AppCompatActivity {
                                     Intent i = new Intent(LoginActivity.this, MainActivity.class);
                                     startActivity(i);
                                     overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
+
+                                    SharedPreferencesService shared = new SharedPreferencesService(LoginActivity.this);
+
+                                    if (!shared.getPermissao()){
+                                        Intent ii = new Intent(LoginActivity.this, ValidarPermissao.class);
+                                        startActivity(ii);
+                                        overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
+
+                                    }
                                     finish();
                                 }
 

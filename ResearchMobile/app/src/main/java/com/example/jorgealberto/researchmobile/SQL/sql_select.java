@@ -51,8 +51,15 @@ public class sql_select {
 			" SELECT ID_ALUNO, DESCRICAO " +
 					" FROM MODO_PREPARACAO  "+
 					" WHERE ID_ALIMENTO = ? ";
-	public static String GET_TUDO_ALIMENTO_CHECADO =
-			" SELECT  ID_PERGUNTA FROM perguntas where cod_pergunta = '" + VariavelAPI.constant_chave_106 + "'";
+	public static String GET_TUDO_ALIMENTO_CHECADO_DOMIC =
+			" SELECT  ID_PERGUNTA FROM perguntas where cod_pergunta = '" + VariavelAPI.contant_chave_inicair_anterior_DETALIMDOMIC2 + "' ";
+
+	public static String GET_TUDO_ALIMENTO_CHECADO_ESC =
+			" SELECT  ID_PERGUNTA FROM perguntas where cod_pergunta = '" + VariavelAPI.contant_chave_inicair_anterior_DETALIMESC2 + "'  ";
+
+	public static String GET_TUDO_ALIMENTO_CHECADO_PAPEL =
+			" SELECT  ID_PERGUNTA FROM perguntas where cod_pergunta = '" + VariavelAPI.contant_chave_inicair_anterior_DETALIMPAPEL2 + "'  ";
+
 	public static String GET_ALIMENTO_INSERIDO =
 			" SELECT  ID_PERGUNTA FROM perguntas where cod_pergunta =  '"+ VariavelAPI.constant_chave_104 +"'";
 	public static String GET_ADICOES =
@@ -133,6 +140,18 @@ public class sql_select {
 
 	public static String GET_OBRIGATORIO = " SELECT MINIMO FROM OPCAO WHERE ID_OPCAO = ? ";
 
+    public static String GET_AMBIENTE_CASA = "  SELECT  distinct * FROM resposta r, perguntas p, opcao o where \n" +
+			"     p.id_pergunta = o.id_pergunta \n" +
+			" and r.id_pergunta = p.id_pergunta \n" +
+			" and r.id_pergunta = o.id_pergunta \n" +
+			" and r.id_opcao = o.id_opcao\n" +
+			" and o.opcao = '" + VariavelAPI.constante_descricao_domiciliar +  "'  AND R.ID_ALUNO = ? ";
 
+	public static String GET_AMBIENTE_ESCOLAR = "  SELECT  distinct * FROM resposta r, perguntas p, opcao o where \n" +
+			"     p.id_pergunta = o.id_pergunta \n" +
+			" and r.id_pergunta = p.id_pergunta \n" +
+			" and r.id_pergunta = o.id_pergunta \n" +
+			" and r.id_opcao = o.id_opcao\n" +
+			" and o.opcao = '" + VariavelAPI.constante_descricao_escolar +  "'   AND R.ID_ALUNO = ? ";
 
 }

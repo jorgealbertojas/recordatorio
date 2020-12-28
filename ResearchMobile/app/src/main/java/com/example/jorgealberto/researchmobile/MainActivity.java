@@ -35,6 +35,7 @@ import com.example.jorgealberto.researchmobile.service.DB;
 import com.example.jorgealberto.researchmobile.service.DataBase;
 import com.example.jorgealberto.researchmobile.util.InterfaceRetrofit;
 import com.example.jorgealberto.researchmobile.util.ListWrapper;
+import com.example.jorgealberto.researchmobile.util.SharedPreferencesService;
 import com.example.jorgealberto.researchmobile.util.Utility;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -164,7 +165,14 @@ public class MainActivity extends Activity {
         //cursorPergunta.close();
     };
 
-
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        SharedPreferencesService shared = new SharedPreferencesService(MainActivity.this);
+        if (shared.getPermissao()){
+            finish();
+        }
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
