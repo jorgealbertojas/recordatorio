@@ -25,6 +25,9 @@ public class sql_delete {
 	public static String DEL_ALIMENTO = " DELETE FROM ALIMENTO WHERE ID_ALUNO = ? AND ID = ?   ";
 
 
+	public static String DEL_ALIMENTO_TUDO = " DELETE FROM ALIMENTO   ";
+
+
 	public static String DEL_TODOS_RESPOSTA = " DELETE FROM RESPOSTA WHERE ID_ALUNO = ? AND ID_PERGUNTA = ?   ";
 
 

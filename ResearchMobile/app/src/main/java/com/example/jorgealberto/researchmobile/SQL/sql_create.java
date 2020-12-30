@@ -163,7 +163,8 @@ public class sql_create {
 					" ID VARCHAR (250), " +
 					" CODIGO INTEGER, " +
 					" DESCRICAO VARCHAR (250), " +
-					" ALIMENTO_REFEICAO VARCHAR (250) ); ";
+					" ALIMENTO_REFEICAO VARCHAR (250)," +
+					" QUAL_E_ESSE_ITEM VARCHAR (250) ) ";
 
 	public static String TABLE_GRUPOS_ALIMENTOS = "GRUPOS_ALIMENTOS";
 	public static String CREATE_GRUPOS_ALIMENTOS =

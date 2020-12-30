@@ -14,6 +14,8 @@ import android.widget.Toast;
 import com.example.jorgealberto.researchmobile.SQL.sql_create;
 import com.example.jorgealberto.researchmobile.modelJson.Crianca;
 import com.example.jorgealberto.researchmobile.modelJson.RespostaAdd;
+import com.example.jorgealberto.researchmobile.modelJson.RespostaAlimento;
+import com.example.jorgealberto.researchmobile.modelJson.RespostaComplementosAlimento;
 import com.example.jorgealberto.researchmobile.service.DB;
 import com.example.jorgealberto.researchmobile.service.DataBase;
 import com.example.jorgealberto.researchmobile.util.InterfaceRetrofit;
@@ -185,21 +187,63 @@ public class automatico extends Activity {
 
 		try {
 
-			ContentValues obj = new ContentValues();
-			obj.put("ID_ALUNO", AlunoAtual);
-			obj.put("ID_PERGUNTA", respostaAdd.getIdPergunta());
-			obj.put("ID_OPCAO", respostaAdd.getIdItemPergunta());
-			obj.put("VALOR", respostaAdd.getValor());
-			obj.put("ID_OPCAO_PESSOA", 0);
+			Boolean eNormal = true;
 
-			// bebeto atenção mundar no futuro bebeto
 			if (respostaAdd.getTagLivre() != null) {
-				obj.put("ID_ALIMENTO", "");
-			} else {
-				obj.put("ID_ALIMENTO", "");
+				if (respostaAdd.getTagLivre().equals(sql_create.TABLE_ALIMENTO) ||
+						respostaAdd.getTagLivre().equals(sql_create.TABLE_ADICOES) ||
+						respostaAdd.getTagLivre().equals(sql_create.TABLE_MODO_PREPARACAO) ||
+						respostaAdd.getTagLivre().equals(sql_create.TABLE_GRUPOS_ALIMENTOS) ||
+						respostaAdd.getTagLivre().equals(sql_create.TABLE_MEDIDAS_CASEIRAS)) {
+					eNormal = false;
+				}
 			}
 
-			this.onInsert(this, obj, sql_create.TABLE_RESPOSTA);
+			if (eNormal) {
+				ContentValues obj = new ContentValues();
+				obj.put("ID_ALUNO", AlunoAtual);
+				obj.put("ID_PERGUNTA", respostaAdd.getIdPergunta());
+				obj.put("ID_OPCAO", respostaAdd.getIdItemPergunta());
+				obj.put("VALOR", respostaAdd.getValor());
+				obj.put("ID_OPCAO_PESSOA", 0);
+
+
+				// bebeto atenção mundar no futuro bebeto
+				if (respostaAdd.getTagLivre() != null) {
+					obj.put("ID_ALIMENTO", respostaAdd.getTagLivre());
+				} else {
+					obj.put("ID_ALIMENTO", "");
+				}
+
+				this.onInsert(this, obj, sql_create.TABLE_RESPOSTA);
+			} else {
+
+				Gson gson = new Gson();
+
+				if (respostaAdd.getTagLivre().equals(sql_create.TABLE_ALIMENTO)) {
+					RespostaAlimento personsFromJson = gson.fromJson(respostaAdd.getValor(), RespostaAlimento.class);
+					if (personsFromJson != null) {
+						ContentValues obj = new ContentValues();
+						obj.put("ID_ALUNO", AlunoAtual);
+						obj.put("ID", respostaAdd.getIdPergunta());
+						obj.put("CODIGO", personsFromJson.getCodigo());
+						obj.put("DESCRICAO", personsFromJson.getDescricao());
+						obj.put("QUAL_E_ESSE_ITEM", respostaAdd.getIdItemPergunta());
+						obj.put("ALIMENTO_REFEICAO", personsFromJson.getAlimento_refeicao());
+						this.onInsert(this, obj, sql_create.TABLE_ALIMENTO);
+					}
+				} else {
+					RespostaComplementosAlimento respostaComplementosAlimento = gson.fromJson(respostaAdd.getValor(), RespostaComplementosAlimento.class);
+					if (respostaComplementosAlimento != null) {
+						ContentValues obj = new ContentValues();
+						obj.put("ID_ALUNO", AlunoAtual);
+						obj.put("ID_ALIMENTO", respostaAdd.getIdPergunta());
+						obj.put("DESCRICAO", respostaComplementosAlimento.getDescricao());
+						this.onInsert(this, obj, respostaAdd.getTagLivre());
+					}
+				}
+
+			}
 
 		} catch (Throwable ex) {
 			System.out.println(ex.getMessage());

@@ -79,6 +79,8 @@ import com.example.jorgealberto.researchmobile.model.contagemGrupoAlimentar;
 import com.example.jorgealberto.researchmobile.modelJson.Crianca;
 import com.example.jorgealberto.researchmobile.modelJson.Imagens;
 import com.example.jorgealberto.researchmobile.modelJson.RespostaAdd;
+import com.example.jorgealberto.researchmobile.modelJson.RespostaAlimento;
+import com.example.jorgealberto.researchmobile.modelJson.RespostaComplementosAlimento;
 import com.example.jorgealberto.researchmobile.modelJson.alimentos;
 import com.example.jorgealberto.researchmobile.service.DB;
 import com.example.jorgealberto.researchmobile.service.DataBase;
@@ -146,6 +148,7 @@ public class Questionario extends Activity  {
     public ConstraintLayout constraintLayout2 = null;
     public ConstraintLayout constraintLayout3 = null;
     public ConstraintLayout constraintLayout4 = null;
+    public String refeicaoAtual = "";
 
     public boolean NaoENotificacao = false;
 
@@ -1001,10 +1004,13 @@ public class Questionario extends Activity  {
                                                             if (VariavelAPI.constante_variavel_domiciliar.equals(ambienteTEMP)) {
                                                                 if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_101_domic)) {
                                                                     bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'");
+                                                                    insereeAtualizaAlimentoeRefeicaoComoCodigo(idAlimento,((TextView) selectedItemView).getText().toString());
                                                                 }
                                                             }else if (VariavelAPI.constante_variavel_escolar.equals(ambienteTEMP)) {
                                                                 if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_101_domic)) {
                                                                     bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'");
+                                                                    insereeAtualizaAlimentoeRefeicaoComoCodigo(idAlimento,((TextView) selectedItemView).getText().toString());
+
                                                                 }
                                                             }
                                                         }
@@ -3306,6 +3312,7 @@ public class Questionario extends Activity  {
             respostaAdd.setIdPergunta(NumeroPerguntaAtual);
             respostaAdd.setIdItemPergunta(pTag);
             respostaAdd.setValor(pvalue);
+            respostaAdd.setTagLivre(idAlimento);
 
             createStackOverflowAPI();
             mInterfaceObject.postAdicionaCrianca(respostaAdd, AlunoAtualID).enqueue(cadatrarRespostaCallback);
@@ -4383,13 +4390,50 @@ public class Questionario extends Activity  {
         }
     }
 
-    public void insereRegistroAlimento(String pTag, String codigo, String pvalue) {
+    public void insereRegistroAlimento(String pTag, String codigo, String pvalue, String novoItemDesseAlimento, String alimentoRefeicao) {
         ContentValues obj = new ContentValues();
         obj.put("ID_ALUNO", AlunoAtual);
         obj.put("ID", pTag);
         obj.put("CODIGO", codigo);
         obj.put("DESCRICAO", pvalue);
+        obj.put("QUAL_E_ESSE_ITEM", novoItemDesseAlimento);
+
+        insereeAtualizaAlimentoeRefeicao(pTag,codigo,pvalue,alimentoRefeicao,novoItemDesseAlimento);
+
+
         this.onInsert(this, obj, sql_create.TABLE_ALIMENTO);
+    }
+
+    public void insereeAtualizaAlimentoeRefeicaoComoCodigo(String pTag, String alimentoRefeicao){
+
+        Cursor cursorALIMENTO = bd.rawQuery(sql_select.GET_ALIMENTOS_REFEICAO, new String[]{Integer.toString(AlunoAtual)});
+        cursorALIMENTO.moveToFirst();
+        cursorALIMENTO.getCount();
+
+        if (cursorALIMENTO.getCount() > 0) {
+            insereeAtualizaAlimentoeRefeicao(pTag,cursorALIMENTO.getString(3),cursorALIMENTO.getString(1),alimentoRefeicao,cursorALIMENTO.getString(6));
+        }
+
+    }
+
+    public void insereeAtualizaAlimentoeRefeicao(String pTag,String codigo, String pvalue, String alimentoRefeicao, String novoItemDesseAlimento){
+        RespostaAlimento respostaAlimento = new RespostaAlimento();
+        respostaAlimento.setId_crianca(Integer.toString(AlunoAtual));
+        respostaAlimento.setId_alimento(pTag);
+        respostaAlimento.setCodigo(codigo);
+        respostaAlimento.setDescricao(pvalue);
+        respostaAlimento.setAlimento_refeicao(alimentoRefeicao);
+
+        Gson gson = new Gson();
+
+        RespostaAdd respostaAdd = new RespostaAdd();
+        respostaAdd.setIdPergunta(pTag);
+        respostaAdd.setIdItemPergunta(novoItemDesseAlimento);
+        respostaAdd.setValor(gson.toJson(respostaAlimento));
+        respostaAdd.setTagLivre(sql_create.TABLE_ALIMENTO);
+
+        createStackOverflowAPI();
+        mInterfaceObject.postAdicionaCrianca(respostaAdd, AlunoAtualID).enqueue(cadatrarRespostaCallback);
     }
 
     public void insereRegistroGruposAlimentos(String pTag, String pvalue) {
@@ -4398,6 +4442,8 @@ public class Questionario extends Activity  {
         obj.put("ID_ALIMENTO", pTag);
         obj.put("DESCRICAO", pvalue);
         this.onInsert(this, obj, sql_create.TABLE_GRUPOS_ALIMENTOS);
+
+        insereeAtualizaOsComplementos(pTag,pvalue,sql_create.TABLE_GRUPOS_ALIMENTOS);
     }
 
     public void insereRegistroModosPreparacao(String pTag, String pvalue) {
@@ -4406,6 +4452,8 @@ public class Questionario extends Activity  {
         obj.put("ID_ALIMENTO", pTag);
         obj.put("DESCRICAO", pvalue);
         this.onInsert(this, obj, sql_create.TABLE_MODO_PREPARACAO);
+
+        insereeAtualizaOsComplementos(pTag,pvalue,sql_create.TABLE_MODO_PREPARACAO);
     }
 
     public void insereRegistroMedidasCaseiras(String pTag, String pvalue) {
@@ -4414,6 +4462,8 @@ public class Questionario extends Activity  {
         obj.put("ID_ALIMENTO", pTag);
         obj.put("DESCRICAO", pvalue);
         this.onInsert(this, obj, sql_create.TABLE_MEDIDAS_CASEIRAS);
+
+        insereeAtualizaOsComplementos(pTag,pvalue,sql_create.TABLE_MEDIDAS_CASEIRAS);
     }
 
     public void insereRegistroAdicoes(String pTag, String pvalue) {
@@ -4422,6 +4472,26 @@ public class Questionario extends Activity  {
         obj.put("ID_ALIMENTO", pTag);
         obj.put("DESCRICAO", pvalue);
         this.onInsert(this, obj, sql_create.TABLE_ADICOES);
+
+        insereeAtualizaOsComplementos(pTag,pvalue,sql_create.TABLE_ADICOES);
+    }
+
+    public void insereeAtualizaOsComplementos(String pTag, String pvalue, String ValorTipo){
+        RespostaComplementosAlimento respostaComplementosAlimento = new RespostaComplementosAlimento();
+        respostaComplementosAlimento.setId_crianca(Integer.toString(AlunoAtual));
+        respostaComplementosAlimento.setId_alimento(pTag);
+        respostaComplementosAlimento.setDescricao(pvalue);
+
+        Gson gson = new Gson();
+
+        RespostaAdd respostaAdd = new RespostaAdd();
+        respostaAdd.setIdPergunta(pTag);
+        respostaAdd.setIdItemPergunta(pvalue);
+        respostaAdd.setValor(gson.toJson(respostaComplementosAlimento));
+        respostaAdd.setTagLivre(ValorTipo);
+
+        createStackOverflowAPI();
+        mInterfaceObject.postAdicionaCrianca(respostaAdd, AlunoAtualID).enqueue(cadatrarRespostaCallback);
     }
 
     private AlertDialog desejaAdicionar(final View view, final String destino) {
@@ -4439,7 +4509,7 @@ public class Questionario extends Activity  {
             @Override
             public void onClick(View v) {
 
-                insereRegistroAlimento(data.get(((int) view.getTag())).getId(), data.get(((int) view.getTag())).getCodigo(), ((TextView) view).getText().toString());
+                insereRegistroAlimento(data.get(((int) view.getTag())).getId(), data.get(((int) view.getTag())).getCodigo(), ((TextView) view).getText().toString(),"1", refeicaoAtual);
 
                 List<String> gruposAlimentos = data.get(((int) view.getTag())).getGruposAlimentares();
                 if (gruposAlimentos != null) {
@@ -5445,7 +5515,7 @@ public class Questionario extends Activity  {
             }
 
             if (!alimento.equals("") && !medidacaseira.equals("") && !modopreparacao.equals("") && !quantidade.equals("")) {
-                insereRegistroAlimento(alimento+" | "+medidacaseira+" | "+modopreparacao+" | "+quantidade,"1",alimento+" | "+medidacaseira+" | "+modopreparacao+" | "+quantidade);
+                insereRegistroAlimento(alimento+" | "+medidacaseira+" | "+modopreparacao+" | "+quantidade,"1",alimento+" | "+medidacaseira+" | "+modopreparacao+" | "+quantidade,"1", refeicaoAtual);
                 Toast.makeText(this, "Inserido com sucesso!", Toast.LENGTH_LONG).show();
                 bd.execSQL(sql_delete.DEL_SALTO_TODOS, new String[]{});
                 InsereSalto(VariavelAPI.constant_chave_102, VariavelAPI.constant_chave_102);

@@ -87,10 +87,11 @@ public class LoginActivity extends AppCompatActivity {
         bd.execSQL(sql_delete.DEL_ALUNO_TODOS);
         bd.execSQL(sql_delete.DEL_PERGUNTAS_TODOS);
         bd.execSQL(sql_delete.DEL_OPCAO_TODOS);
-        //bd.execSQL(sql_delete.DEL_GRUPOS_ALIMENTOS);
-        //bd.execSQL(sql_delete.DEL_MEDIDAS_CASEIRASS);
-        //bd.execSQL(sql_delete.DEL_MODO_PREPARACAO);
-        //bd.execSQL(sql_delete.DEL_ADICOES);
+        bd.execSQL(sql_delete.DEL_GRUPOS_ALIMENTOS);
+        bd.execSQL(sql_delete.DEL_MEDIDAS_CASEIRASS);
+        bd.execSQL(sql_delete.DEL_MODO_PREPARACAO);
+        bd.execSQL(sql_delete.DEL_ADICOES);
+        bd.execSQL(sql_delete.DEL_ALIMENTO_TUDO);
         bd.execSQL(sql_delete.DEL_BLOCO_TODOS);
         bd.execSQL(sql_delete.DEL_RESPOSTA_TODOS);
         bd.execSQL(sql_delete.DEL_CONTROLE_INICIO);
