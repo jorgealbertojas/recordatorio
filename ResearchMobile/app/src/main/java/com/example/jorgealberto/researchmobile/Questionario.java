@@ -82,6 +82,7 @@ import com.example.jorgealberto.researchmobile.modelJson.RespostaAdd;
 import com.example.jorgealberto.researchmobile.modelJson.RespostaAlimento;
 import com.example.jorgealberto.researchmobile.modelJson.RespostaComplementosAlimento;
 import com.example.jorgealberto.researchmobile.modelJson.alimentos;
+import com.example.jorgealberto.researchmobile.modelJson.medidasCaseiras;
 import com.example.jorgealberto.researchmobile.service.DB;
 import com.example.jorgealberto.researchmobile.service.DataBase;
 import com.example.jorgealberto.researchmobile.service.DateValidator;
@@ -162,7 +163,7 @@ public class Questionario extends Activity  {
     public static Integer idade = 6;
     public static Boolean idadeBoolean = false;
 
-    public static String saltoTEMP_NOVO = "DETALIM/1/DOMINIC";
+    public static String saltoTEMP_NOVO = "DETALIM/2/ESC";
     public String saltoTEMP = saltoTEMP_NOVO;
     public static String ambienteTEMP = ConstAmbienteTEMP;
 
@@ -597,6 +598,7 @@ public class Questionario extends Activity  {
         buttonPersonalizado.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 if ((estaPreenchido() || estaPreenchidoDESCRICAO())) {
                     if (!gravaAlimento(buttonPersonalizado.getText().toString())) {
                         bd.execSQL(sql_delete.DEL_SALTO_TODOS, new String[]{});
@@ -746,17 +748,18 @@ public class Questionario extends Activity  {
                 }
                 isBackPressed = false;
 
-                while (!cursor.isAfterLast()) {
 
-                    if (mostraAmbiente(cursor.getString(8))) {
-                        pintaSeta(cursorPergunta.getInt(2));
+            while (!cursor.isAfterLast()) {
 
-                        try {
+                if (mostraAmbiente(cursor.getString(8))) {
+                    pintaSeta(cursorPergunta.getInt(2));
 
-                            if (cursor.getInt(2) == 99) {
-                                AdicionarYouTube();
-                            } else if (cursor.getInt(2) == 98) {
-                                if (cursor.getString(8).equals(VariavelAPI.constante_variavel_fotografar)) {
+                    try {
+
+                        if (cursor.getInt(2) == 99) {
+                            AdicionarYouTube();
+                        } else if (cursor.getInt(2) == 98) {
+                            if (cursor.getString(8).equals(VariavelAPI.constante_variavel_fotografar)) {
                                     AdicionarIconeFoto(true);
                                 } else {
                                     AdicionarIconeFoto(false);
@@ -2604,15 +2607,22 @@ public class Questionario extends Activity  {
                                     //edits.add(edit); // adiciona a nova editText a lista.
                                     ll.addView(edit, params); // adiciona a editText ao ViewGroup
                                 }
-                            }
-
-                        } catch (Exception e) {
-                            System.out.println(e.getMessage());
                         }
+
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
                     }
-                    cursor.moveToNext();
                 }
-                cursor.close();
+                cursor.moveToNext();
+            }
+
+            if (cursorPergunta.getString(7).equals(VariavelAPI.contant_chave_inicair_anterior_DETALIMESC2) || cursorPergunta.getString(7).equals(VariavelAPI.contant_chave_inicair_anterior_DETALIMDOMIC2)) {
+                buttonPersonalizado.setVisibility(View.INVISIBLE);
+                buttonPersonalizado2.setVisibility(View.INVISIBLE);
+                imageButtonAvancar.setVisibility(View.INVISIBLE);
+            }
+
+            cursor.close();
 
 
         } else {
@@ -4456,16 +4466,6 @@ public class Questionario extends Activity  {
         insereeAtualizaOsComplementos(pTag,pvalue,sql_create.TABLE_MODO_PREPARACAO);
     }
 
-    public void insereRegistroMedidasCaseiras(String pTag, String pvalue) {
-        ContentValues obj = new ContentValues();
-        obj.put("ID_ALUNO", AlunoAtual);
-        obj.put("ID_ALIMENTO", pTag);
-        obj.put("DESCRICAO", pvalue);
-        this.onInsert(this, obj, sql_create.TABLE_MEDIDAS_CASEIRAS);
-
-        insereeAtualizaOsComplementos(pTag,pvalue,sql_create.TABLE_MEDIDAS_CASEIRAS);
-    }
-
     public void insereRegistroAdicoes(String pTag, String pvalue) {
         ContentValues obj = new ContentValues();
         obj.put("ID_ALUNO", AlunoAtual);
@@ -4473,10 +4473,22 @@ public class Questionario extends Activity  {
         obj.put("DESCRICAO", pvalue);
         this.onInsert(this, obj, sql_create.TABLE_ADICOES);
 
-        insereeAtualizaOsComplementos(pTag,pvalue,sql_create.TABLE_ADICOES);
+        insereeAtualizaOsComplementos(pTag, pvalue, sql_create.TABLE_ADICOES);
     }
 
-    public void insereeAtualizaOsComplementos(String pTag, String pvalue, String ValorTipo){
+    public void insereRegistroMedidasCaseiras(String pTag, String pvalue) {
+        ContentValues obj = new ContentValues();
+        obj.put("ID_ALUNO", AlunoAtual);
+        obj.put("ID_ALIMENTO", pTag);
+        obj.put("DESCRICAO", pvalue);
+
+        this.onInsert(this, obj, sql_create.TABLE_MEDIDAS_CASEIRAS);
+
+        insereeAtualizaOsComplementos(pTag, pvalue, sql_create.TABLE_MEDIDAS_CASEIRAS);
+    }
+
+
+    public void insereeAtualizaOsComplementos(String pTag, String pvalue, String ValorTipo) {
         RespostaComplementosAlimento respostaComplementosAlimento = new RespostaComplementosAlimento();
         respostaComplementosAlimento.setId_crianca(Integer.toString(AlunoAtual));
         respostaComplementosAlimento.setId_alimento(pTag);
@@ -4525,10 +4537,11 @@ public class Questionario extends Activity  {
                     }
                 }
 
-                List<String> medidasCaseiras = data.get(((int) view.getTag())).getMedidasCaseiras();
+                List<medidasCaseiras> medidasCaseiras = data.get(((int) view.getTag())).getMedidasCaseiras();
                 if (medidasCaseiras != null) {
                     for (int x = 0; x < medidasCaseiras.size(); x++) {
-                        insereRegistroMedidasCaseiras(data.get(((int) view.getTag())).getId(), medidasCaseiras.get(x));
+                        Gson gson = new Gson();
+                        insereRegistroMedidasCaseiras(data.get(((int) view.getTag())).getId(), gson.toJson(medidasCaseiras.get(x)));
                     }
                 }
 
@@ -4924,13 +4937,26 @@ public class Questionario extends Activity  {
                     cursorMEDIDAS_CASEIRAS.moveToFirst();
                     cursorMEDIDAS_CASEIRAS.getCount();
 
+
                     if (cursorMEDIDAS_CASEIRAS.getCount() > 0) {
+
+
                         for (int i = 0; i < cursorMEDIDAS_CASEIRAS.getCount(); i++) {
-                            personalizadoTEMP = personalizadoTEMP + cursorMEDIDAS_CASEIRAS.getString(1);
-                            if (i < cursorMEDIDAS_CASEIRAS.getCount() - 1) {
-                                personalizadoTEMP = personalizadoTEMP + "|";
+
+                            if (cursorMEDIDAS_CASEIRAS.getString(1) != null) {
+
+                                Gson gson = new Gson();
+                                String tempMedida = cursorMEDIDAS_CASEIRAS.getString(1);
+
+                                medidasCaseiras medidasCaseiras = gson.fromJson(tempMedida, medidasCaseiras.class);
+
+                                personalizadoTEMP = personalizadoTEMP + medidasCaseiras.getNome();
+                                if (i < cursorMEDIDAS_CASEIRAS.getCount() - 1) {
+                                    personalizadoTEMP = personalizadoTEMP + "|";
+                                }
+                                cursorMEDIDAS_CASEIRAS.moveToNext();
+
                             }
-                            cursorMEDIDAS_CASEIRAS.moveToNext();
                         }
                     }
                     return personalizadoTEMP;

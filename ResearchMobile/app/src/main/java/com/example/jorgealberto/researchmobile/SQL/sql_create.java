@@ -180,18 +180,21 @@ public class sql_create {
 					" ID_ALIMENTO VARCHAR (250), " +
 					" DESCRICAO VARCHAR (250)); ";
 
-	public static String TABLE_MEDIDAS_CASEIRAS = "MEDIDAS_CASEIRAS";
-	public static String CREATE_MEDIDAS_CASEIRAS =
-			" CREATE TABLE IF NOT EXISTS MEDIDAS_CASEIRAS (" +
-					" ID_ALUNO INTEGER, " +
-					" ID_ALIMENTO VARCHAR (250), " +
-					" DESCRICAO VARCHAR (250)); ";
-
 	public static String TABLE_ADICOES = "ADICOES";
 	public static String CREATE_ADICOES =
 			" CREATE TABLE IF NOT EXISTS ADICOES (" +
 					" ID_ALUNO INTEGER, " +
 					" ID_ALIMENTO VARCHAR (250), " +
 					" DESCRICAO VARCHAR (250)); ";
+
+	public static String TABLE_MEDIDAS_CASEIRAS = "MEDIDAS_CASEIRAS";
+	public static String CREATE_MEDIDAS_CASEIRAS =
+			" CREATE TABLE IF NOT EXISTS MEDIDAS_CASEIRAS (" +
+					" ID_ALUNO INTEGER, " +
+					" ID_ALIMENTO VARCHAR (250), " +
+					" DESCRICAO BLOB ) ";
+
+
+
 
 }

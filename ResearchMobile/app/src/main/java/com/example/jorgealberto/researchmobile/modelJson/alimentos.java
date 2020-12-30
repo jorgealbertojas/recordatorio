@@ -10,9 +10,8 @@ public class alimentos implements Serializable {
     private String descricao;
     private List<String> gruposAlimentares;
     private List<String> modosPreparacao;
-    private List<String> medidasCaseiras;
+    private List<medidasCaseiras> medidasCaseiras;
     private List<String> adicoes;
-
 
     public String getId() {
         return id;
@@ -54,11 +53,11 @@ public class alimentos implements Serializable {
         this.modosPreparacao = modosPreparacao;
     }
 
-    public List<String> getMedidasCaseiras() {
+    public List<com.example.jorgealberto.researchmobile.modelJson.medidasCaseiras> getMedidasCaseiras() {
         return medidasCaseiras;
     }
 
-    public void setMedidasCaseiras(List<String> medidasCaseiras) {
+    public void setMedidasCaseiras(List<com.example.jorgealberto.researchmobile.modelJson.medidasCaseiras> medidasCaseiras) {
         this.medidasCaseiras = medidasCaseiras;
     }
 
