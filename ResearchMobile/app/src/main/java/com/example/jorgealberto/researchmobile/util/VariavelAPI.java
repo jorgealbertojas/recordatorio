@@ -21,7 +21,7 @@ public class VariavelAPI {
     public static final String constante_variavel_fotografar = "{{FOTOGRAFAR}}";
     public static final String constante_variavel_modo_preparo  = "{{MODOS_PREPARO_ALIMENTO}}";
     public static final String constante_variavel_adicoes  = "{{ADICOES_ALIMENTO}}";
-    public static final String constante_variavel_medida  = "GET_MEDIDAS_CASEIRAS";
+    public static final String constante_variavel_medida  = "{{MEDIDAS_CASEIRAS_ALIMENTO}}";
     public static final String constante_variavel_alimento_excluir_editar = "{{LISTA_ALIMENTOS_CADASTRADOS_COM_OPCOES_EDITAR_E_EXCLUIR}}";
     public static final String constante_variavel_alimento_cadastrado = "{{LISTA_ALIMENTOS_CADASTRADOS_COM_OPCAO_MAIS}}";
     public static final String constante_variavel_alimento_porcoes = "{{FOTOS_PORCOES_ALIMENTO}}";
