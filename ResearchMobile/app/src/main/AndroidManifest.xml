@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.jorgealberto.researchmobile">
+    package="com.example.jorgealberto.cadeconsumo">
 
     <application
         android:name="androidx.multidex.MultiDexApplication"
@@ -9,13 +9,13 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ValidarPermissao"></activity>
+        <activity android:name="com.example.jorgealberto.cadeconsumo.ValidarPermissao"></activity>
         <activity
-            android:name=".ImageActivity"
+            android:name="com.example.jorgealberto.cadeconsumo.ImageActivity"
             android:theme="@style/Theme.Transparent" />
-        <activity android:name=".CriarUsuario" />
-        <activity android:name=".CriarCrianca" />
-        <activity android:name=".LoginActivity">
+        <activity android:name="com.example.jorgealberto.cadeconsumo.CriarUsuario" />
+        <activity android:name="com.example.jorgealberto.cadeconsumo.CriarCrianca" />
+        <activity android:name="com.example.jorgealberto.cadeconsumo.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,55 +23,55 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.jorgealberto.cadeconsumo.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".login"
+            android:name="com.example.jorgealberto.cadeconsumo.login"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".login_user.activityLogin"
+            android:name="com.example.jorgealberto.cadeconsumo.login_user.activityLogin"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".ExecutorsActivity"
+            android:name="com.example.jorgealberto.cadeconsumo.ExecutorsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".automatico"
+            android:name="com.example.jorgealberto.cadeconsumo.automatico"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".automatico_nao"
+            android:name="com.example.jorgealberto.cadeconsumo.automatico_nao"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".confirmar"
+            android:name="com.example.jorgealberto.cadeconsumo.confirmar"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".DbExportImport"
+            android:name="com.example.jorgealberto.cadeconsumo.DbExportImport"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".Questionario"
+            android:name="com.example.jorgealberto.cadeconsumo.Questionario"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".fim"
+            android:name="com.example.jorgealberto.cadeconsumo.fim"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".faz_opcao_dinamica"
+            android:name="com.example.jorgealberto.cadeconsumo.faz_opcao_dinamica"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".ShowLocationActivity"
+            android:name="com.example.jorgealberto.cadeconsumo.ShowLocationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".inicio"
+            android:name="com.example.jorgealberto.cadeconsumo.inicio"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 
@@ -95,7 +95,7 @@
         -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.jorgealberto.researchmobile.fileprovider2"
+            android:authorities="com.example.jorgealberto.cadeconsumo.fileprovider2"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
