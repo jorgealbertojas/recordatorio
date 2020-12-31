@@ -63,7 +63,6 @@
             android:layout_marginTop="20dp"
             android:tint="#ffffff"
             android:visibility="gone"
-            android:src="@drawable/places_ic_clear"
             android:layout_below="@id/mainImageView2"
             android:id="@+id/mainImageView3"/>
 
