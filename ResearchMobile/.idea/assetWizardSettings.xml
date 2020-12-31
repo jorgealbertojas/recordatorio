@@ -79,8 +79,8 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\jorge\Downloads\iconfinder_sum_216751.png" />
-                                                <entry key="scalingPercent" value="46" />
+                                                <entry key="imagePath" value="C:\Users\jorge\Downloads\iconfinder_Artboard_30_5627758.png" />
+                                                <entry key="scalingPercent" value="131" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -112,7 +112,7 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="outputName" value="ic_sum" />
+                                      <entry key="outputName" value="ic_entrevistador" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -141,7 +141,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\jorge\Downloads\iconfinder_Mobile_application_6457551.png" />
+                                                <entry key="imagePath" value="C:\Users\jorge\Downloads\iconfinder_child_216220 (1).png" />
                                                 <entry key="paddingPercent" value="5" />
                                               </map>
                                             </option>
@@ -177,7 +177,7 @@
                                       <entry key="assetType" value="IMAGE" />
                                       <entry key="cropped" value="true" />
                                       <entry key="iconShape" value="NONE" />
-                                      <entry key="imageAsset" value="C:\Users\jorge\Downloads\iconfinder_Mobile_application_6457551.png" />
+                                      <entry key="imageAsset" value="C:\Users\jorge\Downloads\iconfinder_child_216220 (1).png" />
                                       <entry key="outputName" value="ic_icon" />
                                     </map>
                                   </option>

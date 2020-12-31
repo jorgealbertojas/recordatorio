@@ -10,6 +10,8 @@ public class Utility {
     public final static String BASE_URL =
             "https://recordatorioapi.azure-api.net/";
 
+    public final static String imagemURL = "https://recordatorioapi.azure-api.net/RecordatorioFunc/foto/";
+
     /** Base URL for get Json */
     public final static String COMPLEMENT_URL = "/RecordatorioFunc/questionario";
 

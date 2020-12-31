@@ -134,6 +134,8 @@ public class Questionario extends Activity  {
     public boolean isBackPressed = false;
 
     private List<Imagens> listimagens = null;
+    private List<String> saltoTelaImagem = null;
+    private List<String> qualTelaImagem = null;
 
     public ImageButton fotoCamera = null;
     public ImageButton fotoCamera2 = null;
@@ -246,6 +248,7 @@ public class Questionario extends Activity  {
     private List<String> steps = null;
     private boolean podedefechar = false;
     private InterfaceRetrofit mInterfaceObject;
+
 
     private GoogleApiClient client;
     private Callback<AlimentosCompletos> objectCallback = new Callback<AlimentosCompletos>() {
@@ -739,15 +742,18 @@ public class Questionario extends Activity  {
 
                 Resources res = getResources();
 
-                buttonPersonalizado.setVisibility(View.INVISIBLE);
-                buttonPersonalizado2.setVisibility(View.INVISIBLE);
-                imageButtonAvancar.setVisibility(View.VISIBLE);
+            buttonPersonalizado.setVisibility(View.INVISIBLE);
+            buttonPersonalizado2.setVisibility(View.INVISIBLE);
+            imageButtonAvancar.setVisibility(View.VISIBLE);
 
-                if (!isBackPressed) {
-                    arrayVoltar.add(cursorPergunta.getString(7));
-                }
-                isBackPressed = false;
+            if (!isBackPressed) {
+                arrayVoltar.add(cursorPergunta.getString(7));
+            }
+            isBackPressed = false;
 
+
+            saltoTelaImagem = new ArrayList<String>();
+            qualTelaImagem = new ArrayList<String>();
 
             while (!cursor.isAfterLast()) {
 
@@ -882,7 +888,7 @@ public class Questionario extends Activity  {
                                     } else if (cursor.getString(3).equals(VariavelAPI.constante_variavel_alimento_excluir_editar)) {
                                         criarAlimentosInseridos();
                                     } else if (cursor.getString(3).equals(VariavelAPI.constante_variavel_alimento_porcoes)) {
-                                        colocarasImagens();
+                                        colocarImagens();
 
                                     } else if (cursor.getString(3).equals(VariavelAPI.constante_variavel__refeicao)) {
                                         criarRefeicaoInseridos();
@@ -904,17 +910,21 @@ public class Questionario extends Activity  {
                                     }
                                 }
                             } else if (cursor.getInt(2) == 34) {
-                                String opcoes = cursor.getString(3);
-                                if (buttonPersonalizado.getVisibility() == View.INVISIBLE) {
-                                    if (mostraAmbiente(cursor.getString(8)) && (!temIdadeFrase(cursor.getString(8)))){
-                                        if (eParaFechar(cursor.getString(8))){
-                                            buttonPersonalizado.setTag(cursor.getString(8));
-                                        }else{
-                                            buttonPersonalizado.setTag(cursor.getString(6));
-                                        }
-                                        if (buttonPersonalizadoBolean) {
-                                            buttonPersonalizado.setVisibility(View.VISIBLE);
-                                        }
+                            String opcoes = cursor.getString(3);
+
+                            saltoTelaImagem.add(cursor.getString(6));
+                            qualTelaImagem.add(cursor.getString(8));
+
+                            if (buttonPersonalizado.getVisibility() == View.INVISIBLE) {
+                                if (mostraAmbiente(cursor.getString(8)) && (!temIdadeFrase(cursor.getString(8)))) {
+                                    if (eParaFechar(cursor.getString(8))) {
+                                        buttonPersonalizado.setTag(cursor.getString(8));
+                                    } else {
+                                        buttonPersonalizado.setTag(cursor.getString(6));
+                                    }
+                                    if (buttonPersonalizadoBolean) {
+                                        buttonPersonalizado.setVisibility(View.VISIBLE);
+                                    }
                                         buttonPersonalizadoBolean = true;
                                         buttonPersonalizado.setText(opcoes);
                                     }
@@ -1002,14 +1012,47 @@ public class Questionario extends Activity  {
                                                     bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), parentView.getTag().toString(), idAlimento});
 
                                                     insereRegistro(parentView.getTag().toString(), ((TextView) selectedItemView).getText().toString(), 0);
+
+                                                    Cursor cursorMEDIDAS_CASEIRAS = bd.rawQuery(sql_select.GET_MEDIDAS_CASEIRAS, new String[]{idAlimento});
+                                                    cursorMEDIDAS_CASEIRAS.moveToFirst();
+                                                    cursorMEDIDAS_CASEIRAS.getCount();
+
+                                                    if (cursorMEDIDAS_CASEIRAS.getCount() > 0) {
+                                                        for (int h = 0; h < cursorMEDIDAS_CASEIRAS.getCount(); h++) {
+                                                            Gson gson = new Gson();
+                                                            String tempMedida = cursorMEDIDAS_CASEIRAS.getString(1);
+
+                                                            medidasCaseiras medidasCaseiras = gson.fromJson(tempMedida, medidasCaseiras.class);
+                                                            if (medidasCaseiras.getNome().equals(((TextView) selectedItemView).getText().toString())) {
+
+                                                                if (medidasCaseiras.getTipoFoto().equals("FOTO_PORCAO_ALIMENTO")){
+                                                                    habilitarBotao(VariavelAPI.constant_foto_alimento);
+                                                                }else if (medidasCaseiras.getTipoFoto().equals("SEM FOTO")){
+                                                                    habilitarBotao(VariavelAPI.constant_sem_foto);
+                                                                }else{
+                                                                    habilitarBotao(VariavelAPI.constant_foto_utensilio);
+                                                                }
+
+                                                                listimagens = new ArrayList<>();
+                                                                for (int y = 0; y < medidasCaseiras.getFotos().size(); y++) {
+                                                                    Imagens imagens = new Imagens();
+                                                                    imagens.setUrl(Utility.imagemURL + medidasCaseiras.getFotos().get(y));
+                                                                    imagens.setId(medidasCaseiras.getNome());
+                                                                    listimagens.add(imagens);
+                                                                }
+                                                            }
+                                                            cursorMEDIDAS_CASEIRAS.moveToNext();
+                                                        }
+                                                    }
+
                                                     if ((!cursorPergunta.isAfterLast())) {
                                                         if (cursorPergunta.getString(7) != null && cursorPergunta.getString(7) != "") {
                                                             if (VariavelAPI.constante_variavel_domiciliar.equals(ambienteTEMP)) {
                                                                 if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_101_domic)) {
                                                                     bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'");
-                                                                    insereeAtualizaAlimentoeRefeicaoComoCodigo(idAlimento,((TextView) selectedItemView).getText().toString());
+                                                                    insereeAtualizaAlimentoeRefeicaoComoCodigo(idAlimento, ((TextView) selectedItemView).getText().toString());
                                                                 }
-                                                            }else if (VariavelAPI.constante_variavel_escolar.equals(ambienteTEMP)) {
+                                                            } else if (VariavelAPI.constante_variavel_escolar.equals(ambienteTEMP)) {
                                                                 if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_101_domic)) {
                                                                     bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'");
                                                                     insereeAtualizaAlimentoeRefeicaoComoCodigo(idAlimento,((TextView) selectedItemView).getText().toString());
@@ -2617,7 +2660,7 @@ public class Questionario extends Activity  {
             }
 
             if (cursorPergunta.getString(7).equals(VariavelAPI.contant_chave_inicair_anterior_DETALIMESC2) || cursorPergunta.getString(7).equals(VariavelAPI.contant_chave_inicair_anterior_DETALIMDOMIC2)) {
-                buttonPersonalizado.setVisibility(View.INVISIBLE);
+                buttonPersonalizado.setVisibility(View.VISIBLE);
                 buttonPersonalizado2.setVisibility(View.INVISIBLE);
                 imageButtonAvancar.setVisibility(View.INVISIBLE);
             }
@@ -2791,35 +2834,12 @@ public class Questionario extends Activity  {
         return dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
 
-    private void colocarasImagens() {
+    private void colocarImagens() {
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;// - (convertPixelsToDp(15f,this) * 2);
-
-
-        listimagens = new ArrayList();
-
-        Imagens imagens1 = new Imagens();
-        imagens1.setId("image1");
-        imagens1.setUrl("https://i.picsum.photos/id/834/200/200.jpg?hmac=vcoSQ7O6i2vxWANscm-9EGrw0MNqLzU3X0pQZ1o5ovI");
-        listimagens.add(imagens1);
-
-        Imagens imagens2 = new Imagens();
-        imagens2.setId("image2");
-        imagens2.setUrl("https://i.picsum.photos/id/979/200/200.jpg?hmac=WcPMB8O2ujsPsQzJm14ISP-kXmQ59P6G82VPGNwql4I");
-        listimagens.add(imagens2);
-
-        Imagens imagens3 = new Imagens();
-        imagens3.setId("image3");
-        imagens3.setUrl("https://i.picsum.photos/id/809/200/200.jpg?hmac=2U0kkZGtbw4L4bQc3aC8cZA6ywfn2MvR0d-YC4ITcI8");
-        listimagens.add(imagens3);
-
-        Imagens imagens4 = new Imagens();
-        imagens4.setId("image4");
-        imagens4.setUrl("https://i.picsum.photos/id/960/200/200.jpg?hmac=jBtZLcx2FwawGC7rwl0dNWTD3q1uuB7CjJmALIF9pIg");
-        listimagens.add(imagens4);
 
         int tempImageID = 0;
         ConstraintLayout constraintLayout = new ConstraintLayout(this);
@@ -2855,6 +2875,7 @@ public class Questionario extends Activity  {
                 imageView1.setOnClickListener(new View.OnClickListener() {
                                                    @Override
                                                    public void onClick(View view) {
+                                                       desmarcarImagem();
                                                        ((ImageView) view).setBackground(getResources().getDrawable(R.drawable.image_select));
                                                        Intent imageActivity = new Intent(Questionario.this, ImageActivity.class);
                                                        imageActivity.putExtra("imagem_url", listimagens.get(Integer.parseInt(view.getTag().toString())).getUrl());
@@ -2874,7 +2895,11 @@ public class Questionario extends Activity  {
                 imageView2.setOnClickListener(new View.OnClickListener() {
                                                   @Override
                                                   public void onClick(View view) {
+                                                      desmarcarImagem();
                                                       ((ImageView) view).setBackground(getResources().getDrawable(R.drawable.image_select));
+                                                      Intent imageActivity = new Intent(Questionario.this, ImageActivity.class);
+                                                      imageActivity.putExtra("imagem_url", listimagens.get(Integer.parseInt(view.getTag().toString())).getUrl());
+                                                      startActivity(imageActivity);
 
                                                   }
                                               }
@@ -4311,7 +4336,6 @@ public class Questionario extends Activity  {
                 }
             }
 
-
             if (cursorReposta.getCount() > 0 && opcaoQuestionario != null) {
                 if (cursorReposta.getInt(1) > Integer.parseInt(opcaoQuestionario)) {
                     numeroTemppergunta = cursorReposta.getInt(1);
@@ -4333,7 +4357,6 @@ public class Questionario extends Activity  {
             } else {
                 numeroTemppergunta = Integer.parseInt(opcaoQuestionario);
             }
-
 
             //int o = cursorReposta.getInt(1);
 
@@ -4409,7 +4432,6 @@ public class Questionario extends Activity  {
         obj.put("QUAL_E_ESSE_ITEM", novoItemDesseAlimento);
 
         insereeAtualizaAlimentoeRefeicao(pTag,codigo,pvalue,alimentoRefeicao,novoItemDesseAlimento);
-
 
         this.onInsert(this, obj, sql_create.TABLE_ALIMENTO);
     }
@@ -5638,6 +5660,34 @@ public class Questionario extends Activity  {
         }
     };
 
+    public void habilitarBotao(String carregarImagens) {
+        for (int i = 0; i < qualTelaImagem.size() ; i++){
+            if (qualTelaImagem.get(i).equals(carregarImagens)){
+                buttonPersonalizado.setTag(saltoTelaImagem.get(i));
+            }
+        }
+    }
 
+    public void desmarcarImagem() {
+
+        try {
+            for (int i = 0; i < ll.getChildCount(); i++) {
+                View child = ll.getChildAt(i);
+                if (child instanceof ConstraintLayout) {
+                    for (int y = 0; y < ((ConstraintLayout) child).getChildCount(); y++) {
+                        View child2 = ((ConstraintLayout) child).getChildAt(y);
+                        if (child2 instanceof ImageView) {
+                            ImageView et = (ImageView) child2;
+                            et.setBackground(null);
+                        }
+                    }
+                }
+            }
+
+        } catch (Throwable ex) {
+            System.out.println(ex.getMessage());
+        }
+
+    }
 
 }
