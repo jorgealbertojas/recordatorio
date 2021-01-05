@@ -721,6 +721,32 @@ public class Questionario extends Activity  {
                         }
                     }
 
+                    if (pergunta.toString() != null) {
+                        if (pergunta.length() > 0) {
+                            pergunta = pergunta.replace("          ", " ");
+                            pergunta = pergunta.replace("\\n", "\n");
+                            pergunta = pergunta.replace(VariavelAPI.contante_variavel_detalhar_alimento2, nomeAlimento);
+                        }
+                    }
+
+                    if (pergunta.toString() != null) {
+                        if (pergunta.length() > 0) {
+
+
+                            String medidacaseira = "";
+                            Cursor cursorRESPOSTA_OPCAO_MEDIDA_CASEIRA = bd.rawQuery(sql_select.GET_RESPOSTA_OPCAO_MEDIDA_CASEIRA_2, new String[]{Integer.toString(AlunoAtual)});
+                            cursorRESPOSTA_OPCAO_MEDIDA_CASEIRA.moveToFirst();
+                            cursorRESPOSTA_OPCAO_MEDIDA_CASEIRA.getCount();
+                            if (cursorRESPOSTA_OPCAO_MEDIDA_CASEIRA.getCount() > 0) {
+                                medidacaseira = cursorRESPOSTA_OPCAO_MEDIDA_CASEIRA.getString(4);
+                            }
+
+                            pergunta = pergunta.replace("          ", " ");
+                            pergunta = pergunta.replace("\\n", "\n");
+                            pergunta = pergunta.replace(VariavelAPI.constante_descricao_medida_caseira_detalhar, medidacaseira);
+                        }
+                    }
+
                     llPergunta.setText(pergunta);
 
 
@@ -888,7 +914,7 @@ public class Questionario extends Activity  {
                                     } else if (cursor.getString(3).equals(VariavelAPI.constante_variavel_alimento_porcoes)) {
                                         colocarImagens();
 
-                                    } else if (cursor.getString(3).equals(VariavelAPI.constante_variavel__refeicao)) {
+                                    } else if (cursor.getString(3).equals(VariavelAPI.constante_variavel_refeicao)) {
                                         criarRefeicaoInseridos();
                                     }
                                     else if (cursor.getString(3).equals(VariavelAPI.constante_variavel_alimento_cadastrado)) {
@@ -4655,14 +4681,14 @@ public class Questionario extends Activity  {
 
     // personalizado
     private void criarRefeicaoInseridos() {
-        Cursor cursorALIMENTO = bd.rawQuery(sql_select.GET_ALIMENTOS, new String[]{Integer.toString(AlunoAtual)});
-        cursorALIMENTO.moveToFirst();
-        cursorALIMENTO.getCount();
+        Cursor cursorREFEICAO = bd.rawQuery(sql_select.GET_ALIMENTOS_REFEICAO_DESCRICAO, new String[]{Integer.toString(AlunoAtual)});
+        cursorREFEICAO.moveToFirst();
+        cursorREFEICAO.getCount();
 
-        if (cursorALIMENTO.getCount() > 0) {
-            for (int i = 0; i < cursorALIMENTO.getCount(); i++) {
+        if (cursorREFEICAO.getCount() > 0) {
+            for (int i = 0; i < cursorREFEICAO.getCount(); i++) {
                 TextView textView = new TextView(getApplicationContext());
-                textView.setText(cursorALIMENTO.getString(4));
+                textView.setText(cursorREFEICAO.getString(0));
                 textView.setTag(i);
 
                 textView.setPadding(20, 20, 20, 20);
@@ -4680,7 +4706,7 @@ public class Questionario extends Activity  {
 
                 final int newColor2 = res.getColor(R.color.red);
                 nButton2.setColorFilter(newColor2, PorterDuff.Mode.SRC_ATOP);
-                nButton2.setTag(cursorALIMENTO.getString(0));
+                nButton2.setTag(cursorREFEICAO.getString(0));
 
                 nButton2.setOnClickListener(new OnClickListener() {
                     @Override
@@ -4713,7 +4739,7 @@ public class Questionario extends Activity  {
                 LinearLayout.LayoutParams paramsTextHelp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
                 paramsTextHelp.setMargins(0, 0, 0, 0);
                 TextInputLayout editAnimation = new TextInputLayout(this);
-                editAnimation.setTag(cursorALIMENTO.getString(0));
+                editAnimation.setTag(cursorREFEICAO.getString(0));
 
 
                 editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
@@ -4723,7 +4749,7 @@ public class Questionario extends Activity  {
                 ll.addView(editAnimation, params);
 
 
-                cursorALIMENTO.moveToNext();
+                cursorREFEICAO.moveToNext();
             }
         }
     }

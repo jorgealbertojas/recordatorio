@@ -18,6 +18,7 @@ public class VariavelAPI {
     public static final String getConstante_variavel_fechar = "{{FECHAR_APLICATIVO}}";
     public static final String constante_variavel_entrevistado = "{{NOME_CRIANCA}}";
     public static final String contante_variavel_detalhar_alimento = "{{NOME_ALIMENTO_SELECIONADO_PARA_DETALHAR}}";
+    public static final String contante_variavel_detalhar_alimento2 = "{{NOME_ALIMENTO_QUE_ESTA_SENDO_DETALHADO}}";
     public static final String constante_variavel_fotografar = "{{FOTOGRAFAR}}";
     public static final String constante_variavel_modo_preparo  = "{{MODOS_PREPARO_ALIMENTO}}";
     public static final String constante_variavel_adicoes  = "{{ADICOES_ALIMENTO}}";
@@ -25,7 +26,7 @@ public class VariavelAPI {
     public static final String constante_variavel_alimento_excluir_editar = "{{LISTA_ALIMENTOS_CADASTRADOS_COM_OPCOES_EDITAR_E_EXCLUIR}}";
     public static final String constante_variavel_alimento_cadastrado = "{{LISTA_ALIMENTOS_CADASTRADOS_COM_OPCAO_MAIS}}";
     public static final String constante_variavel_alimento_porcoes = "{{FOTOS_PORCOES_ALIMENTO}}";
-    public static final String constante_variavel__refeicao = "{{LISTAR_REFEICOES_CADASTRADAS_COM_OPCAO_MAIS}}";
+    public static final String constante_variavel_refeicao = "{{LISTAR_REFEICOES_CADASTRADAS_COM_OPCAO_MAIS}}";
 
     // Extras
     public static final String constanteSelecione = "Selecione";
@@ -42,7 +43,9 @@ public class VariavelAPI {
     public static final String constante_descricao_quantidade = "Qual a quantidade da medida caseira utilizada? (ex.: 1 colher de sopa, 2 colheres de sopa, 3 colheres de sopa)";
     // INICIO/2
     public static final String constante_descricao_inicio_2_confirma = "Sim";
+    public static final String constante_descricao_medida_caseira_detalhar =  "{{NOME_MEDIDA_CASEIRA_SELECIONADA_NA_TELA_ANTERIOR}}";
 
+    public static final String constante_descricao_medida_caseira_1 = "Qual medida caseira você ou a criança utilizou para servir este alimento?";
 
     public static final String constant_chave_100 =  "INICIO/2";
     public static final String constant_chave_101 =  "FIM/1";
@@ -67,7 +70,5 @@ public class VariavelAPI {
     public static final String constant_foto_alimento = "{{EXIBIR_SOMENTE_TEM_FOTO_ALIMENTO";
     public static final String constant_foto_utensilio = "{{EXIBIR_SOMENTE_TEM_FOTO_UTENSILIO}}";
     public static final String constant_sem_foto = "{{EXIBIR_SOMENTE_SEM_FOTO}}";
-
-
 
 }
