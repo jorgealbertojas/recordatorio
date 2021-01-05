@@ -8,6 +8,7 @@ public class RespostaAdd implements Serializable {
     private String identUnicaPergunta = "";
     private String idPergunta;
     private String idItemPergunta;
+    private String idAlimento;
     private String valor;
     private String dataCadastro;
     private String tagLivre;
@@ -67,5 +68,13 @@ public class RespostaAdd implements Serializable {
 
     public void setIdentUnicaPergunta(String identUnicaPergunta) {
         this.identUnicaPergunta = identUnicaPergunta;
+    }
+
+    public String getIdAlimento() {
+        return idAlimento;
+    }
+
+    public void setIdAlimento(String idAlimento) {
+        this.idAlimento = idAlimento;
     }
 }

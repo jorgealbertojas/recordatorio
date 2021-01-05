@@ -26,6 +26,7 @@ public class VariavelAPI {
     public static final String constante_variavel_alimento_excluir_editar = "{{LISTA_ALIMENTOS_CADASTRADOS_COM_OPCOES_EDITAR_E_EXCLUIR}}";
     public static final String constante_variavel_alimento_cadastrado = "{{LISTA_ALIMENTOS_CADASTRADOS_COM_OPCAO_MAIS}}";
     public static final String constante_variavel_alimento_porcoes = "{{FOTOS_PORCOES_ALIMENTO}}";
+    public static final String constante_variavel_alimento_utensilios = "{{FOTOS_UTENSILIOS_ALIMENTO}}";
     public static final String constante_variavel_refeicao = "{{LISTAR_REFEICOES_CADASTRADAS_COM_OPCAO_MAIS}}";
 
     // Extras

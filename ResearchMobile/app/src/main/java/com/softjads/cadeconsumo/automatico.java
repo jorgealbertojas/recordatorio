@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.softjads.cadeconsumo.SQL.sql_create;
+import com.softjads.cadeconsumo.SQL.sql_delete;
 import com.softjads.cadeconsumo.modelJson.Crianca;
 import com.softjads.cadeconsumo.modelJson.RespostaAdd;
 import com.softjads.cadeconsumo.modelJson.RespostaAlimento;
@@ -63,6 +64,23 @@ public class automatico extends Activity {
 			try {
 				if (response.isSuccessful()) {
 					String ultimaResposta = "";
+
+					nDataBase = new DataBase(automatico.this);
+					bd = nDataBase.getReadableDatabase();
+					bd.execSQL(sql_delete.DEL_ALUNO_TODOS);
+					bd.execSQL(sql_delete.DEL_GRUPOS_ALIMENTOS);
+					bd.execSQL(sql_delete.DEL_MEDIDAS_CASEIRASS);
+					bd.execSQL(sql_delete.DEL_MODO_PREPARACAO);
+					bd.execSQL(sql_delete.DEL_ADICOES);
+					bd.execSQL(sql_delete.DEL_ALIMENTO_TUDO);
+					bd.execSQL(sql_delete.DEL_RESPOSTA_TODOS);
+					bd.execSQL(sql_delete.DEL_CONTROLE_INICIO);
+					bd.execSQL(sql_delete.DEL_CONTROLE_FIM);
+					bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ALUNO);
+					bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ALUNO, new String[]{"1"});
+					bd.execSQL(sql_delete.DEL_TODOS_CONTROLE_INICIO, new String[]{"1"});
+					bd.execSQL(sql_delete.DEL_TODOS_CONTROLE_FIM, new String[]{"1"});
+
 					if (response.body().getUltimaResposta() != null){
 						if (response.body().getUltimaResposta().getIdentUnicaPergunta() != null){
 							ultimaResposta = response.body().getUltimaResposta().getIdentUnicaPergunta();
@@ -209,8 +227,8 @@ public class automatico extends Activity {
 
 
 				// bebeto atenção mundar no futuro bebeto
-				if (respostaAdd.getTagLivre() != null) {
-					obj.put("ID_ALIMENTO", respostaAdd.getTagLivre());
+				if (respostaAdd.getIdAlimento() != null) {
+					obj.put("ID_ALIMENTO", respostaAdd.getIdAlimento());
 				} else {
 					obj.put("ID_ALIMENTO", "");
 				}
@@ -225,7 +243,7 @@ public class automatico extends Activity {
 					if (personsFromJson != null) {
 						ContentValues obj = new ContentValues();
 						obj.put("ID_ALUNO", AlunoAtual);
-						obj.put("ID", respostaAdd.getIdPergunta());
+						obj.put("ID", respostaAdd.getIdAlimento());
 						obj.put("CODIGO", personsFromJson.getCodigo());
 						obj.put("DESCRICAO", personsFromJson.getDescricao());
 						obj.put("QUAL_E_ESSE_ITEM", respostaAdd.getIdItemPergunta());
@@ -237,7 +255,7 @@ public class automatico extends Activity {
 					if (respostaComplementosAlimento != null) {
 						ContentValues obj = new ContentValues();
 						obj.put("ID_ALUNO", AlunoAtual);
-						obj.put("ID_ALIMENTO", respostaAdd.getIdPergunta());
+						obj.put("ID_ALIMENTO", respostaAdd.getIdAlimento());
 						obj.put("DESCRICAO", respostaComplementosAlimento.getDescricao());
 						this.onInsert(this, obj, respostaAdd.getTagLivre());
 					}

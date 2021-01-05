@@ -911,7 +911,7 @@ public class Questionario extends Activity  {
                                         ll.addView(radionbutton, params); // adiciona a editText ao ViewGroup
                                     } else if (cursor.getString(3).equals(VariavelAPI.constante_variavel_alimento_excluir_editar)) {
                                         criarAlimentosInseridos();
-                                    } else if (cursor.getString(3).equals(VariavelAPI.constante_variavel_alimento_porcoes)) {
+                                    } else if (cursor.getString(3).equals(VariavelAPI.constante_variavel_alimento_porcoes) || cursor.getString(3).equals(VariavelAPI.constante_variavel_alimento_utensilios) ) {
                                         colocarImagens();
 
                                     } else if (cursor.getString(3).equals(VariavelAPI.constante_variavel_refeicao)) {
@@ -2860,6 +2860,9 @@ public class Questionario extends Activity  {
 
     private void colocarImagens() {
 
+        mensagemInformadoAlimento(llPergunta.getText().toString());
+        llPergunta.setText("Clique na foto.");
+
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
@@ -2871,7 +2874,11 @@ public class Questionario extends Activity  {
 
 
         int tempWidth = (((width - ((int) convertDpToPixel(getResources().getDimension(R.dimen.imageTamanho),this)))) / 2);;
-        int temHeight = height / listimagens.size();
+
+        int temHeight = 0;
+        if (listimagens.size() <= 6){
+            temHeight = height / (listimagens.size());
+        }
 
         for (int i = 0; i < listimagens.size(); i++) {
 
@@ -2882,8 +2889,13 @@ public class Questionario extends Activity  {
                 ImageView imageView1 = new ImageView(this);
                 imageView1.setId(View.generateViewId());
                 imageView1.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                imageView1.setLayoutParams(new ConstraintLayout.LayoutParams(
-                        tempWidth, temHeight));
+                if (temHeight == 0) {
+                    imageView1.setLayoutParams(new ConstraintLayout.LayoutParams(
+                            tempWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+                }else{
+                    imageView1.setLayoutParams(new ConstraintLayout.LayoutParams(
+                            tempWidth, temHeight));
+                }
 
                 Picasso.get().load(listimagens.get(i).getUrl()).into(imageView1);
                 imageView1.setTag(Integer.toString(i));
@@ -2913,8 +2925,15 @@ public class Questionario extends Activity  {
                 ImageView imageView2 = new ImageView(this);
                 imageView2.setId(View.generateViewId());
                 imageView2.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                imageView2.setLayoutParams(new ConstraintLayout.LayoutParams(
-                        tempWidth, temHeight));
+
+                if (temHeight == 0) {
+                    imageView2.setLayoutParams(new ConstraintLayout.LayoutParams(
+                            tempWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+                }
+                else{
+                    imageView2.setLayoutParams(new ConstraintLayout.LayoutParams(
+                            tempWidth, temHeight));
+                }
 
                 imageView2.setOnClickListener(new View.OnClickListener() {
                                                   @Override
@@ -2945,6 +2964,31 @@ public class Questionario extends Activity  {
 
         }
 
+    }
+
+    private AlertDialog mensagemInformadoAlimento(String mensagem) {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View deleteDialogView = factory.inflate(
+                R.layout.custom_dialog_ok, null);
+        final AlertDialog deleteDialog = new AlertDialog.Builder(this).create();
+        deleteDialog.setView(deleteDialogView);
+
+        TextView nTextView = (TextView) deleteDialogView.findViewById(R.id.txt_dia);
+        nTextView.setText(mensagem);
+
+        deleteDialogView.findViewById(R.id.btn_yes).setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                deleteDialog.dismiss();
+            }
+        });
+
+
+        deleteDialog.show();
+
+        return deleteDialog;
     }
 
     protected void AdicionarRegistro() {
@@ -3370,6 +3414,7 @@ public class Questionario extends Activity  {
             RespostaAdd respostaAdd = new RespostaAdd();
             respostaAdd.setIdPergunta(NumeroPerguntaAtual);
             respostaAdd.setIdItemPergunta(pTag);
+            respostaAdd.setIdAlimento(idAlimento);
             respostaAdd.setValor(pvalue);
             respostaAdd.setTagLivre(idAlimento);
 
@@ -4447,10 +4492,11 @@ public class Questionario extends Activity  {
         Gson gson = new Gson();
 
         RespostaAdd respostaAdd = new RespostaAdd();
-        respostaAdd.setIdPergunta(pTag);
-        respostaAdd.setIdItemPergunta(novoItemDesseAlimento);
+        respostaAdd.setIdPergunta(sql_create.TABLE_ALIMENTO);
+        respostaAdd.setIdItemPergunta(pTag);
         respostaAdd.setValor(gson.toJson(respostaAlimento));
         respostaAdd.setTagLivre(sql_create.TABLE_ALIMENTO);
+        respostaAdd.setIdAlimento(pTag);
 
         createStackOverflowAPI();
         mInterfaceObject.postAdicionaCrianca(respostaAdd, AlunoAtualID).enqueue(cadatrarRespostaCallback);
@@ -4507,10 +4553,11 @@ public class Questionario extends Activity  {
         Gson gson = new Gson();
 
         RespostaAdd respostaAdd = new RespostaAdd();
-        respostaAdd.setIdPergunta(pTag);
+        respostaAdd.setIdPergunta(ValorTipo);
         respostaAdd.setIdItemPergunta(pvalue);
         respostaAdd.setValor(gson.toJson(respostaComplementosAlimento));
         respostaAdd.setTagLivre(ValorTipo);
+        respostaAdd.setIdAlimento(pTag);
 
         createStackOverflowAPI();
         mInterfaceObject.postAdicionaCrianca(respostaAdd, AlunoAtualID).enqueue(cadatrarRespostaCallback);

@@ -1032,7 +1032,7 @@ public class MainFragment extends Fragment {
             }
         });
 
-      /*  ImageView imageViewFinalizar = (ImageView) fragmentView.findViewById(R.id.bkp);
+        ImageView imageViewFinalizar = (ImageView) fragmentView.findViewById(R.id.bkp);
         imageViewFinalizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1085,7 +1085,7 @@ public class MainFragment extends Fragment {
 
             }
         });
-*/
+
     }
 
 

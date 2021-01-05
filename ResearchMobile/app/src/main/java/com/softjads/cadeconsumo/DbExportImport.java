@@ -77,7 +77,7 @@ public class DbExportImport extends Activity{
 	        			DataCompleta = DataCompleta + "_"+Integer.toString(now.hour);
 	        			DataCompleta = DataCompleta + "_"+Integer.toString(now.minute);
 	        			DataCompleta = DataCompleta + "_"+Integer.toString(now.second);
-	        			
+
 	        			
 						bkp(MyConstant.caminhobanco,MyConstant.storage +NomeCopia + filtro_desc_pesquisa + DataCompleta +".db");
 					

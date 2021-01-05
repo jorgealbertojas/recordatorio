@@ -111,7 +111,7 @@
             tools:fab_size="mini" />
 
 
-<!--        <com.getbase.floatingactionbutton.FloatingActionButton
+        <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/bkp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -127,7 +127,7 @@
             card_view:fab_icon="@mipmap/configuration"
             tools:fab_colorNormal="@color/white"
             tools:fab_colorPressed="@color/white_pressed"
-            tools:fab_title="Set bottom menu enabled/disabled" />-->
+            tools:fab_title="Set bottom menu enabled/disabled" />
 
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
