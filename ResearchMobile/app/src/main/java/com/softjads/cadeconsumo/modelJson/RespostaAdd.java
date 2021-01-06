@@ -1,16 +1,41 @@
 package com.softjads.cadeconsumo.modelJson;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class RespostaAdd implements Serializable {
-
+    @SerializedName("id")
+    @Expose
     private String id;
+
+    @SerializedName("identUnicaPergunta")
+    @Expose
     private String identUnicaPergunta = "";
+
+    @SerializedName("idPergunta")
+    @Expose
     private String idPergunta;
+
+    @SerializedName("idItemPergunta")
+    @Expose
     private String idItemPergunta;
+
+    @SerializedName("idAlimento")
+    @Expose
     private String idAlimento;
+
+    @SerializedName("valor")
+    @Expose
     private String valor;
+
+    @SerializedName("dataCadastro")
+    @Expose
     private String dataCadastro;
+
+    @SerializedName("tagLivre")
+    @Expose
     private String tagLivre;
 
     public String getId() {

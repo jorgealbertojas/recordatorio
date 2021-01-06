@@ -2,7 +2,7 @@ package com.softjads.cadeconsumo.SQL;
 
 
 public class sql_create {
-	public static final int DBVERSION = 1;
+	public static final int DBVERSION = 2;
 	public static String DBNAME = "DBSOFTJADSPESQUISA.db";
 
 	public static String TABLE_CONTROLE_INICIO = "CONTROLE_INICIO";
@@ -164,7 +164,8 @@ public class sql_create {
 					" CODIGO INTEGER, " +
 					" DESCRICAO VARCHAR (250), " +
 					" ALIMENTO_REFEICAO VARCHAR (250)," +
-					" QUAL_E_ESSE_ITEM VARCHAR (250) ) ";
+					" QUAL_E_ESSE_ITEM VARCHAR (250)," +
+					" ALIMENTO_REFEICAO_ORDER INTEGER ) ";
 
 	public static String TABLE_GRUPOS_ALIMENTOS = "GRUPOS_ALIMENTOS";
 	public static String CREATE_GRUPOS_ALIMENTOS =

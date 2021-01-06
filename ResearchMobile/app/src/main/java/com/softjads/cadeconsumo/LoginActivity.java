@@ -64,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
     static ValueAnimator va;
     private DisplayMetrics dm;
 
+
     private SQLiteDatabase bd;
     //private Context context;
     private DataBase nDataBase;
@@ -163,11 +164,11 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
 
 
-     //   email.setText(sharedPref.getString("preference_key_email", null));
-    //    password.setText(sharedPref.getString("preference_key_password", null));
+        email.setText(sharedPref.getString("preference_key_email", null));
+        password.setText(sharedPref.getString("preference_key_password", null));
 
-         email.setText("marina");
-         password.setText("senha");
+      //   email.setText("marina");
+      //   password.setText("senha");
     }
 
     public boolean validateEmailAndPassword() {
@@ -383,20 +384,13 @@ public class LoginActivity extends AppCompatActivity {
                     escola.setSUBTIPO("1");
                     escola.setTIPO("1");
                     saveEscola(escola);
-
+                    Log.i("QuestionsCallback1", "Code: " + response.code() + " Message: " + response.message());
 
                 } else {
-                    Log.d("QuestionsCallback", "Code: " + response.code() + " Message: " + response.message());
+                    Log.i("QuestionsCallback2", "Code: " + response.code() + " Message: " + response.message());
                 }
             } catch (NullPointerException e) {
-                System.out.println("onActivityResult consume crashed");
-                runOnUiThread(new Runnable() {
-                    public void run() {
-
-                        Context context = getApplicationContext();
-
-                    }
-                });
+                Log.i("QuestionsCallback3", "Code: " + response.code() + " Message: " + response.message());
             }
         }
 
@@ -569,28 +563,20 @@ public class LoginActivity extends AppCompatActivity {
                             // TODO: Implement this method
                         }
                     }).start();
-
+                    Log.i("QuestionsCallback6", "Code: " + response.code() + " Message: " + response.message());
 
 
                 } else {
-                    Toast.makeText(LoginActivity.this, "Login ou senha invalida!",
-                            Toast.LENGTH_SHORT).show();
+                    Log.i("QuestionsCallback5", "Code: " + response.code() + " Message: " + response.message());
                 }
             } catch (NullPointerException e) {
-                System.out.println("onActivityResult consume crashed");
-                runOnUiThread(new Runnable() {
-                    public void run() {
-
-                        Context context = getApplicationContext();
-
-                    }
-                });
+                Log.i("QuestionsCallback4", "Code: " + response.code() + " Message: " + response.message());
             }
         }
 
         @Override
         public void onFailure(Call<Usuario> call, Throwable t) {
-            Toast.makeText(LoginActivity.this, "Entre com login e senha!",
+            Toast.makeText(LoginActivity.this, t.toString(),
                     Toast.LENGTH_SHORT).show();
         }
 

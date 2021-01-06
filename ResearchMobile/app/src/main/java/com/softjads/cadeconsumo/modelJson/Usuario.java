@@ -1,13 +1,30 @@
 package com.softjads.cadeconsumo.modelJson;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class Usuario implements Serializable {
 
+    @SerializedName("email")
+    @Expose
     private String email;
+
+    @SerializedName("nome")
+    @Expose
     private String nome;
+
+    @SerializedName("senha")
+    @Expose
     private String senha;
+
+    @SerializedName("login")
+    @Expose
     private String login;
+
+    @SerializedName("perfil")
+    @Expose
     private String perfil;
 
     public String getEmail() {

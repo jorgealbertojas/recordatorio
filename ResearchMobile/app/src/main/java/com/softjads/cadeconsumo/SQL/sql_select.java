@@ -73,6 +73,10 @@ public class sql_select {
 
 	public static String GET_ALIMENTO_INSERIDO =
 			" SELECT  ID_PERGUNTA FROM perguntas where cod_pergunta =  '"+ VariavelAPI.constant_chave_104 +"'";
+
+	public static String GET_ALIMENTO_REFEICAO =
+			" SELECT  ALIMENTO_REFEICAO, ALIMENTO_REFEICAO_ORDER FROM ALIMENTO ORDER BY ALIMENTO_REFEICAO_ORDER ";
+
 	public static String GET_ADICOES =
 			" SELECT ID_ALUNO, DESCRICAO " +
 					" FROM ADICOES  "+

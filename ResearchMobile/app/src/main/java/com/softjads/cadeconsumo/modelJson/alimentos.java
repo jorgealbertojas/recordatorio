@@ -1,16 +1,38 @@
 package com.softjads.cadeconsumo.modelJson;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.List;
 
 public class alimentos implements Serializable {
-
+    @SerializedName("id")
+    @Expose
     private String id;
+
+    @SerializedName("codigo")
+    @Expose
     private String codigo;
+
+    @SerializedName("descricao")
+    @Expose
     private String descricao;
+
+    @SerializedName("gruposAlimentares")
+    @Expose
     private List<String> gruposAlimentares;
+
+    @SerializedName("modosPreparacao")
+    @Expose
     private List<String> modosPreparacao;
+
+    @SerializedName("medidasCaseiras")
+    @Expose
     private List<medidasCaseiras> medidasCaseiras;
+
+    @SerializedName("adicoes")
+    @Expose
     private List<String> adicoes;
 
     public String getId() {

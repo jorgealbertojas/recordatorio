@@ -1,11 +1,22 @@
 package com.softjads.cadeconsumo.modelJson;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class RespostaComplementosAlimento implements Serializable {
 
+    @SerializedName("id_crianca")
+    @Expose
     private String id_crianca;
+
+    @SerializedName("id_alimento")
+    @Expose
     private String id_alimento;
+
+    @SerializedName("descricao")
+    @Expose
     private String descricao;
 
     public String getId_crianca() {

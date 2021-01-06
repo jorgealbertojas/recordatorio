@@ -1,15 +1,20 @@
 package com.softjads.cadeconsumo;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -83,7 +88,53 @@ public class MainActivity extends Activity {
     }
 
 
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
+    /**
+     * this method check permission and return current state of permission need.
+     */
+    private boolean checkPermissions() {
+        int permissionState = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA);
+        return permissionState == PackageManager.PERMISSION_GRANTED;
+    }
 
+    /**
+     * this method request to permission asked.
+     */
+    private void requestPermissions() {
+        boolean shouldProvideRationale =
+                ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.CAMERA);
+
+        if (shouldProvideRationale) {
+
+        } else {
+
+            // previously and checked "Never ask again".
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.CAMERA},
+                    REQUEST_PERMISSIONS_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+
+        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+            if (grantResults.length <= 0) {
+                // If user interaction was interrupted, the permission request is cancelled and you
+                // receive empty arrays.
+
+            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission was granted. Kick off the process of building and connecting
+                // GoogleApiClient.
+                // perform your operation
+            } else {
+                // Permission denied.
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +144,10 @@ public class MainActivity extends Activity {
 
         app nApp = new app();
         nApp.setContext(this);
+
+        if (!checkPermissions()) {
+            requestPermissions();
+        }
 
 
         if(savedInstanceState == null){

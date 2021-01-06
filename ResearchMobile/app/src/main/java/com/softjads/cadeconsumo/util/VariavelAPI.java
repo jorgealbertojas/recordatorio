@@ -17,6 +17,7 @@ public class VariavelAPI {
     // Personalização especifica
     public static final String getConstante_variavel_fechar = "{{FECHAR_APLICATIVO}}";
     public static final String constante_variavel_entrevistado = "{{NOME_CRIANCA}}";
+    public static final String constante_variavel_refeicao_nome = "{{NOME_REFEICAO}}";
     public static final String contante_variavel_detalhar_alimento = "{{NOME_ALIMENTO_SELECIONADO_PARA_DETALHAR}}";
     public static final String contante_variavel_detalhar_alimento2 = "{{NOME_ALIMENTO_QUE_ESTA_SENDO_DETALHADO}}";
     public static final String constante_variavel_fotografar = "{{FOTOGRAFAR}}";
@@ -25,6 +26,7 @@ public class VariavelAPI {
     public static final String constante_variavel_medida  = "{{MEDIDAS_CASEIRAS_ALIMENTO}}";
     public static final String constante_variavel_alimento_excluir_editar = "{{LISTA_ALIMENTOS_CADASTRADOS_COM_OPCOES_EDITAR_E_EXCLUIR}}";
     public static final String constante_variavel_alimento_cadastrado = "{{LISTA_ALIMENTOS_CADASTRADOS_COM_OPCAO_MAIS}}";
+    public static final String constante_variavel_alimento_cadastrado_simples = "{{LISTA_ALIMENTOS_CADASTRADOS_SIMPLES}}";
     public static final String constante_variavel_alimento_porcoes = "{{FOTOS_PORCOES_ALIMENTO}}";
     public static final String constante_variavel_alimento_utensilios = "{{FOTOS_UTENSILIOS_ALIMENTO}}";
     public static final String constante_variavel_refeicao = "{{LISTAR_REFEICOES_CADASTRADAS_COM_OPCAO_MAIS}}";

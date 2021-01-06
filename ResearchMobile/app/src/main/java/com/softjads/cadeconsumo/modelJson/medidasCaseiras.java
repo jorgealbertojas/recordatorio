@@ -1,13 +1,30 @@
 package com.softjads.cadeconsumo.modelJson;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.List;
 
 public class medidasCaseiras implements Serializable {
+    @SerializedName("codigo")
+    @Expose
     private String codigo;
+
+    @SerializedName("nome")
+    @Expose
     private String nome;
+
+    @SerializedName("fotos")
+    @Expose
     private List<String> fotos;
+
+    @SerializedName("abreSelecaoQuantidade")
+    @Expose
     private String abreSelecaoQuantidade;
+
+    @SerializedName("tipoFoto")
+    @Expose
     private String tipoFoto;
 
     public String getCodigo() {

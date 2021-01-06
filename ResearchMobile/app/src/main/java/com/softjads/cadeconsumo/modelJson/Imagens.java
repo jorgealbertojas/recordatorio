@@ -1,10 +1,17 @@
 package com.softjads.cadeconsumo.modelJson;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class Imagens implements Serializable {
-
+    @SerializedName("url")
+    @Expose
     private String url;
+
+    @SerializedName("id")
+    @Expose
     private String id;
 
     public String getUrl() {

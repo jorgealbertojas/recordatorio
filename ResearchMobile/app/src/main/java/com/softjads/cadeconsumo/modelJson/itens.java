@@ -1,17 +1,45 @@
 package com.softjads.cadeconsumo.modelJson;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class itens implements Serializable {
-
+    @SerializedName("id")
+    @Expose
     private String id;
+
+    @SerializedName("identUnica")
+    @Expose
     private String identUnica;
+
+    @SerializedName("descricao")
+    @Expose
     private String descricao;
+
+    @SerializedName("ordem")
+    @Expose
     private Integer ordem;
+
+    @SerializedName("personalizacao")
+    @Expose
     private String personalizacao;
+
+    @SerializedName("tipo")
+    @Expose
     private Integer tipo;
+
+    @SerializedName("minimo")
+    @Expose
     private Integer minimo;
+
+    @SerializedName("maximo")
+    @Expose
     private Integer maximo;
+
+    @SerializedName("perguntaDestino")
+    @Expose
     private String perguntaDestino;
 
     public String getId() {

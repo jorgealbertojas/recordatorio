@@ -35,7 +35,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.StatFs;
 import android.text.format.Time;
-import android.util.Xml;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,7 +111,7 @@ public class MainFragment extends Fragment {
     //private Context context;
     private DataBase nDataBase;
 
-    private XmlSerializer serializer = Xml.newSerializer();
+
     private StringWriter writer;
 
 
@@ -547,92 +547,11 @@ public class MainFragment extends Fragment {
 
     }
 
-    private void writeXmlInicio(){
-        //serializer = null;
-        writer = new StringWriter();
-        try {
-            serializer.setOutput(writer);
-            serializer.startDocument("UTF-8", true);
-            serializer.startTag("", "NewDataSet");
 
-        } catch (Exception e) {
 
-            throw new RuntimeException(e);
-        }
-    }
 
-    private void writeXmlFim(){
-        //StringWriter writer = new StringWriter();
 
-        try{
 
-            serializer.endTag("", "NewDataSet");
-            serializer.endDocument();
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private XmlSerializer writeXml(ArrayList<Object> Listaoutput,String nNomeTabela){
-        //XmlSerializer serializer = Xml.newSerializer();
-        //StringWriter writer = new StringWriter();
-        try {
-            //serializer.setOutput(writer);
-            //serializer.startDocument("UTF-8", true);
-            String NTAGClasse = nNomeTabela;
-            //serializer.startTag("", "NewDataSet");
-
-            for (int j = 0; Listaoutput.size() > j; j++){
-
-                serializer.startTag("", NTAGClasse);
-
-                Class classe = Listaoutput.get(j).getClass();
-                Class theClass = Listaoutput.get(j).getClass();
-                Field[] fields = theClass.getDeclaredFields();
-
-                for (int i = 0; i < fields.length; i++) {
-                    Type type = fields[i].getType();
-                    fields[i].setAccessible(true);
-
-                    if (fields[i].getType().equals(String.class)) {
-                        String r = fields[i].toString();
-
-                        serializer.startTag("", fields[i].getName());
-                        if (!r.trim().equals("")){
-                            serializer.text(fields[i].get(Listaoutput.get(j)).toString());
-                        }else{
-                            serializer.text("");
-                        }
-                        serializer.endTag("", fields[i].getName());
-                    }
-                    else if (type.equals(Integer.TYPE) || type.equals(Integer.class)) {
-                        serializer.startTag("", fields[i].getName());
-                        int nInt = fields[i].getInt(Listaoutput.get(j));
-                        String Temp = Integer.toString(nInt);
-                        serializer.text(Temp);
-                        serializer.endTag("", fields[i].getName());
-                    }
-                    else if (type.equals(Float.TYPE) || type.equals(Float.class)) {
-                        serializer.startTag("", fields[i].getName());
-                        float nFloat = fields[i].getFloat(Listaoutput.get(j));
-                        String Temp = Float.toString(nFloat);
-                        serializer.text(Temp);
-                        serializer.endTag("", fields[i].getName());
-                    }
-
-                }
-                serializer.endTag("", NTAGClasse);
-            }
-
-            //serializer.endTag("", "NewDataSet");
-            //serializer.endDocument();
-            return serializer;
-            //return writer.toString();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 
     public ArrayList<Object> PegarDados(String nString,  Object output) {
@@ -718,46 +637,6 @@ public class MainFragment extends Fragment {
         return ResultadoLista;
     }
 
-    private StringWriter ParametroRetorna(){
-        try{
-            writeXmlInicio();
-
-            Cursor cusrsorlogin = bd.rawQuery(sql_select.GET_USUARIO2,new String[] {(carregarsuario_login())});
-            cusrsorlogin.moveToFirst();
-
-            if (cusrsorlogin.getCount() > 0) {
-                usuario = cusrsorlogin.getString(2).toString();
-                Nomeusuario = cusrsorlogin.getString(0).toString();
-
-                bd.execSQL(" update controle_inicio set ID_USUARIO =  " + usuario  + " , NM_USUARIO = '" + Nomeusuario + "'");
-                bd.execSQL(" update controle_fim set ID_USUARIO = " + usuario  + " , NM_USUARIO = '" + Nomeusuario + "'");
-            }
-
-            Resposta OResposta = new Resposta();
-            writeXml(PegarDados(sql_select.GET_RESPOSTAOrdenado,OResposta), sql_create.TABLE_RESPOSTA);
-
-            Aluno OAluno = new Aluno();
-            writeXml(PegarDados(sql_select.GET_ALUNO_completoNOVO,OAluno), sql_create.TABLE_ALUNO);
-
-            // comentar para teste IERC
-            Controle_inicio OControle_inicio = new Controle_inicio();
-            writeXml(PegarDados(sql_select.GET_CONTROLE_INICIO,OControle_inicio), sql_create.TABLE_CONTROLE_INICIO);
-
-            // comentar para teste IERC
-            Controle_fim OControle_fim = new Controle_fim();
-            writeXml(PegarDados(sql_select.GET_CONTROLE_FIM,OControle_fim), sql_create.TABLE_CONTROLE_FIM);
-
-            // sql_select.GET_RESPOSTA
-            writeXmlFim();
-            StringWriter s = new StringWriter();
-            s = writer;
-
-            return s;
-        }
-        catch (Throwable ex){
-            return  null;
-        }
-    }
 
     private class MythreadWeservice implements Runnable {
         private int numLoops;
@@ -776,25 +655,7 @@ public class MainFragment extends Fragment {
                 }
             });
 
-            try {
 
-
-                nboolean = ChamaThead();
-
-
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                Toast.makeText(fragmentView.getContext(), e.getMessage().toString(), Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            } catch (XmlPullParserException e) {
-                // TODO Auto-generated catch block
-                Toast.makeText(fragmentView.getContext(), e.getMessage().toString(), Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            } catch (Exception e) {
-                Toast.makeText(fragmentView.getContext(), e.getMessage().toString(), Toast.LENGTH_LONG).show();
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
 
             mHandler.post(new Runnable() {
                 @Override
@@ -886,58 +747,8 @@ public class MainFragment extends Fragment {
             return text.toString();
         }
 
-
-
-        private Boolean ChamaThead() throws IOException, XmlPullParserException{
-
-
-            SoapObject request = new SoapObject(WSDL_TARGET_NAMESPACE,OPERATION_NAME);
-
-            pegaDadosPesquisa();
-
-            /// para teste com o arquivo /testexml.txt"
-            //request.addProperty("ds",fffff());
-            request.addProperty("ds",ParametroRetorna().toString());
-            request.addProperty("w_TipoAluno",filtro_automatico.toString());
-            request.addProperty("w_idCliente",filtro_id_cliente.toString());
-            request.addProperty("w_idPesquisa",filtro_id_pesquisa.toString());
-
-
-            // descomentar para teste IERC
-            //   request.addProperty("w_TipoAluno",0);
-            //   request.addProperty("w_idCliente",1);
-            //   request.addProperty("w_idPesquisa",1);
-
-            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-            envelope.dotNet = true;
-
-            envelope.setOutputSoapObject(request);
-
-
-
-            HttpTransportSE httpTransport = new HttpTransportSE(SOAP_ADDRESS,30000);
-            httpTransport.debug = true;
-            //httpTransport.setXmlVersionTag("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            try
-            {
-                httpTransport.call(SOAP_ACTION, envelope); // ERRO AQUI
-                String resultString =  (String)envelope.getResponse().toString();
-                Boolean nBoolean;
-                if (resultString.equals("true")){
-                    nBoolean = true;
-                }
-                else{
-                    nBoolean = false;
-                }
-                return nBoolean;
-            }
-            catch (Exception exception)
-            {
-                return false;
-            }
-        }
-
     }
+
 
     public static boolean externalMemoryAvailable() {
         return android.os.Environment.getExternalStorageState().equals(
