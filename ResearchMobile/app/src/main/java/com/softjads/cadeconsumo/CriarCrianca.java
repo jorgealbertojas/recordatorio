@@ -134,7 +134,7 @@ public class CriarCrianca extends AppCompatActivity {
 
         @Override
         public void onFailure(Call<Crianca> call, Throwable t) {
-            Toast.makeText(CriarCrianca.this, "Entre com login e senha!",
+            Toast.makeText(CriarCrianca.this, "Verifique a internet!",
                     Toast.LENGTH_SHORT).show();
         }
     };
@@ -315,7 +315,7 @@ public class CriarCrianca extends AppCompatActivity {
 
         @Override
         public void onFailure(Call<Boolean> call, Throwable t) {
-            Toast.makeText(CriarCrianca.this, "Entre com login e senha!",
+            Toast.makeText(CriarCrianca.this, "Verifique a internet!",
                     Toast.LENGTH_SHORT).show();
         }
     };

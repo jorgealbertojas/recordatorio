@@ -26,6 +26,10 @@ public class RespostaAlimento implements Serializable {
     @Expose
     private String alimento_refeicao;
 
+    @SerializedName("alimento_order")
+    @Expose
+    private Integer alimento_order;
+
     public String getId_crianca() {
         return id_crianca;
     }
@@ -64,5 +68,13 @@ public class RespostaAlimento implements Serializable {
 
     public void setAlimento_refeicao(String alimento_refeicao) {
         this.alimento_refeicao = alimento_refeicao;
+    }
+
+    public int getAlimento_order() {
+        return alimento_order;
+    }
+
+    public void setAlimento_order(Integer alimento_order) {
+        this.alimento_order = alimento_order;
     }
 }

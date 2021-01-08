@@ -28,6 +28,9 @@ public interface InterfaceRetrofit {
         @POST(Utility.COMPLEMENT_URL_USUARIO)
         Call<Usuario> getUsuario(@Body Usuario usuario);
 
+        @POST(Utility.COMPLEMENT_URL_CREATE_USUARIO)
+        Call<Usuario> createUsuario(@Body Usuario usuario);
+
         @POST(Utility.COMPLEMENT_URL_CRIANCA)
         Call<Crianca> postCrianca(@Body Crianca crianca);
 

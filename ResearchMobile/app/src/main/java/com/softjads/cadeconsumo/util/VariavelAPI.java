@@ -18,6 +18,7 @@ public class VariavelAPI {
     public static final String getConstante_variavel_fechar = "{{FECHAR_APLICATIVO}}";
     public static final String constante_variavel_entrevistado = "{{NOME_CRIANCA}}";
     public static final String constante_variavel_refeicao_nome = "{{NOME_REFEICAO}}";
+    public static final String constante_variavel_refeicao_nome_selecionada = "{{NOME_REFEICAO_SELECIONADA}}";
     public static final String contante_variavel_detalhar_alimento = "{{NOME_ALIMENTO_SELECIONADO_PARA_DETALHAR}}";
     public static final String contante_variavel_detalhar_alimento2 = "{{NOME_ALIMENTO_QUE_ESTA_SENDO_DETALHADO}}";
     public static final String constante_variavel_fotografar = "{{FOTOGRAFAR}}";
@@ -29,7 +30,8 @@ public class VariavelAPI {
     public static final String constante_variavel_alimento_cadastrado_simples = "{{LISTA_ALIMENTOS_CADASTRADOS_SIMPLES}}";
     public static final String constante_variavel_alimento_porcoes = "{{FOTOS_PORCOES_ALIMENTO}}";
     public static final String constante_variavel_alimento_utensilios = "{{FOTOS_UTENSILIOS_ALIMENTO}}";
-    public static final String constante_variavel_refeicao = "{{LISTAR_REFEICOES_CADASTRADAS_COM_OPCAO_MAIS}}";
+    public static final String constante_variavel_refeicao_com_opcao_mais = "{{LISTAR_REFEICOES_CADASTRADAS_COM_OPCAO_MAIS}}";
+    public static final String constante_variavel_refeicao = "{{LISTAR_REFEICOES_CADASTRADAS}}";
 
     // Extras
     public static final String constanteSelecione = "Selecione";
@@ -57,6 +59,11 @@ public class VariavelAPI {
     public static final String constant_chave_104 =  "ALIMENTO/10";
     public static final String constant_chave_105 =  "INICIO/1";
     public static final String constant_chave_106 =  "DETALIM/2";
+    public static final String constant_chave_107 =  "FIMDOMIC/2";
+    public static final String constant_chave_108 =  "FIMDOMIC/1";
+    public static final String constant_chave_109 =  "FIMDOMIC/3";
+    // "FIMDOMIC/2" não tinha como saber pela id
+    public static final String constant_chave_1010 =  "6EEEBF0B-75A5-4813-A9E1-C24CE1394E32";
 
     // caso iniciar
     public static final String contant_chave_inicair_anterior_DETALIMDOMIC2 = "DETALIM/2/DOMIC";

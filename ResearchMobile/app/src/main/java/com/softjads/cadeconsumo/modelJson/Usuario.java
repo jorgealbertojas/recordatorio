@@ -25,7 +25,7 @@ public class Usuario implements Serializable {
 
     @SerializedName("perfil")
     @Expose
-    private String perfil;
+    private Integer perfil;
 
     public String getEmail() {
         return email;
@@ -51,11 +51,11 @@ public class Usuario implements Serializable {
         this.login = login;
     }
 
-    public String getPerfil() {
+    public Integer getPerfil() {
         return perfil;
     }
 
-    public void setPerfil(String perfil) {
+    public void setPerfil(Integer perfil) {
         this.perfil = perfil;
     }
 

@@ -2,7 +2,7 @@ package com.softjads.cadeconsumo.SQL;
 
 
 public class sql_create {
-	public static final int DBVERSION = 2;
+	public static final int DBVERSION = 3;
 	public static String DBNAME = "DBSOFTJADSPESQUISA.db";
 
 	public static String TABLE_CONTROLE_INICIO = "CONTROLE_INICIO";
@@ -89,7 +89,7 @@ public class sql_create {
 					" ID_ALUNO INTEGER, " +
 					" ID_PERGUNTA VARCHAR (250), " +
 					" ID_OPCAO VARCHAR (250), " +
-					" VALOR VARCHAR (250) , ID_OPCAO_PESSOA INTEGER, ID_ALIMENTO VARCHAR (250) ); ";
+					" VALOR VARCHAR (250) , ID_OPCAO_PESSOA INTEGER, ID_ALIMENTO VARCHAR (250), REFEICAO_DESCRICAO VARCHAR (250) ); ";
 
 	public static String TABLE_BLOCO = "BLOCO";
 	public static String CREATE_BLOCO =

@@ -117,7 +117,7 @@
             android:layout_height="wrap_content"
             card_view:fab_icon="@mipmap/database"
             tools:fab_colorNormal="@color/white"
-            android:visibility="gone"
+            android:visibility="visible"
             tools:fab_colorPressed="@color/white_pressed" />
 
 

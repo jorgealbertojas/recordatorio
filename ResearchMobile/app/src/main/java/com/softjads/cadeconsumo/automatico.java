@@ -24,6 +24,7 @@ import com.softjads.cadeconsumo.util.SharedPreferencesService;
 import com.softjads.cadeconsumo.util.Utility;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.softjads.cadeconsumo.util.VariavelAPI;
 
 import java.util.List;
 
@@ -106,7 +107,7 @@ public class automatico extends Activity {
 
 		@Override
 		public void onFailure(Call<Crianca> call, Throwable t) {
-			Toast.makeText(automatico.this, "Entre com login e senha!",
+			Toast.makeText(automatico.this, "Verifique a internet!",
 					Toast.LENGTH_SHORT).show();
 		}
 	};
@@ -225,12 +226,17 @@ public class automatico extends Activity {
 				obj.put("VALOR", respostaAdd.getValor());
 				obj.put("ID_OPCAO_PESSOA", 0);
 
-
 				// bebeto atenção mundar no futuro bebeto
 				if (respostaAdd.getIdAlimento() != null) {
 					obj.put("ID_ALIMENTO", respostaAdd.getIdAlimento());
 				} else {
 					obj.put("ID_ALIMENTO", "");
+				}
+
+				if (respostaAdd.getIdPergunta().equals(VariavelAPI.constant_chave_1010)) {
+					obj.put("REFEICAO_DESCRICAO", respostaAdd.getIdAlimento());
+				} else {
+					obj.put("REFEICAO_DESCRICAO", "");
 				}
 
 				this.onInsert(this, obj, sql_create.TABLE_RESPOSTA);
@@ -247,6 +253,7 @@ public class automatico extends Activity {
 						obj.put("CODIGO", personsFromJson.getCodigo());
 						obj.put("DESCRICAO", personsFromJson.getDescricao());
 						obj.put("QUAL_E_ESSE_ITEM", respostaAdd.getIdItemPergunta());
+						obj.put("ALIMENTO_REFEICAO", personsFromJson.getAlimento_refeicao());
 						obj.put("ALIMENTO_REFEICAO", personsFromJson.getAlimento_refeicao());
 						this.onInsert(this, obj, sql_create.TABLE_ALIMENTO);
 					}

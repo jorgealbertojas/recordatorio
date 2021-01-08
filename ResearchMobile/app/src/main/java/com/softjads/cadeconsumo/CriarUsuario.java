@@ -100,10 +100,10 @@ public class CriarUsuario extends AppCompatActivity {
                     usuario.setNome(edtNome.getText().toString());
                     usuario.setSenha(edtSenha.getText().toString());
                     usuario.setLogin(edtLogin.getText().toString());
-                    usuario.setPerfil(perfil);
+                    usuario.setPerfil(1);
 
                     createStackOverflowAPI();
-                    mInterfaceObject.getUsuario(usuario).enqueue(cadatrarUsuarioCallback);
+                    mInterfaceObject.createUsuario(usuario).enqueue(cadatrarUsuarioCallback);
 
 
                 } else {
@@ -160,7 +160,7 @@ public class CriarUsuario extends AppCompatActivity {
 
         @Override
         public void onFailure(Call<Usuario> call, Throwable t) {
-            Toast.makeText(CriarUsuario.this, "Entre com login e senha!",
+            Toast.makeText(CriarUsuario.this, "Verifique a internet!",
                     Toast.LENGTH_SHORT).show();
         }
     };

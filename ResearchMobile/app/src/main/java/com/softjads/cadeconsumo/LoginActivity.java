@@ -167,8 +167,8 @@ public class LoginActivity extends AppCompatActivity {
         email.setText(sharedPref.getString("preference_key_email", null));
         password.setText(sharedPref.getString("preference_key_password", null));
 
-      //   email.setText("marina");
-      //   password.setText("senha");
+       //  email.setText("marina");
+       //  password.setText("senha");
     }
 
     public boolean validateEmailAndPassword() {
@@ -567,7 +567,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
                 } else {
-                    Log.i("QuestionsCallback5", "Code: " + response.code() + " Message: " + response.message());
+                    Toast.makeText(LoginActivity.this, "Login ou senha invalida!",
+                            Toast.LENGTH_SHORT).show();
                 }
             } catch (NullPointerException e) {
                 Log.i("QuestionsCallback4", "Code: " + response.code() + " Message: " + response.message());
@@ -576,7 +577,7 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         public void onFailure(Call<Usuario> call, Throwable t) {
-            Toast.makeText(LoginActivity.this, t.toString(),
+            Toast.makeText(LoginActivity.this, "Verifique sua internet",
                     Toast.LENGTH_SHORT).show();
         }
 
