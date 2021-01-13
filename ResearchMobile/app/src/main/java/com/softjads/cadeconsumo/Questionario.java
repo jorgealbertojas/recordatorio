@@ -1,9 +1,15 @@
 package com.softjads.cadeconsumo;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
@@ -20,10 +26,9 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.Editable;
@@ -90,6 +95,7 @@ import com.softjads.cadeconsumo.modelJson.medidasCaseiras;
 import com.softjads.cadeconsumo.service.DB;
 import com.softjads.cadeconsumo.service.DataBase;
 import com.softjads.cadeconsumo.service.DateValidator;
+import com.softjads.cadeconsumo.service.NotificationPublisher;
 import com.softjads.cadeconsumo.util.ImageUtils;
 import com.softjads.cadeconsumo.util.InterfaceRetrofit;
 import com.softjads.cadeconsumo.util.MinhaTAG;
@@ -103,6 +109,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -112,6 +120,7 @@ import java.util.Properties;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.FileProvider;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -123,6 +132,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Questionario extends Activity  {
 
     int TAKE_PHOTO_CODE = 0;
+    int NOTIFICATION_REMINDER_NIGHT = 1;
     private final int REQUEST_TAKE_PHOTO_CODE = 1;
     private DisplayMetrics dm;
 
@@ -188,7 +198,7 @@ public class Questionario extends Activity  {
     public ArrayList<contagemGrupoAlimentar> grupo = null;
 
     public DateValidator dateValidator = null;
-    MyHandlerNovo blinker = null;
+
     private Button buttonPersonalizado = null;
     private boolean buttonPersonalizadoBolean = true;
     private Button buttonPersonalizado2 = null;
@@ -431,6 +441,31 @@ public class Questionario extends Activity  {
         this.onInsert(this, obj, sql_create.TABLE_CONTROLE_FIM);
     }
 
+    public static String md5(final String s) {
+        final String MD5 = "MD5";
+        try {
+            // Create MD5 Hash
+            MessageDigest digest = java.security.MessageDigest
+                    .getInstance(MD5);
+            digest.update(s.getBytes());
+            byte messageDigest[] = digest.digest();
+
+            // Create Hex String
+            StringBuilder hexString = new StringBuilder();
+            for (byte aMessageDigest : messageDigest) {
+                String h = Integer.toHexString(0xFF & aMessageDigest);
+                while (h.length() < 2)
+                    h = "0" + h;
+                hexString.append(h);
+            }
+            return hexString.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -611,6 +646,9 @@ public class Questionario extends Activity  {
 
             @Override
             public void onClick(View view) {
+
+                putNotificacao(buttonPersonalizado);
+
                 if ((estaPreenchido())) {
                     AvancarQuestionario("");
                 } else {
@@ -622,6 +660,8 @@ public class Questionario extends Activity  {
         buttonPersonalizado.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                putNotificacao(buttonPersonalizado);
 
                 if ((estaPreenchido() || estaPreenchidoDESCRICAO())) {
                     if (!gravaAlimento(buttonPersonalizado.getText().toString())) {
@@ -638,6 +678,9 @@ public class Questionario extends Activity  {
         buttonPersonalizado2.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                putNotificacao(buttonPersonalizado2);
+
                 if ((estaPreenchido() || estaPreenchidoDESCRICAO())) {
                     bd.execSQL(sql_delete.DEL_SALTO_TODOS, new String[]{});
                     InsereSalto(buttonPersonalizado2.getTag().toString(), buttonPersonalizado2.getTag().toString());
@@ -649,7 +692,16 @@ public class Questionario extends Activity  {
         });
 
 
+    }
 
+    private void putNotificacao(Button butao) {
+        if (butao.getText().toString() != null) {
+            if (butao.getText().toString().equals(VariavelAPI.constant_ativar_natificacao)) {
+                notificationDialog();
+                Toast.makeText(this, "Notificação agendada com sucesso!", Toast.LENGTH_LONG).show();
+                finishAffinity();
+            }
+        }
     }
 
     private int RetornoTAG(MinhaTAG nTAG, int nIndex) {
@@ -3483,9 +3535,55 @@ public class Questionario extends Activity  {
         DB.getInstance(context).insert(nTabela, obj);
     }
 
+    private void notificationDialog() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        String NOTIFICATION_CHANNEL_ID = "tutorialspoint_01";
+
+        Intent notificationIntent2 = new Intent(Questionario.this, MainActivity.class);
+        notificationIntent2.addCategory(Intent.CATEGORY_LAUNCHER);
+        notificationIntent2.setAction(Intent.ACTION_MAIN);
+        notificationIntent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent resultIntent = PendingIntent.getActivity(Questionario.this, 0, notificationIntent2, 0);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            @SuppressLint("WrongConstant") NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "My Notifications", NotificationManager.IMPORTANCE_MAX);
+            // Configure the notification channel.
+            notificationChannel.setDescription("Sample Channel description");
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
+            notificationChannel.enableVibration(true);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
+        notificationBuilder.setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.mipmap.ic_icon)
+                .setTicker("Tutorialspoint")
+                //.setPriority(Notification.PRIORITY_MAX)
+                .setContentIntent(resultIntent)
+                .setContentTitle("Cade - Consumo Alimentar")
+                .setContentText("Relate a refeição que está consumindo agora")
+                .setContentInfo("Information");
+
+
+        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notificationBuilder.build());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        long futureInMillis = 3000;
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, futureInMillis, pendingIntent);
+
+
+    }
+
     public void insereRegistro(String pTag, String pvalue, int pPessoa) {
 
         try {
+
 
             ContentValues obj = new ContentValues();
             obj.put("ID_ALUNO", AlunoAtual);
@@ -5152,23 +5250,6 @@ public class Questionario extends Activity  {
         }
     }
 
-    private class MyHandlerNovo extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    break;
-                case 1:
-                    break;
-                case 379:
-                    fechar();
-                    break;
-
-            }
-
-            super.handleMessage(msg);
-        }
-    }
 
 
     protected void AdicionarYouTube() {
@@ -5481,6 +5562,8 @@ public class Questionario extends Activity  {
         if (!stringFoto.equals("0")) {
             try {
 
+                insereRegistro(md5(stringFoto), stringFoto, 0);
+
                 byte[] decodedByte = null;
 
                 try {
@@ -5615,6 +5698,9 @@ public class Questionario extends Activity  {
 
         String retorna = "";
 
+        if (cursorPergunta.isAfterLast()) {
+            cursorPergunta.moveToPrevious();
+        }
         if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_109)) {
             Cursor cursorRESPOSTA_OPCAO_TOTAS_REFEICAO = bd.rawQuery(sql_select.GET_RESPOSTA_OPCAO_TOTAS_REFEICAO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), tag, numero_refeicao_atual_domic});
             cursorRESPOSTA_OPCAO_TOTAS_REFEICAO.moveToFirst();
@@ -5639,6 +5725,7 @@ public class Questionario extends Activity  {
                 retorna = cursorRESPOSTA_OPCAO_TOTAS.getString(4);
             }
         }
+
 
         return retorna;
     }

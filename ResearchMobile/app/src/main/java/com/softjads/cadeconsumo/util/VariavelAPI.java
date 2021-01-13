@@ -77,8 +77,10 @@ public class VariavelAPI {
 
     public static final String constant_chave_101_domic =  "FIMPAPEL/5";
 
-    public static final String constant_foto_alimento = "{{EXIBIR_SOMENTE_TEM_FOTO_ALIMENTO";
+    public static final String constant_foto_alimento = "{{EXIBIR_SOMENTE_TEM_FOTO_ALIMENTO}}";
     public static final String constant_foto_utensilio = "{{EXIBIR_SOMENTE_TEM_FOTO_UTENSILIO}}";
     public static final String constant_sem_foto = "{{EXIBIR_SOMENTE_SEM_FOTO}}";
+
+    public static final String constant_ativar_natificacao = "Ativar notificação para as próximas refeições";
 
 }

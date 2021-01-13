@@ -73,10 +73,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.softjads.cadeconsumo.fim"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name="com.softjads.cadeconsumo.faz_opcao_dinamica"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
@@ -107,6 +103,18 @@
              sign the APK for publishing.
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.softjads.cadeconsumo.fileprovider2"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+        <receiver android:name=".service.NotificationPublisher" />
+
 
 
     </application>
