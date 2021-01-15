@@ -167,8 +167,8 @@ public class LoginActivity extends AppCompatActivity {
         email.setText(sharedPref.getString("preference_key_email", null));
         password.setText(sharedPref.getString("preference_key_password", null));
 
-         email.setText("marina");
-         password.setText("senha");
+         //email.setText("marina");
+         //password.setText("senha");
     }
 
     public boolean validateEmailAndPassword() {

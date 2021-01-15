@@ -17,6 +17,7 @@ public class VariavelAPI {
     // Personalização especifica
     public static final String getConstante_variavel_fechar = "{{FECHAR_APLICATIVO}}";
     public static final String constante_variavel_entrevistado = "{{NOME_CRIANCA}}";
+    public static final String constante_variavel_entrevistado2 = "{{NOME_CRIANÇA}}";
     public static final String constante_variavel_refeicao_nome = "{{NOME_REFEICAO}}";
     public static final String constante_variavel_refeicao_nome_selecionada = "{{NOME_REFEICAO_SELECIONADA}}";
     public static final String contante_variavel_detalhar_alimento = "{{NOME_ALIMENTO_SELECIONADO_PARA_DETALHAR}}";
@@ -45,7 +46,7 @@ public class VariavelAPI {
     public static final String constante_descricao_alimento = "Nome do alimento";
     public static final String constante_descricao_medida = "Medida caseira";
     public static final String constante_descricao_modo_preparacao = "Modo de preparação";
-    public static final String constante_descricao_quantidade = "Qual a quantidade da medida caseira utilizada? (ex.: 1 colher de sopa, 2 colheres de sopa, 3 colheres de sopa)";
+    public static final String constante_descricao_quantidade = "Qual a quantidade da medida caseira utilizada? (ex.: 1 colher de sopa)";
     // INICIO/2
     public static final String constante_descricao_inicio_2_confirma = "Sim";
     public static final String constante_descricao_medida_caseira_detalhar =  "{{NOME_MEDIDA_CASEIRA_SELECIONADA_NA_TELA_ANTERIOR}}";
@@ -62,12 +63,33 @@ public class VariavelAPI {
     public static final String constant_chave_107 =  "FIMDOMIC/2";
     public static final String constant_chave_108 =  "FIMDOMIC/1";
     public static final String constant_chave_109 =  "FIMDOMIC/3";
+    public static final String constant_chave_1013 = "PAPEL/2";
+
     // "FIMDOMIC/2" não tinha como saber pela id
-    public static final String constant_chave_1010 =  "6EEEBF0B-75A5-4813-A9E1-C24CE1394E32";
+    public static final String constant_chave_1010 = "6EEEBF0B-75A5-4813-A9E1-C24CE1394E32";
+    // "PAPEL/2" para saber o nome da refeição id_opcao
+    public static final String constant_chave_1011 = "07820b7d-c13f-46df-9d5c-6ba388314f16";
+    // "PAPEL/2" para saber o nome da refeição id_pergunta
+    public static final String constant_chave_1012 = "D0BD426A-1D19-4ACA-B147-5AEB720D417A";
+    // "INICIO/3" para saber o nome da crianca
+    public static final String constant_chave_1014 = "9FE42CA6-AC40-4644-9D98-2CF9870D4B8B";
+    // "NOTIFICACAO/1" gera notificacao
+    public static final String constant_chave_1015 = "7895D828-80E8-4367-8A50-44504C950855";
+
+
+
+
 
     // caso iniciar
     public static final String contant_chave_inicair_anterior_DETALIMDOMIC2 = "DETALIM/2/DOMIC";
     public static final String contant_chave_inicair_anterior_DETALIMDOMIC1 = "DETALIM/1/DOMIC";
+
+    public static final String contant_chave_inicair_anterior_DETALIMDOMIC8 = "DETALIM/8/DOMIC";
+    public static final String contant_chave_inicair_anterior_DETALIMDOMIC30 = "DETALIM/30/DOMIC";
+    public static final String contant_chave_inicair_anterior_DETALIMDOMIC40 = "DETALIM/40/DOMIC";
+    public static final String contant_chave_inicair_anterior_DETALIMDOMIC50 = "DETALIM/50/DOMIC";
+
+
 
     public static final String contant_chave_inicair_anterior_DETALIMESC2 = "DETALIM/2/ESC";
     public static final String contant_chave_inicair_anterior_DETALIMESC1 = "DETALIM/1/ESC";
@@ -82,5 +104,6 @@ public class VariavelAPI {
     public static final String constant_sem_foto = "{{EXIBIR_SOMENTE_SEM_FOTO}}";
 
     public static final String constant_ativar_natificacao = "Ativar notificação para as próximas refeições";
+    public static final String constant_ativar_natificacaoNao = "Não";
 
 }

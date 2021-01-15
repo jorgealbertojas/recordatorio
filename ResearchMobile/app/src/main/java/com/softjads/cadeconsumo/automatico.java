@@ -87,6 +87,12 @@ public class automatico extends Activity {
 							ultimaResposta = response.body().getUltimaResposta().getIdentUnicaPergunta();
 						}
 					}
+
+					SharedPreferencesService shared = new SharedPreferencesService(automatico.this);
+					shared.setIDCrianca(response.body().getId());
+
+
+
 					Entrar(editTextcodigo.getText().toString(), response.body().getId(),  ultimaResposta, response.body().getTodasRespostas());
 
 				} else {
@@ -233,11 +239,11 @@ public class automatico extends Activity {
 					obj.put("ID_ALIMENTO", "");
 				}
 
-				if (respostaAdd.getIdPergunta().equals(VariavelAPI.constant_chave_1010)) {
-					obj.put("REFEICAO_DESCRICAO", respostaAdd.getIdAlimento());
+/*				if (respostaAdd.getIdPergunta().equals(VariavelAPI.constant_chave_1010)) {
+					obj.put("REFEICAO_DESCRICAO", respostaAdd.get());
 				} else {
 					obj.put("REFEICAO_DESCRICAO", "");
-				}
+				}*/
 
 				this.onInsert(this, obj, sql_create.TABLE_RESPOSTA);
 			} else {

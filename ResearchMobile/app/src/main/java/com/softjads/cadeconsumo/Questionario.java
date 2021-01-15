@@ -131,6 +131,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Questionario extends Activity  {
 
+    Boolean esperaFinalizar = false;
+
     int TAKE_PHOTO_CODE = 0;
     int NOTIFICATION_REMINDER_NIGHT = 1;
     private final int REQUEST_TAKE_PHOTO_CODE = 1;
@@ -191,6 +193,8 @@ public class Questionario extends Activity  {
     public String numero_alimento_atual = "0";
 
     public String numero_refeicao_atual_domic = "0";
+
+    public String refeicao_para_papel = "0";
 
     public String mCurrentPhotoPath = "";
 
@@ -484,6 +488,8 @@ public class Questionario extends Activity  {
         nDataBase = new DataBase(this);
         bd = nDataBase.getReadableDatabase();
 
+
+
         bd.execSQL(sql_delete.DEL_SALTO_TODOS, new String[]{});
 
         if (!saltoTEMP.equals("")) {
@@ -504,6 +510,23 @@ public class Questionario extends Activity  {
             if (VariavelAPI.contant_chave_inicair_anterior_DETALIMESC2.equals(saltoTEMP)) {
                 saltoTEMP = VariavelAPI.contant_chave_inicair_anterior_DETALIMESC1;
             }
+
+            if (VariavelAPI.contant_chave_inicair_anterior_DETALIMDOMIC8.equals(saltoTEMP)) {
+                saltoTEMP = VariavelAPI.contant_chave_inicair_anterior_DETALIMDOMIC1;
+            }
+
+            if (VariavelAPI.contant_chave_inicair_anterior_DETALIMDOMIC30.equals(saltoTEMP)) {
+                saltoTEMP = VariavelAPI.contant_chave_inicair_anterior_DETALIMDOMIC1;
+            }
+
+            if (VariavelAPI.contant_chave_inicair_anterior_DETALIMDOMIC40.equals(saltoTEMP)) {
+                saltoTEMP = VariavelAPI.contant_chave_inicair_anterior_DETALIMDOMIC1;
+            }
+
+            if (VariavelAPI.contant_chave_inicair_anterior_DETALIMDOMIC50.equals(saltoTEMP)) {
+                saltoTEMP = VariavelAPI.contant_chave_inicair_anterior_DETALIMDOMIC1;
+            }
+
 
             InsereSalto(saltoTEMP, saltoTEMP);
             saltoTEMP = "";
@@ -555,6 +578,8 @@ public class Questionario extends Activity  {
         } else {
             nTIME = false;
         }
+
+        nomeCrianca = colocaNomeCrianca();
 
 
         Cursor cursorQualAmbiente;
@@ -696,7 +721,7 @@ public class Questionario extends Activity  {
 
     private void putNotificacao(Button butao) {
         if (butao.getText().toString() != null) {
-            if (butao.getText().toString().equals(VariavelAPI.constant_ativar_natificacao)) {
+            if ((butao.getText().toString().equals(VariavelAPI.constant_ativar_natificacao)) || (butao.getText().toString().equals(VariavelAPI.constant_ativar_natificacaoNao) && (cursorPergunta.getString(0).equals(VariavelAPI.constant_chave_1015)))) {
                 notificationDialog();
                 Toast.makeText(this, "Notificação agendada com sucesso!", Toast.LENGTH_LONG).show();
                 finishAffinity();
@@ -749,6 +774,8 @@ public class Questionario extends Activity  {
         nDataBase = new DataBase(this);
         bd = nDataBase.getReadableDatabase();
 
+
+
      //   llPergunta.animate().translationY(dm.heightPixels).setStartDelay(0).setDuration(0).start();
     //    llPergunta.animate().translationY(0).setDuration(500).alpha(1).setStartDelay(1500).start();
 
@@ -784,6 +811,14 @@ public class Questionario extends Activity  {
                             pergunta = pergunta.replace("          ", " ");
                             pergunta = pergunta.replace("\\n", "\n");
                             pergunta = pergunta.replace(VariavelAPI.constante_variavel_entrevistado, nomeCrianca);
+                        }
+                    }
+
+                    if (pergunta.toString() != null) {
+                        if (pergunta.length() > 0) {
+                            pergunta = pergunta.replace("          ", " ");
+                            pergunta = pergunta.replace("\\n", "\n");
+                            pergunta = pergunta.replace(VariavelAPI.constante_variavel_entrevistado2, nomeCrianca);
                         }
                     }
 
@@ -947,16 +982,20 @@ public class Questionario extends Activity  {
                                                     }
                                                 }
 
+                                               // esperaFinalizar = true;
                                                 bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual)});
                                                 createStackOverflowAPI();
-                                                mInterfaceObject.deleteRespostaCrianca(AlunoAtualID,(NumeroPerguntaAtual)).enqueue(deletarRespostaCriancaCallback);
+
+                                                //mInterfaceObject.deleteRespostaCrianca(AlunoAtualID,(NumeroPerguntaAtual)).enqueue(deletarRespostaCriancaCallback);
+
+
 
                                                 bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{(NumeroPerguntaAtual)});
 
                                                 if (getPersonalizacaoBOOLEAN((NumeroPerguntaAtual), ((RadioButton) view).getTag().toString())) {
-                                                    insereRegistro(((RadioButton) view).getTag().toString(), ((RadioButton) view).getText().toString(), 0);
+                                                    insereRegistro(((RadioButton) view).getTag().toString(), ((RadioButton) view).getText().toString(), 0, true);
                                                 } else {
-                                                    insereRegistro(((RadioButton) view).getTag().toString(), "", 0);
+                                                    insereRegistro(((RadioButton) view).getTag().toString(), "", 0, true);
                                                 }
 
                                                 Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{(NumeroPerguntaAtual), ((RadioButton) view).getTag().toString()});
@@ -1141,7 +1180,7 @@ public class Questionario extends Activity  {
 
                                                     bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), parentView.getTag().toString(), idAlimento});
 
-                                                    insereRegistro(parentView.getTag().toString(), ((TextView) selectedItemView).getText().toString(), 0);
+                                                    insereRegistro(parentView.getTag().toString(), ((TextView) selectedItemView).getText().toString(), 0, false);
 
                                                     Cursor cursorMEDIDAS_CASEIRAS = bd.rawQuery(sql_select.GET_MEDIDAS_CASEIRAS, new String[]{idAlimento});
                                                     cursorMEDIDAS_CASEIRAS.moveToFirst();
@@ -1184,12 +1223,19 @@ public class Questionario extends Activity  {
                                                                     cursorRefeicaoatualiza.getCount();
                                                                     anteriorRefeicaoCombo = ((TextView) selectedItemView).getText().toString();
                                                                     if (cursorRefeicaoatualiza.getCount() > 0) {
-                                                                        for (int h = 0; h < cursorRefeicaoatualiza.getCount(); h++) {
-                                                                            bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + cursorRefeicaoatualiza.getString(0) + "'");
-                                                                            insereeAtualizaAlimentoeRefeicaoComoCodigo(cursorRefeicaoatualiza.getString(0), ((TextView) selectedItemView).getText().toString());
-                                                                            cursorRefeicaoatualiza.moveToNext();
+                                                                        if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_101_domic)) {
+
+                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'");
+                                                                                insereeAtualizaAlimentoeRefeicaoComoCodigo(idAlimento, ((TextView) selectedItemView).getText().toString());
+
+                                                                        }else{
+                                                                            for (int h = 0; h < cursorRefeicaoatualiza.getCount(); h++) {
+                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + cursorRefeicaoatualiza.getString(0) + "'");
+                                                                                insereeAtualizaAlimentoeRefeicaoComoCodigo(cursorRefeicaoatualiza.getString(0), ((TextView) selectedItemView).getText().toString());
+                                                                                cursorRefeicaoatualiza.moveToNext();
 
 
+                                                                            }
                                                                         }
                                                                     }
                                                                 }
@@ -1200,10 +1246,17 @@ public class Questionario extends Activity  {
                                                                     cursorRefeicaoatualiza.getCount();
                                                                     anteriorRefeicaoCombo = ((TextView) selectedItemView).getText().toString();
                                                                     if (cursorRefeicaoatualiza.getCount() > 0) {
-                                                                        for (int h = 0; h < cursorRefeicaoatualiza.getCount(); h++) {
-                                                                            bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + cursorRefeicaoatualiza.getString(0) + "'");
-                                                                            insereeAtualizaAlimentoeRefeicaoComoCodigo(cursorRefeicaoatualiza.getString(0), ((TextView) selectedItemView).getText().toString());
-                                                                            cursorRefeicaoatualiza.moveToNext();
+                                                                        if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_101_domic) ) {
+
+                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'");
+                                                                                insereeAtualizaAlimentoeRefeicaoComoCodigo(idAlimento, ((TextView) selectedItemView).getText().toString());
+
+                                                                        }else{
+                                                                            for (int h = 0; h < cursorRefeicaoatualiza.getCount(); h++) {
+                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + cursorRefeicaoatualiza.getString(0) + "'");
+                                                                                insereeAtualizaAlimentoeRefeicaoComoCodigo(cursorRefeicaoatualiza.getString(0), ((TextView) selectedItemView).getText().toString());
+                                                                                cursorRefeicaoatualiza.moveToNext();
+                                                                            }
                                                                         }
                                                                     }
                                                                 }
@@ -1308,9 +1361,9 @@ public class Questionario extends Activity  {
                                                 bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString(),idAlimento});
 
                                                 if (getPersonalizacaoBOOLEAN((NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString())) {
-                                                    insereRegistro(buttonView.getTag().toString(), ((CheckBox) buttonView).getText().toString(), 0);
+                                                    insereRegistro(buttonView.getTag().toString(), ((CheckBox) buttonView).getText().toString(), 0, false);
                                                 } else {
-                                                    insereRegistro(buttonView.getTag().toString(), "", 0);
+                                                    insereRegistro(buttonView.getTag().toString(), "", 0, false);
                                                 }
 
                                                 if (cursorSALTO.getCount() > 0) {
@@ -1436,7 +1489,7 @@ public class Questionario extends Activity  {
 
                                                 bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), (TemEditText.getTag().toString()),idAlimento});
                                                 if (s.length() > 0) {
-                                                    insereRegistro((TemEditText.getTag().toString()), s.toString(), 0);
+                                                    insereRegistro((TemEditText.getTag().toString()), s.toString(), 0, false);
 
                                                     Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{(NumeroPerguntaAtual), TemEditText.getTag().toString()});
                                                     cursorSALTO.moveToFirst();
@@ -1688,7 +1741,7 @@ public class Questionario extends Activity  {
 
                                             bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), (TemEditText.getTag().toString())});
                                             if (s.length() > 0) {
-                                                insereRegistro((TemEditText.getTag().toString()), s.toString(), 0);
+                                                insereRegistro((TemEditText.getTag().toString()), s.toString(), 0, false);
                                                 Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{(NumeroPerguntaAtual), TemEditText.getTag().toString()});
                                                 cursorSALTO.moveToFirst();
                                                 cursorSALTO.getCount();
@@ -1875,7 +1928,7 @@ public class Questionario extends Activity  {
 
                                             bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), (TempMaskEditText.getTag().toString())});
                                             if (s.length() > 0) {
-                                                insereRegistro((TempMaskEditText.getTag().toString()), s.toString(), 0);
+                                                insereRegistro((TempMaskEditText.getTag().toString()), s.toString(), 0, false);
                                                 Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{(NumeroPerguntaAtual), TempMaskEditText.getTag().toString()});
                                                 cursorSALTO.moveToFirst();
                                                 cursorSALTO.getCount();
@@ -1969,7 +2022,14 @@ public class Questionario extends Activity  {
                                     if (nestaPerguntaNaoColocaResposta()) {
                                         String temp = colocaValor(edit.getTag().toString());
                                         if (!temp.equals("")) {
-                                            edit.setText(temp);
+                                            temp = temp.trim();
+                                            if (!temp.equals("")) {
+                                                if (temp.equals(":")){
+                                                    temp = "00:00";
+                                                }
+
+                                                edit.setText(temp);
+                                            }
                                         }
                                     }
 
@@ -2052,7 +2112,7 @@ public class Questionario extends Activity  {
 
                                             bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), (TempMaskEditText.getTag().toString())});
                                             if (s.length() > 0) {
-                                                insereRegistro((TempMaskEditText.getTag().toString()), s.toString(), 0);
+                                                insereRegistro((TempMaskEditText.getTag().toString()), s.toString(), 0, false);
                                                 Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{(NumeroPerguntaAtual), TempMaskEditText.getTag().toString()});
                                                 cursorSALTO.moveToFirst();
                                                 cursorSALTO.getCount();
@@ -2282,7 +2342,7 @@ public class Questionario extends Activity  {
 
                                             bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), (TempMaskEditText.getTag().toString())});
                                             if (s.length() > 0) {
-                                                insereRegistro((TempMaskEditText.getTag().toString()), s.toString(), 0);
+                                                insereRegistro((TempMaskEditText.getTag().toString()), s.toString(), 0, false);
                                                 Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{(NumeroPerguntaAtual), TempMaskEditText.getTag().toString()});
                                                 cursorSALTO.moveToFirst();
                                                 cursorSALTO.getCount();
@@ -2475,7 +2535,7 @@ public class Questionario extends Activity  {
 
                                             bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), (TemEditText.getTag().toString())});
                                             if (s.length() > 0) {
-                                                insereRegistro((TemEditText.getTag().toString()), s.toString(), 0);
+                                                insereRegistro((TemEditText.getTag().toString()), s.toString(), 0, false);
                                                 Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{(NumeroPerguntaAtual), TemEditText.getTag().toString()});
                                                 cursorSALTO.moveToFirst();
                                                 cursorSALTO.getCount();
@@ -2644,7 +2704,7 @@ public class Questionario extends Activity  {
                                     number.setMaxValue(nMax);
                                     number.setWrapSelectorWheel(true);
 
-                                    insereRegistro(cursor.getString(0), Integer.toString(nMin), 0);
+                                    insereRegistro(cursor.getString(0), Integer.toString(nMin), 0, false);
 
                                     ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                                             .hideSoftInputFromWindow(number.getWindowToken(), 0);
@@ -2666,9 +2726,9 @@ public class Questionario extends Activity  {
                                                 bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual)});
 
                                                 createStackOverflowAPI();
-                                                mInterfaceObject.deleteRespostaCrianca(AlunoAtualID,(NumeroPerguntaAtual)).enqueue(deletarRespostaCriancaCallback);
+                                                //mInterfaceObject.deleteRespostaCrianca(AlunoAtualID,(NumeroPerguntaAtual)).enqueue(deletarRespostaCriancaCallback);
 
-                                                insereRegistro(Integer.toString(ntag), Integer.toString(picker.getValue()), 0);
+                                                insereRegistro(Integer.toString(ntag), Integer.toString(picker.getValue()), 0, true);
 
                                             } catch (Exception e) {
                                                 System.out.println(e.getMessage());
@@ -2715,7 +2775,7 @@ public class Questionario extends Activity  {
                                             if (isChecked) {
                                                 TornaVisivelTextEspecial(Integer.toString(Integer.parseInt(buttonView.getTag().toString()) + 1), true);
                                                 bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString(),idAlimento});
-                                                insereRegistro(buttonView.getTag().toString(), "", 0);
+                                                insereRegistro(buttonView.getTag().toString(), "", 0, false);
 
                                                 if (cursorSALTO.getCount() > 0) {
                                                     String n = cursorSALTO.getString(6);
@@ -2791,7 +2851,7 @@ public class Questionario extends Activity  {
                                         public void afterTextChanged(Editable s) {
                                             bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_OPCAO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), (TemEditText.getTag().toString())});
                                             if (s.length() > 0) {
-                                                insereRegistro((TemEditText.getTag().toString()), s.toString(), 0);
+                                                insereRegistro((TemEditText.getTag().toString()), s.toString(), 0, false);
                                             }
                                             if (!((s.toString().equals("")))) {
                                                 if (s.toString().length() + 1 > AtualMax) {
@@ -3539,7 +3599,32 @@ public class Questionario extends Activity  {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         String NOTIFICATION_CHANNEL_ID = "tutorialspoint_01";
 
-        Intent notificationIntent2 = new Intent(Questionario.this, MainActivity.class);
+        SharedPreferencesService shared = new SharedPreferencesService(this);
+        String alunoTemp = shared.getCodigoCrianca();
+        String alunoIdTemp = shared.getIDCrianca();
+
+        Intent notificationIntent2 = new Intent(Questionario.this, Questionario.class);
+        notificationIntent2.putExtra("filtro_id_cliente", "");
+        notificationIntent2.putExtra("filtro_id_pesquisa", "");
+        notificationIntent2.putExtra("filtro_desc_pesquisa", "");
+        notificationIntent2.putExtra("filtro_automatico", "");
+        notificationIntent2.putExtra("filtro_previsao", "");
+        notificationIntent2.putExtra("usuario", "bebeto");
+        notificationIntent2.putExtra("Nomeusuario", "bebeto");
+        notificationIntent2.putExtra("AlunoAtual", alunoTemp);
+        notificationIntent2.putExtra("AlunoAtualID", alunoIdTemp);
+        notificationIntent2.putExtra("saltoTEMP_NOVO","NOTIFICACAO/1");
+        notificationIntent2.putExtra("nFONTE", "M");
+        notificationIntent2.putExtra("nGPS", "false");
+        notificationIntent2.putExtra("NomeGravacaoArquivo", "GRAVACAO_" + "bebeto" + "_" + System.currentTimeMillis() + ".amr");
+        notificationIntent2.putExtra("opcao", Integer.toString(1));
+        notificationIntent2.putExtra("opcaoQuestionario", Integer.toString(0));
+        notificationIntent2.putExtra("opcaoQuestionarioFINAL", Integer.toString(0));
+        if (true) {
+            notificationIntent2.putExtra("nTIME", "1");
+        } else {
+            notificationIntent2.putExtra("nTIME", "0");
+        }
         notificationIntent2.addCategory(Intent.CATEGORY_LAUNCHER);
         notificationIntent2.setAction(Intent.ACTION_MAIN);
         notificationIntent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -3580,9 +3665,14 @@ public class Questionario extends Activity  {
 
     }
 
-    public void insereRegistro(String pTag, String pvalue, int pPessoa) {
+    public void insereRegistro(String pTag, String pvalue, int pPessoa, Boolean delete) {
 
         try {
+
+            if (pTag.equals(VariavelAPI.constant_chave_1011)){
+                refeicao_para_papel = pvalue;
+                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO = '" + pvalue + "' WHERE ALIMENTO_REFEICAO ISNULL ");
+            }
 
 
             ContentValues obj = new ContentValues();
@@ -3591,34 +3681,61 @@ public class Questionario extends Activity  {
             obj.put("ID_OPCAO", pTag);
             obj.put("VALOR", pvalue);
             obj.put("ID_OPCAO_PESSOA", pPessoa);
-            if (colocaIDAlimento()) {
-                obj.put("ID_ALIMENTO", idAlimento);
-            } else {
-                obj.put("ID_ALIMENTO", "");
+
+            String temId = "";
+
+            if (refeicao_para_papel.equals("0") || !NumeroPerguntaAtual.equals(VariavelAPI.constant_chave_1012)) {
+                if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_109)) {
+                    temId = numero_refeicao_atual_domic;
+                    obj.put("ID_ALIMENTO", numero_refeicao_atual_domic);
+                }else{
+                    if (colocaIDAlimento()) {
+                        temId = idAlimento;
+                        obj.put("ID_ALIMENTO", idAlimento);
+                    } else {
+                        obj.put("ID_ALIMENTO", "");
+                    }
+                }
+            }else{
+                if (!refeicao_para_papel.equals("0")){
+                    temId = refeicao_para_papel;
+                    obj.put("ID_ALIMENTO", refeicao_para_papel);
+                }else{
+                    obj.put("ID_ALIMENTO", "");
+                }
             }
 
-            if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_109)) {
+/*           if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_109)) {
                 obj.put("REFEICAO_DESCRICAO", numero_refeicao_atual_domic);
             } else {
                 obj.put("REFEICAO_DESCRICAO", "");
-            }
+            }*/
 
 
             RespostaAdd respostaAdd = new RespostaAdd();
             respostaAdd.setIdPergunta(NumeroPerguntaAtual);
             respostaAdd.setIdItemPergunta(pTag);
-            if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_109)) {
-                respostaAdd.setIdAlimento(numero_refeicao_atual_domic);
-            } else {
-                respostaAdd.setIdAlimento(idAlimento);
-            }
+
+            respostaAdd.setIdAlimento(temId);
+
             respostaAdd.setValor(pvalue);
             respostaAdd.setTagLivre(idAlimento);
 
-            createStackOverflowAPI();
-            mInterfaceObject.postAdicionaCrianca(respostaAdd, AlunoAtualID).enqueue(cadatrarRespostaCallback);
-
             this.onInsert(this, obj, sql_create.TABLE_RESPOSTA);
+
+            createStackOverflowAPI();
+
+          //  while (esperaFinalizar){
+         //       Log.d("bebeto12", "teste" );
+         //   }
+
+            if (delete) {
+                mInterfaceObject.postAdicionaCriancaDelete(respostaAdd, AlunoAtualID).enqueue(cadatrarRespostaCallback);
+            }else{
+                mInterfaceObject.postAdicionaCrianca(respostaAdd, AlunoAtualID).enqueue(cadatrarRespostaCallback);
+            }
+
+
 
         } catch (Throwable ex) {
             System.out.println(ex.getMessage());
@@ -4662,6 +4779,11 @@ public class Questionario extends Activity  {
         obj.put("QUAL_E_ESSE_ITEM", novoItemDesseAlimento);
         obj.put("ALIMENTO_REFEICAO_ORDER", getRefeicaoOrder());
 
+        if (!refeicao_para_papel.equals("0")){
+            obj.put("ALIMENTO_REFEICAO", refeicao_para_papel);
+            alimentoRefeicao = refeicao_para_papel;
+        }
+
         insereeAtualizaAlimentoeRefeicao(pTag, codigo, pvalue, alimentoRefeicao, getRefeicaoOrder());
 
         this.onInsert(this, obj, sql_create.TABLE_ALIMENTO);
@@ -4696,6 +4818,10 @@ public class Questionario extends Activity  {
         respostaAdd.setValor(gson.toJson(respostaAlimento));
         respostaAdd.setTagLivre(sql_create.TABLE_ALIMENTO);
         respostaAdd.setIdAlimento(pTag);
+
+        while (esperaFinalizar){
+            Log.d("bebeto12", "teste" );
+        }
 
         createStackOverflowAPI();
         mInterfaceObject.postAdicionaCrianca(respostaAdd, AlunoAtualID).enqueue(cadatrarRespostaCallback);
@@ -4759,6 +4885,11 @@ public class Questionario extends Activity  {
         respostaAdd.setIdAlimento(pTag);
 
         createStackOverflowAPI();
+
+        while (esperaFinalizar){
+            Log.d("bebeto12", "teste" );
+        }
+
         mInterfaceObject.postAdicionaCrianca(respostaAdd, AlunoAtualID).enqueue(cadatrarRespostaCallback);
     }
 
@@ -4962,9 +5093,35 @@ public class Questionario extends Activity  {
                     public void onClick(View view) {
                         numero_refeicao_atual_domic = view.getTag().toString();
 
+                        idAlimento = numero_refeicao_atual_domic;
+
                         InsereSalto(VariavelAPI.constant_chave_107, VariavelAPI.constant_chave_107);
 
                         AvancarQuestionario("");
+                    }
+                });
+
+
+                // Editar
+
+                ImageView nButtonEditar = new ImageView(this);
+                nButtonEditar.setImageResource(R.mipmap.ic_edit);
+
+                final int newColornEditar = res.getColor(R.color.red);
+                nButtonEditar.setColorFilter(newColornEditar, PorterDuff.Mode.SRC_ATOP);
+                nButtonEditar.setTag(cursorREFEICAO.getString(0));
+
+                if (ambienteTEMP.equals(VariavelAPI.constante_variavel_papel) ) {
+                    nButtonEditar.setVisibility(View.VISIBLE);
+                }else{
+                    nButtonEditar.setVisibility(View.INVISIBLE);
+                }
+
+                nButtonEditar.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                         editarRefeicaodosAlimentos(view.getTag().toString());
+
                     }
                 });
 
@@ -4984,6 +5141,7 @@ public class Questionario extends Activity  {
 
                 linearLayout.addView(textView, params);
                 linearLayout.addView(nButton2, paramsButton);
+                linearLayout.addView(nButtonEditar, paramsButton);
 
                 //
 
@@ -5003,6 +5161,45 @@ public class Questionario extends Activity  {
                 cursorREFEICAO.moveToNext();
             }
         }
+    }
+
+    private AlertDialog editarRefeicaodosAlimentos(final String refeicao) {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View deleteDialogView = factory.inflate(
+                R.layout.custom_dialog, null);
+        final AlertDialog deleteDialog = new AlertDialog.Builder(this).create();
+        deleteDialog.setView(deleteDialogView);
+
+        TextView nTextView = (TextView) deleteDialogView.findViewById(R.id.txt_dia);
+        nTextView.setText("ATENÇÃO! Tem ceterteza que deseja editar essa refeição?");
+
+        deleteDialogView.findViewById(R.id.btn_yes).setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO = NULL WHERE ALIMENTO_REFEICAO = '" + refeicao + "'");
+
+                bd.execSQL(sql_delete.DEL_SALTO_TODOS, new String[]{});
+                InsereSalto(VariavelAPI.constant_chave_1013, VariavelAPI.constant_chave_1013);
+                saltoTEMP = "";
+                AvancarQuestionario("");
+
+                deleteDialog.dismiss();
+            }
+        });
+        deleteDialogView.findViewById(R.id.btn_no).setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                deleteDialog.dismiss();
+
+            }
+        });
+
+        deleteDialog.show();
+
+        return deleteDialog;
     }
 
     private void criarAlimentosInseridosDetalhes(Boolean MostrarMais) {
@@ -5562,7 +5759,7 @@ public class Questionario extends Activity  {
         if (!stringFoto.equals("0")) {
             try {
 
-                insereRegistro(md5(stringFoto), stringFoto, 0);
+                insereRegistro(md5(stringFoto), stringFoto, 0, false);
 
                 byte[] decodedByte = null;
 
@@ -5832,7 +6029,7 @@ public class Questionario extends Activity  {
             }
 
             if (!alimento.equals("") && !medidacaseira.equals("") && !modopreparacao.equals("") && !quantidade.equals("")) {
-                insereRegistroAlimento(alimento + " | " + medidacaseira + " | " + modopreparacao + " | " + quantidade, "1", alimento + " | " + medidacaseira + " | " + modopreparacao + " | " + quantidade, "1", colocaRefeicaoOrder());
+                insereRegistroAlimento(alimento + "  " + medidacaseira + "  " + modopreparacao + "  " + quantidade, "1", alimento + "  " + medidacaseira + "  " + modopreparacao + "  " + quantidade, "1", colocaRefeicaoOrder());
                 Toast.makeText(this, "Inserido com sucesso!", Toast.LENGTH_LONG).show();
                 bd.execSQL(sql_delete.DEL_SALTO_TODOS, new String[]{});
                 InsereSalto(VariavelAPI.constant_chave_102, VariavelAPI.constant_chave_102);
@@ -5902,10 +6099,13 @@ public class Questionario extends Activity  {
     /**
      * Call post cadatrar CriancaCallback .
      */
-    private Callback<Boolean>deletarRespostaCriancaCallback = new Callback<Boolean>() {
+    private Callback<Integer>deletarRespostaCriancaCallback = new Callback<Integer>() {
+
+
         @Override
-        public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+        public void onResponse(Call<Integer> call, Response<Integer> response) {
             try {
+                //esperaFinalizar = false;
                 if (response.isSuccessful()) {
 
                 }
@@ -5922,8 +6122,9 @@ public class Questionario extends Activity  {
         }
 
         @Override
-        public void onFailure(Call<Boolean> call, Throwable t) {
-
+        public void onFailure(Call<Integer> call, Throwable t) {
+            Log.d("bebeto1212", "Code: " );
+            esperaFinalizar = false;
         }
     };
 
@@ -5977,6 +6178,21 @@ public class Questionario extends Activity  {
 
         if (cursorALIMENTO_REFEICAO.getCount() > 0) {
             retorno = cursorALIMENTO_REFEICAO.getString(0);
+        }
+
+        return retorno;
+
+    }
+
+
+    private String colocaNomeCrianca() {
+        String retorno = "";
+        Cursor cursorNOME_CRIANCA = bd.rawQuery(sql_select.GET_RESPOSTA_NOME, new String[]{Integer.toString(AlunoAtual)});
+        cursorNOME_CRIANCA.moveToFirst();
+        cursorNOME_CRIANCA.getCount();
+
+        if (cursorNOME_CRIANCA.getCount() > 0) {
+            retorno = cursorNOME_CRIANCA.getString(4);
         }
 
         return retorno;

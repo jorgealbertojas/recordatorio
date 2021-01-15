@@ -46,7 +46,10 @@ public interface InterfaceRetrofit {
         @POST(Utility.COMPLEMENT_URL_ADICIONA_RESPOSTA + "{id_crianca}")
         Call<Crianca> postAdicionaCrianca(@Body RespostaAdd respostaAdd, @Path("id_crianca") String id_crianca);
 
+        @POST(Utility.COMPLEMENT_URL_ADICIONA_RESPOSTA_DELETE + "{id_crianca}")
+        Call<Crianca> postAdicionaCriancaDelete(@Body RespostaAdd respostaAdd, @Path("id_crianca") String id_crianca);
+
         @DELETE(Utility.COMPLEMENT_URL_RESPOSTA_CRIANCA_DELETE + "{id_crianca}" + "/{id_pergunta}")
-        Call<Boolean> deleteRespostaCrianca(@Path("id_crianca") String id_crianca, @Path("id_pergunta") String id_pergunta);
+        Call<Integer> deleteRespostaCrianca(@Path("id_crianca") String id_crianca, @Path("id_pergunta") String id_pergunta);
 
     }

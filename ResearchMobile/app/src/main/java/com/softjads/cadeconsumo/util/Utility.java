@@ -31,6 +31,8 @@ public class Utility {
 
     public final static String COMPLEMENT_URL_ADICIONA_RESPOSTA = "/RecordatorioFunc/resposta/";
 
+    public final static String COMPLEMENT_URL_ADICIONA_RESPOSTA_DELETE = "/RecordatorioFunc/RespostaDeletando/";
+
     public final static String COMPLEMENT_URL_RESPOSTA_CRIANCA_DELETE = "/RecordatorioFunc/resposta/";
 
     public static int countCaracter(String string){
