@@ -42,17 +42,22 @@ public class sql_select {
 	public static String GET_ALIMENTOS =
 			" SELECT ID, DESCRICAO, ID_ALUNO, CODIGO, ALIMENTO_REFEICAO, QUAL_E_ESSE_ITEM  " +
 					" FROM ALIMENTO  "+
-					" WHERE ID_ALUNO = ? ";
+					" WHERE ID_ALUNO = ? and (ALIMENTO_REFEICAO_ORDER < 1000 or ALIMENTO_REFEICAO_ORDER isnull) ";
 
 	public static String GET_ALIMENTOS_REFEICAO_DESCRICAO =
 			" SELECT DISTINCT ALIMENTO_REFEICAO   " +
 					" FROM ALIMENTO "+
-					" WHERE ID_ALUNO = ?  order by ALIMENTO_REFEICAO_ORDER ";
+					" WHERE ID_ALUNO = ? order by ALIMENTO_REFEICAO_ORDER ";
 
 	public static String GET_ALIMENTOS_REFEICAO =
 			" SELECT ID, DESCRICAO, ID_ALUNO, CODIGO, ALIMENTO_REFEICAO, QUAL_E_ESSE_ITEM  " +
 					" FROM ALIMENTO  "+
 					" WHERE ID_ALUNO = ? and ID = ? ";
+
+	public static String GET_ALIMENTOS_REFEICAO_NULL =
+			" SELECT ID, DESCRICAO, ID_ALUNO, CODIGO, ALIMENTO_REFEICAO, QUAL_E_ESSE_ITEM  " +
+					" FROM ALIMENTO  "+
+					" WHERE ID_ALUNO = ? and ALIMENTO_REFEICAO isnull ";
 
 	public static String GET_ALIMENTOS_nome =
 			" SELECT ID, DESCRICAO, ID_ALUNO " +
@@ -122,7 +127,8 @@ public class sql_select {
 	public static String GET_RESPOSTA_OPCAO_TOTAS_MAIOR_3 = "SELECT R.ID_ALUNO, R.ID_PERGUNTA, R.ID_OPCAO, O.VALOR AS VALOROPCAO, R.VALOR AS VALORRESPOSTA, O.OPCAO   FROM RESPOSTA R, OPCAO O"+
 			" WHERE R.ID_OPCAO = O.ID_OPCAO AND R.ID_ALUNO = ? AND R.ID_PERGUNTA = ? AND R.ID_ALIMENTO = ?  ORDER BY R.ID_PERGUNTA, R.ID_OPCAO ";
 
-
+	public static String GET_RESPOSTA_OPCAO_TOTAS_MAIOR_2 = " SELECT * FROM resposta "+
+			" WHERE ID_ALUNO = ? AND ID_PERGUNTA = '" + VariavelAPI.constant_chave_1016 + "' AND ID_ALIMENTO = ? ";
 
 	public static String GET_RESPOSTA_VIRTUAL = " SELECT DISTINCT ID_PERGUNTA FROM RESPOSTA WHERE ID_ALUNO = ? ";
 
@@ -163,6 +169,8 @@ public class sql_select {
 			" WHERE P.ID_PERGUNTA = R.ID_PERGUNTA AND P.ID_PERGUNTA = O.ID_PERGUNTA AND R.ID_OPCAO = O.ID_OPCAO AND R.ID_ALUNO = ? AND R.ID_OPCAO_PESSOA = ? AND P.NUM_SUBFORMULARIO ORDER BY R.ID_OPCAO_PESSOA, R.ID_PERGUNTA, R.ID_OPCAO  ";
 
 	public static String GET_OBRIGATORIO = " SELECT MINIMO FROM OPCAO WHERE ID_OPCAO = ? ";
+
+	public static String GET_AMBIENTE_CASA_TESTE = "  SELECT  distinct * FROM resposta ";
 
     public static String GET_AMBIENTE_CASA = "  SELECT  distinct * FROM resposta r, perguntas p, opcao o where \n" +
 			"     p.id_pergunta = o.id_pergunta \n" +

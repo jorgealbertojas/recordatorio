@@ -31,6 +31,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.PorterDuff;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.StatFs;
@@ -45,6 +46,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.softjads.cadeconsumo.util.modulo;
 import com.softjads.cadeconsumo.util.FTPtransferencia;
 import com.softjads.cadeconsumo.util.MyConstant;
@@ -223,9 +225,14 @@ public class MainFragment extends Fragment {
 
         modulo.Liberado = true;
 
+        FloatingActionsMenu multiple_actions_down = fragmentView.findViewById(R.id.multiple_actions_down);
+        if (modulo.perfilUsuario == 1){
+            multiple_actions_down.setVisibility(View.VISIBLE);
+        }
+
         main_icon_schedule_image_view = (ImageView) fragmentView.findViewById(R.id.main_icon_schedule_image_view);
         imageviewEnviar = (ImageView) fragmentView.findViewById(R.id.imageviewEnviar);
-        main_icon_schedule_image_view.setColorFilter(main_icon_schedule_image_view.getContext().getResources().getColor(R.color.green_dark), PorterDuff.Mode.SRC_ATOP);
+        main_icon_schedule_image_view.setColorFilter(main_icon_schedule_image_view.getContext().getResources().getColor(R.color.green), PorterDuff.Mode.SRC_ATOP);
 
         ImageView main_icon_schedule_image_view3 = fragmentView.findViewById(R.id.main_icon_schedule_image_view3 );
         main_icon_schedule_image_view3.setColorFilter(main_icon_schedule_image_view3.getContext().getResources().getColor(R.color.color_primary), PorterDuff.Mode.SRC_ATOP);
@@ -844,6 +851,11 @@ public class MainFragment extends Fragment {
         });
 
         ImageView imageViewFinalizar = (ImageView) fragmentView.findViewById(R.id.bkp);
+        if (BuildConfig.DEBUG) {
+            imageViewFinalizar.setVisibility(View.VISIBLE);
+        }else{
+            imageViewFinalizar.setVisibility(View.INVISIBLE);
+        }
         imageViewFinalizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

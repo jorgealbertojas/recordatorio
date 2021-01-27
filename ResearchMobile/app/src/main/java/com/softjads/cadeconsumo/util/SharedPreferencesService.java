@@ -11,6 +11,7 @@ public class SharedPreferencesService {
     private static final String CODIGO_CRIANCA = "codigocrianca";
     private static final String PERMISSAO_USO = "permissao_uso";
     private static final String ID_CRIANCA = "idcrianca";
+    private static final String ALUNOATUALID = "AlunoAtualID";
 
 
 
@@ -72,6 +73,17 @@ public class SharedPreferencesService {
         return settings.getBoolean(PERMISSAO_USO,false);
     }
 
+    public void setIDCriancaCodigo(String alunoCodigo) {
+        SharedPreferences settings = activity.getSharedPreferences(SHARED_PREFERENCES, Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(ALUNOATUALID, alunoCodigo);
+        editor.apply();
+    }
+
+    public String getIDCriancaCodigo() {
+        SharedPreferences settings = activity.getSharedPreferences(SHARED_PREFERENCES, Activity.MODE_PRIVATE);
+        return settings.getString(ALUNOATUALID,"0");
+    }
 
 }
 

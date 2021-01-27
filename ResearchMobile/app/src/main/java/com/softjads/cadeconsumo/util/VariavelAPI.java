@@ -65,6 +65,7 @@ public class VariavelAPI {
     public static final String constant_chave_109 =  "FIMDOMIC/3";
     public static final String constant_chave_1013 = "PAPEL/2";
 
+
     // "FIMDOMIC/2" não tinha como saber pela id
     public static final String constant_chave_1010 = "6EEEBF0B-75A5-4813-A9E1-C24CE1394E32";
     // "PAPEL/2" para saber o nome da refeição id_opcao
@@ -75,6 +76,11 @@ public class VariavelAPI {
     public static final String constant_chave_1014 = "9FE42CA6-AC40-4644-9D98-2CF9870D4B8B";
     // "NOTIFICACAO/1" gera notificacao
     public static final String constant_chave_1015 = "7895D828-80E8-4367-8A50-44504C950855";
+    // "FIMDOMINIC/2 pega as resposta do DOMIC para detalhar as refeições
+    public static final String constant_chave_1016 = "6EEEBF0B-75A5-4813-A9E1-C24CE1394E32";
+    // "FIMESC/1 encerra as refeições com codigo ID
+    public static final String constant_chave_1017 = "FEEE1EE3-DC81-4816-A266-064247EA1B3E";
+
 
 
 

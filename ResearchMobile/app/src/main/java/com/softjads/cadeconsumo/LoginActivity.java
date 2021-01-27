@@ -40,6 +40,8 @@ import com.softjads.cadeconsumo.util.SharedPreferencesService;
 import com.softjads.cadeconsumo.util.Utility;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.softjads.cadeconsumo.util.modulo;
+
 import java.util.ArrayList;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -84,9 +86,9 @@ public class LoginActivity extends AppCompatActivity {
 
         nDataBase = new DataBase(this);
         bd = nDataBase.getReadableDatabase();
-        bd.execSQL(sql_delete.DEL_ALUNO_TODOS);
         bd.execSQL(sql_delete.DEL_PERGUNTAS_TODOS);
         bd.execSQL(sql_delete.DEL_OPCAO_TODOS);
+/*        bd.execSQL(sql_delete.DEL_ALUNO_TODOS);
         bd.execSQL(sql_delete.DEL_GRUPOS_ALIMENTOS);
         bd.execSQL(sql_delete.DEL_MEDIDAS_CASEIRASS);
         bd.execSQL(sql_delete.DEL_MODO_PREPARACAO);
@@ -99,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
         bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ALUNO);
         bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ALUNO, new String[]{"1"});
         bd.execSQL(sql_delete.DEL_TODOS_CONTROLE_INICIO, new String[]{"1"});
-        bd.execSQL(sql_delete.DEL_TODOS_CONTROLE_FIM, new String[]{"1"});
+        bd.execSQL(sql_delete.DEL_TODOS_CONTROLE_FIM, new String[]{"1"});*/
 
         createStackOverflowAPI();
         mInterfaceObject.getObject().enqueue(objectCallback);
@@ -167,8 +169,10 @@ public class LoginActivity extends AppCompatActivity {
         email.setText(sharedPref.getString("preference_key_email", null));
         password.setText(sharedPref.getString("preference_key_password", null));
 
-         //email.setText("marina");
-         //password.setText("senha");
+        if (BuildConfig.DEBUG) {
+            email.setText("marina");
+            password.setText("senha");
+        }
     }
 
     public boolean validateEmailAndPassword() {
@@ -503,6 +507,7 @@ public class LoginActivity extends AppCompatActivity {
                     button_login.setTag(1);
                     va.setFloatValues(button_login.getMeasuredWidth(), button_login.getMeasuredHeight());
                     va.start();
+                    modulo.perfilUsuario = response.body().getPerfil();
                     pbar.animate().setStartDelay(300).setDuration(1000).alpha(1).start();
                     button_label.animate().setStartDelay(100).setDuration(500).alpha(0).start();
                     button_login.animate().setInterpolator(new FastOutSlowInInterpolator()).setStartDelay(4000).setDuration(1000).scaleX(30).scaleY(30).setListener(new Animator.AnimatorListener() {

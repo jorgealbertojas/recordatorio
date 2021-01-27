@@ -167,6 +167,9 @@ public class automatico extends Activity {
 
 	private void Entrar(String AlunoAtual, String AlunoAtualID, String saltoTEMP_NOVO, List<RespostaAdd> listRespostaAdd) {
 
+		SharedPreferencesService shared = new SharedPreferencesService(this);
+		shared.setIDCriancaCodigo(AlunoAtualID);
+
 		try {
 			Intent WSActivity = new Intent(this, Questionario.class);
 			WSActivity.putExtra("filtro_id_cliente", filtro_id_cliente);
@@ -260,7 +263,7 @@ public class automatico extends Activity {
 						obj.put("DESCRICAO", personsFromJson.getDescricao());
 						obj.put("QUAL_E_ESSE_ITEM", respostaAdd.getIdItemPergunta());
 						obj.put("ALIMENTO_REFEICAO", personsFromJson.getAlimento_refeicao());
-						obj.put("ALIMENTO_REFEICAO", personsFromJson.getAlimento_refeicao());
+						obj.put("ALIMENTO_REFEICAO_ORDER", personsFromJson.getAlimento_order());
 						this.onInsert(this, obj, sql_create.TABLE_ALIMENTO);
 					}
 				} else {

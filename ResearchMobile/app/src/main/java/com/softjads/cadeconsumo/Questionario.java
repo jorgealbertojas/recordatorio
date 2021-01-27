@@ -25,6 +25,8 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.location.LocationManager;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -563,7 +565,17 @@ public class Questionario extends Activity  {
         usuario = extras.getString("usuario");
         Nomeusuario = extras.getString("Nomeusuario");
         AlunoAtual = Integer.parseInt(extras.getString("AlunoAtual"));
+        if (AlunoAtual == 0) {
+            SharedPreferencesService shared = new SharedPreferencesService(this);
+            AlunoAtual = Integer.parseInt(shared.getCodigoCrianca());
+        }
+
+
         AlunoAtualID = (extras.getString("AlunoAtualID"));
+        if (AlunoAtualID.equals("0")) {
+            SharedPreferencesService shared = new SharedPreferencesService(this);
+            AlunoAtualID = (shared.getIDCriancaCodigo());
+        }
 
         nFONTE = extras.getString("nFONTE");
         nGPS = extras.getString("nGPS").toString();
@@ -571,6 +583,12 @@ public class Questionario extends Activity  {
         opcaoQuestionario = extras.getString("opcaoQuestionario");
         opcaoQuestionarioFINAL = extras.getString("opcaoQuestionarioFINAL");
         NomeGravacaoArquivo = extras.getString("NomeGravacaoArquivo");
+
+        String ambienteTEMPNotificacao = extras.getString("ambienteTEMP");
+        if (ambienteTEMPNotificacao != null){
+            ambienteTEMP = ambienteTEMPNotificacao;
+        }
+
         String stingnTIME = "";
         stingnTIME = extras.getString("nTIME");
         if (stingnTIME.equals("1")) {
@@ -581,6 +599,12 @@ public class Questionario extends Activity  {
 
         nomeCrianca = colocaNomeCrianca();
 
+        Cursor cursorQualAmbiente2;
+        cursorQualAmbiente2 = bd.rawQuery(sql_select.GET_AMBIENTE_CASA_TESTE, null);
+        cursorQualAmbiente2.moveToFirst();
+        if (cursorQualAmbiente2.getCount() > 0) {
+            Log.d("bebeto12", "teste" + cursorQualAmbiente2.getCount());
+        }
 
         Cursor cursorQualAmbiente;
         cursorQualAmbiente = bd.rawQuery(sql_select.GET_AMBIENTE_CASA, new String[]{(Integer.toString(AlunoAtual))});
@@ -674,6 +698,8 @@ public class Questionario extends Activity  {
 
                 putNotificacao(buttonPersonalizado);
 
+                putAlimento();
+
                 if ((estaPreenchido())) {
                     AvancarQuestionario("");
                 } else {
@@ -687,6 +713,8 @@ public class Questionario extends Activity  {
             public void onClick(View view) {
 
                 putNotificacao(buttonPersonalizado);
+
+                putAlimento();
 
                 if ((estaPreenchido() || estaPreenchidoDESCRICAO())) {
                     if (!gravaAlimento(buttonPersonalizado.getText().toString())) {
@@ -705,6 +733,8 @@ public class Questionario extends Activity  {
             public void onClick(View view) {
 
                 putNotificacao(buttonPersonalizado2);
+
+                putAlimento();
 
                 if ((estaPreenchido() || estaPreenchidoDESCRICAO())) {
                     bd.execSQL(sql_delete.DEL_SALTO_TODOS, new String[]{});
@@ -726,6 +756,15 @@ public class Questionario extends Activity  {
                 Toast.makeText(this, "Notificação agendada com sucesso!", Toast.LENGTH_LONG).show();
                 finishAffinity();
             }
+        }
+    }
+
+    private void putAlimento() {
+        int valor = 1000;
+        if (NumeroPerguntaAtual.equals(VariavelAPI.constant_chave_1017)) {
+            bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + valor);
+
+            insereeAtualizaAlimentoeRefeicaoComoCodigocomFOR(idAlimento, valor);
         }
     }
 
@@ -2503,7 +2542,7 @@ public class Questionario extends Activity  {
                                                 dpd.updateDate(d.get(Calendar.YEAR),d.get(Calendar.MONTH),d.get(Calendar.DAY_OF_MONTH));
                                                 dpd.show();
 
-                                                edit.clearFocus();
+                                               // edit.clearFocus();
                                             }
                                         }
                                     });
@@ -3599,11 +3638,8 @@ public class Questionario extends Activity  {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         String NOTIFICATION_CHANNEL_ID = "tutorialspoint_01";
 
-        SharedPreferencesService shared = new SharedPreferencesService(this);
-        String alunoTemp = shared.getCodigoCrianca();
-        String alunoIdTemp = shared.getIDCrianca();
 
-        Intent notificationIntent2 = new Intent(Questionario.this, Questionario.class);
+        Intent notificationIntent2 = new Intent(Questionario.this, Questionario.class); notificationIntent2.putExtra("ambienteTEMP", ambienteTEMP);
         notificationIntent2.putExtra("filtro_id_cliente", "");
         notificationIntent2.putExtra("filtro_id_pesquisa", "");
         notificationIntent2.putExtra("filtro_desc_pesquisa", "");
@@ -3611,8 +3647,8 @@ public class Questionario extends Activity  {
         notificationIntent2.putExtra("filtro_previsao", "");
         notificationIntent2.putExtra("usuario", "bebeto");
         notificationIntent2.putExtra("Nomeusuario", "bebeto");
-        notificationIntent2.putExtra("AlunoAtual", alunoTemp);
-        notificationIntent2.putExtra("AlunoAtualID", alunoIdTemp);
+        notificationIntent2.putExtra("AlunoAtual", "0");
+        notificationIntent2.putExtra("AlunoAtualID", "0");
         notificationIntent2.putExtra("saltoTEMP_NOVO","NOTIFICACAO/1");
         notificationIntent2.putExtra("nFONTE", "M");
         notificationIntent2.putExtra("nGPS", "false");
@@ -3620,6 +3656,7 @@ public class Questionario extends Activity  {
         notificationIntent2.putExtra("opcao", Integer.toString(1));
         notificationIntent2.putExtra("opcaoQuestionario", Integer.toString(0));
         notificationIntent2.putExtra("opcaoQuestionarioFINAL", Integer.toString(0));
+
         if (true) {
             notificationIntent2.putExtra("nTIME", "1");
         } else {
@@ -3636,6 +3673,12 @@ public class Questionario extends Activity  {
             notificationChannel.setDescription("Sample Channel description");
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.RED);
+            Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            AudioAttributes att = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                    .build();
+            notificationChannel.setSound(uri,att);
             notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
             notificationChannel.enableVibration(true);
             notificationManager.createNotificationChannel(notificationChannel);
@@ -3646,7 +3689,7 @@ public class Questionario extends Activity  {
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.mipmap.ic_icon)
                 .setTicker("Tutorialspoint")
-                //.setPriority(Notification.PRIORITY_MAX)
+                .setPriority(Notification.PRIORITY_MAX)
                 .setContentIntent(resultIntent)
                 .setContentTitle("Cade - Consumo Alimentar")
                 .setContentText("Relate a refeição que está consumindo agora")
@@ -3672,6 +3715,7 @@ public class Questionario extends Activity  {
             if (pTag.equals(VariavelAPI.constant_chave_1011)){
                 refeicao_para_papel = pvalue;
                 bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO = '" + pvalue + "' WHERE ALIMENTO_REFEICAO ISNULL ");
+                insereeAtualizaAlimentoeRefeicaoComoCodigo(pTag, pvalue);
             }
 
 
@@ -4801,6 +4845,21 @@ public class Questionario extends Activity  {
 
     }
 
+    public void insereeAtualizaAlimentoeRefeicaoComoCodigocomFOR(String pTag, int valor1000){
+
+        Cursor cursorALIMENTO = bd.rawQuery(sql_select.GET_ALIMENTOS_REFEICAO_NULL, new String[]{Integer.toString(AlunoAtual)});
+        cursorALIMENTO.moveToFirst();
+        cursorALIMENTO.getCount();
+
+        if (cursorALIMENTO.getCount() > 0) {
+            for (int i = 0; i < cursorALIMENTO.getCount(); i++ ) {
+                insereeAtualizaAlimentoeRefeicao(pTag, cursorALIMENTO.getString(3), cursorALIMENTO.getString(1), cursorALIMENTO.getString(4), valor1000);
+                cursorALIMENTO.moveToNext();
+            }
+        }
+
+    }
+
     public void insereeAtualizaAlimentoeRefeicao(String pTag, String codigo, String pvalue, String alimentoRefeicao, Integer alimentoOrder) {
         RespostaAlimento respostaAlimento = new RespostaAlimento();
         respostaAlimento.setId_crianca(Integer.toString(AlunoAtual));
@@ -5033,8 +5092,13 @@ public class Questionario extends Activity  {
                 TextInputLayout editAnimation = new TextInputLayout(this);
                 editAnimation.setTag(cursorALIMENTO.getString(0));
                 if (cursorALIMENTO.getString(4)  != null) {
-                    editAnimation.setHelperText(" Refeição:" + cursorALIMENTO.getString(4));
-                    editAnimation.setHelperTextTextAppearance(R.style.TextHelp10);
+                    if (cursorALIMENTO.getString(4) != null && !cursorALIMENTO.getString(4).equals("")) {
+                        editAnimation.setHelperText(" Refeição:" + cursorALIMENTO.getString(4));
+                        editAnimation.setHelperTextTextAppearance(R.style.TextHelp10);
+                    }else{
+                        editAnimation.setHelperText("");
+                        editAnimation.setHelperTextTextAppearance(R.style.TextHelp10);
+                    }
                 }else{
                     editAnimation.setHelperText("");
                     editAnimation.setHelperTextTextAppearance(R.style.TextHelp10);
@@ -5102,6 +5166,41 @@ public class Questionario extends Activity  {
                 });
 
 
+                // Check in refeicao domiciliar
+                /////////
+                ImageView nButtonCheck = new ImageView(this);
+                nButtonCheck.setImageResource
+                        (R.drawable.ic_check_white_24dp);
+                nButtonCheck.setTag("CHECK");
+
+                final int newColor = res.getColor(R.color.green);
+                nButtonCheck.setColorFilter(newColor, PorterDuff.Mode.SRC_ATOP);
+                nButtonCheck.setTag(cursorREFEICAO.getString(0));
+
+                boolean mostarCheck = false;
+
+                if (colocaIDAlimento()) {
+                    Cursor cursorTUDO_REFEICAO_CHECADO = bd.rawQuery(sql_select.GET_RESPOSTA_OPCAO_TOTAS_MAIOR_2, new String[]{Integer.toString(AlunoAtual), cursorREFEICAO.getString(0)});
+                    cursorTUDO_REFEICAO_CHECADO.moveToFirst();
+                    cursorTUDO_REFEICAO_CHECADO.getCount();
+                    if ((cursorTUDO_REFEICAO_CHECADO.getCount() > 1) &&  (ambienteTEMP.equals(VariavelAPI.constante_variavel_domiciliar))) {
+                        mostarCheck = true;
+                    }
+                }
+
+                if (mostarCheck) {
+                    nButtonCheck.setVisibility(View.VISIBLE);
+                } else {
+                    nButtonCheck.setVisibility(View.INVISIBLE);
+                    buttonPersonalizadoBolean = false;
+                    // coloca o botao invicivel, so volta para o visivel deposi que coletar todos
+                    buttonPersonalizado.setVisibility(View.INVISIBLE);
+                    buttonPersonalizado2.setVisibility(View.INVISIBLE);
+                    imageButtonAvancar.setVisibility(View.INVISIBLE);
+                }
+                ///////
+
+
                 // Editar
 
                 ImageView nButtonEditar = new ImageView(this);
@@ -5140,9 +5239,10 @@ public class Questionario extends Activity  {
                 paramsButton.gravity = Gravity.CENTER;
 
                 linearLayout.addView(textView, params);
-                linearLayout.addView(nButton2, paramsButton);
-                linearLayout.addView(nButtonEditar, paramsButton);
 
+                linearLayout.addView(nButtonEditar, paramsButton);
+                linearLayout.addView(nButton2, paramsButton);
+                linearLayout.addView(nButtonCheck, paramsButton);
                 //
 
                 LinearLayout.LayoutParams paramsTextHelp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
@@ -5177,6 +5277,17 @@ public class Questionario extends Activity  {
 
             @Override
             public void onClick(View v) {
+
+                Cursor cursorALIMENTO = bd.rawQuery(sql_select.GET_ALIMENTOS_REFEICAO_NULL, new String[]{Integer.toString(AlunoAtual)});
+                cursorALIMENTO.moveToFirst();
+                cursorALIMENTO.getCount();
+
+                if (cursorALIMENTO.getCount() > 0) {
+                    for (int i = 0; i < cursorALIMENTO.getCount(); i++) {
+                        insereeAtualizaAlimentoeRefeicaoComoCodigo(cursorALIMENTO.getString(0), refeicao);
+                        cursorALIMENTO.moveToNext();
+                    }
+                }
 
                 bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO = NULL WHERE ALIMENTO_REFEICAO = '" + refeicao + "'");
 
@@ -5874,6 +5985,7 @@ public class Questionario extends Activity  {
             imageView1.setBackgroundColor(getResources().getColor(R.color.color_primary));
             imageView2.setBackgroundColor(getResources().getColor(R.color.color_primary));
             imageView3.setBackgroundColor(getResources().getColor(R.color.color_primary));
+            imageView4.setBackgroundColor(getResources().getColor(R.color.color_primary));
         }
     }
 
