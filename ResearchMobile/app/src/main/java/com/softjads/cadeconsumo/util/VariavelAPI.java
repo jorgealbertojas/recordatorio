@@ -100,6 +100,8 @@ public class VariavelAPI {
     public static final String contant_chave_inicair_anterior_DETALIMESC2 = "DETALIM/2/ESC";
     public static final String contant_chave_inicair_anterior_DETALIMESC1 = "DETALIM/1/ESC";
 
+    public static final String contant_chave_inicair_anterior_DETALIMESC30 = "DETALIM/30/ESC";
+
     public static final String contant_chave_inicair_anterior_DETALIMPAPEL2 = "DETALIM/2/PAPEL";
     public static final String contant_chave_inicair_anterior_DETALIMPAPEL1 = "DETALIM/1/PAPEL";
 

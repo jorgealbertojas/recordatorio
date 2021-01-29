@@ -135,6 +135,8 @@ public class Questionario extends Activity  {
 
     Boolean esperaFinalizar = false;
 
+    Boolean imagemEstaMarca = false;
+
     int TAKE_PHOTO_CODE = 0;
     int NOTIFICATION_REMINDER_NIGHT = 1;
     private final int REQUEST_TAKE_PHOTO_CODE = 1;
@@ -151,6 +153,7 @@ public class Questionario extends Activity  {
     private List<Imagens> listimagens = null;
     private List<String> saltoTelaImagem = null;
     private List<String> qualTelaImagem = null;
+    private List<String> listimagensCodigo = null;
 
     public ImageButton fotoCamera = null;
     public ImageButton fotoCamera2 = null;
@@ -491,7 +494,6 @@ public class Questionario extends Activity  {
         bd = nDataBase.getReadableDatabase();
 
 
-
         bd.execSQL(sql_delete.DEL_SALTO_TODOS, new String[]{});
 
         if (!saltoTEMP.equals("")) {
@@ -510,6 +512,10 @@ public class Questionario extends Activity  {
             }
 
             if (VariavelAPI.contant_chave_inicair_anterior_DETALIMESC2.equals(saltoTEMP)) {
+                saltoTEMP = VariavelAPI.contant_chave_inicair_anterior_DETALIMESC1;
+            }
+
+            if (VariavelAPI.contant_chave_inicair_anterior_DETALIMESC30.equals(saltoTEMP)) {
                 saltoTEMP = VariavelAPI.contant_chave_inicair_anterior_DETALIMESC1;
             }
 
@@ -556,6 +562,12 @@ public class Questionario extends Activity  {
         constraintLayout3 = (ConstraintLayout) findViewById(R.id.constraintLayout3);
         constraintLayout4 = (ConstraintLayout) findViewById(R.id.constraintLayout4);
 
+        String notificacao = extras.getString("saltoTEMP_NOVO");
+        if (notificacao != null) {
+            if (notificacao.equals("NOTIFICACAO/1")) {
+                NaoENotificacao = true;
+            }
+        }
 
         filtro_id_cliente = extras.getString("filtro_id_cliente");
         filtro_id_pesquisa = extras.getString("filtro_id_pesquisa");
@@ -585,7 +597,7 @@ public class Questionario extends Activity  {
         NomeGravacaoArquivo = extras.getString("NomeGravacaoArquivo");
 
         String ambienteTEMPNotificacao = extras.getString("ambienteTEMP");
-        if (ambienteTEMPNotificacao != null){
+        if (ambienteTEMPNotificacao != null) {
             ambienteTEMP = ambienteTEMPNotificacao;
         }
 
@@ -630,7 +642,7 @@ public class Questionario extends Activity  {
 
         AbrirMaxPergunta();
 
-        if (savedInstanceState == null) {
+       // if (savedInstanceState == null) {
             AbrirQuestionarioSQL();
             if (opcao == "0") {
                 Ir_utimo();
@@ -678,9 +690,9 @@ public class Questionario extends Activity  {
                 }
             }
 
-        } else if (savedInstanceState != null) {
+/*        } else if (savedInstanceState != null) {
             AbrirQuestionarioSQL();
-       //     Localizador();
+            //     Localizador();
             MaxText = new ArrayList<String>();
             HintText = new ArrayList<String>();
             PERSONALIZACAOHint = new ArrayList<String>();
@@ -689,7 +701,7 @@ public class Questionario extends Activity  {
             criarNovaEditText();
             //  PreencherResposta((NumeroPerguntaAtual));
             cursorPergunta.moveToNext();
-        }
+        }*/
 
         imageButtonAvancar.setOnClickListener(new OnClickListener() {
 
@@ -745,8 +757,6 @@ public class Questionario extends Activity  {
                 }
             }
         });
-
-
     }
 
     private void putNotificacao(Button butao) {
@@ -764,7 +774,7 @@ public class Questionario extends Activity  {
         if (NumeroPerguntaAtual.equals(VariavelAPI.constant_chave_1017)) {
             bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + valor);
 
-            insereeAtualizaAlimentoeRefeicaoComoCodigocomFOR(idAlimento, valor);
+            insereeAtualizaAlimentoeRefeicaoComoCodigocomFOR(valor);
         }
     }
 
@@ -812,6 +822,8 @@ public class Questionario extends Activity  {
         boolean passou = false;
         nDataBase = new DataBase(this);
         bd = nDataBase.getReadableDatabase();
+
+
 
 
 
@@ -938,6 +950,7 @@ public class Questionario extends Activity  {
             }
             isBackPressed = false;
 
+            imagemEstaMarca = false;
 
             saltoTelaImagem = new ArrayList<String>();
             qualTelaImagem = new ArrayList<String>();
@@ -1242,11 +1255,13 @@ public class Questionario extends Activity  {
                                                                 }
 
                                                                 listimagens = new ArrayList<>();
+                                                                listimagensCodigo = new ArrayList<>();
                                                                 for (int y = 0; y < medidasCaseiras.getFotos().size(); y++) {
                                                                     Imagens imagens = new Imagens();
                                                                     imagens.setUrl(Utility.imagemURL + medidasCaseiras.getFotos().get(y));
                                                                     imagens.setId(medidasCaseiras.getNome());
                                                                     listimagens.add(imagens);
+                                                                    listimagensCodigo.add(medidasCaseiras.getFotos().get(y));
                                                                 }
                                                             }
                                                             cursorMEDIDAS_CASEIRAS.moveToNext();
@@ -1264,12 +1279,12 @@ public class Questionario extends Activity  {
                                                                     if (cursorRefeicaoatualiza.getCount() > 0) {
                                                                         if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_101_domic)) {
 
-                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'");
+                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'" + " AND ALIMENTO_REFEICAO_ORDER <> 1000 " );
                                                                                 insereeAtualizaAlimentoeRefeicaoComoCodigo(idAlimento, ((TextView) selectedItemView).getText().toString());
 
                                                                         }else{
                                                                             for (int h = 0; h < cursorRefeicaoatualiza.getCount(); h++) {
-                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + cursorRefeicaoatualiza.getString(0) + "'");
+                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + cursorRefeicaoatualiza.getString(0) + "'" + " AND ALIMENTO_REFEICAO_ORDER <> 1000 ");
                                                                                 insereeAtualizaAlimentoeRefeicaoComoCodigo(cursorRefeicaoatualiza.getString(0), ((TextView) selectedItemView).getText().toString());
                                                                                 cursorRefeicaoatualiza.moveToNext();
 
@@ -1287,12 +1302,12 @@ public class Questionario extends Activity  {
                                                                     if (cursorRefeicaoatualiza.getCount() > 0) {
                                                                         if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_101_domic) ) {
 
-                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'");
+                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'" + " AND ALIMENTO_REFEICAO_ORDER <> 1000 ");
                                                                                 insereeAtualizaAlimentoeRefeicaoComoCodigo(idAlimento, ((TextView) selectedItemView).getText().toString());
 
                                                                         }else{
                                                                             for (int h = 0; h < cursorRefeicaoatualiza.getCount(); h++) {
-                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + cursorRefeicaoatualiza.getString(0) + "'");
+                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + cursorRefeicaoatualiza.getString(0) + "'"  + " AND ALIMENTO_REFEICAO_ORDER <> 1000 ");
                                                                                 insereeAtualizaAlimentoeRefeicaoComoCodigo(cursorRefeicaoatualiza.getString(0), ((TextView) selectedItemView).getText().toString());
                                                                                 cursorRefeicaoatualiza.moveToNext();
                                                                             }
@@ -3109,13 +3124,14 @@ public class Questionario extends Activity  {
 
         int tempImageID = 0;
         ConstraintLayout constraintLayout = new ConstraintLayout(this);
+        constraintLayout.setTag("imagem");
         ConstraintSet constraintSet = new ConstraintSet();
 
 
         int tempWidth = (((width - ((int) convertDpToPixel(getResources().getDimension(R.dimen.imageTamanho),this)))) / 2);;
 
         int temHeight = 0;
-        if (listimagens.size() <= 6){
+        if (listimagens.size() <= 50){
             temHeight = height / (listimagens.size());
         }
 
@@ -3123,20 +3139,17 @@ public class Questionario extends Activity  {
 
             if (i % 2 == 0) {
                 constraintLayout = new ConstraintLayout(this);
+                constraintLayout.setTag("imagem");
                 constraintSet = new ConstraintSet();
 
                 ImageView imageView1 = new ImageView(this);
                 imageView1.setId(View.generateViewId());
-                imageView1.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                if (temHeight == 0) {
-                    imageView1.setLayoutParams(new ConstraintLayout.LayoutParams(
-                            tempWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
-                }else{
-                    imageView1.setLayoutParams(new ConstraintLayout.LayoutParams(
-                            tempWidth, temHeight));
-                }
+                imageView1.setScaleType(ImageView.ScaleType.FIT_START);
 
-                Picasso.get().load(listimagens.get(i).getUrl()).into(imageView1);
+                imageView1.setLayoutParams(new ConstraintLayout.LayoutParams(
+                        tempWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+                Picasso.get().load(listimagens.get(i).getUrl()).placeholder(R.drawable.progress_animation).into(imageView1);
                 imageView1.setTag(Integer.toString(i));
 
 
@@ -3150,10 +3163,14 @@ public class Questionario extends Activity  {
                 imageView1.setOnClickListener(new View.OnClickListener() {
                                                    @Override
                                                    public void onClick(View view) {
+                                                       imagemEstaMarca = true;
                                                        desmarcarImagem();
                                                        ((ImageView) view).setBackground(getResources().getDrawable(R.drawable.image_select));
                                                        Intent imageActivity = new Intent(Questionario.this, ImageActivity.class);
                                                        imageActivity.putExtra("imagem_url", listimagens.get(Integer.parseInt(view.getTag().toString())).getUrl());
+                                                       bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), listimagensCodigo.get(Integer.parseInt(view.getTag().toString())),idAlimento});
+                                                       insereRegistro(listimagensCodigo.get(Integer.parseInt(view.getTag().toString())), "", 0, true);
+
                                                        startActivity(imageActivity);
                                                    }
                                                }
@@ -3163,31 +3180,29 @@ public class Questionario extends Activity  {
             } else  {
                 ImageView imageView2 = new ImageView(this);
                 imageView2.setId(View.generateViewId());
-                imageView2.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView2.setScaleType(ImageView.ScaleType.FIT_START);
 
-                if (temHeight == 0) {
-                    imageView2.setLayoutParams(new ConstraintLayout.LayoutParams(
+                imageView2.setLayoutParams(new ConstraintLayout.LayoutParams(
                             tempWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
-                }
-                else{
-                    imageView2.setLayoutParams(new ConstraintLayout.LayoutParams(
-                            tempWidth, temHeight));
-                }
 
                 imageView2.setOnClickListener(new View.OnClickListener() {
                                                   @Override
                                                   public void onClick(View view) {
+                                                      imagemEstaMarca = true;
                                                       desmarcarImagem();
                                                       ((ImageView) view).setBackground(getResources().getDrawable(R.drawable.image_select));
                                                       Intent imageActivity = new Intent(Questionario.this, ImageActivity.class);
                                                       imageActivity.putExtra("imagem_url", listimagens.get(Integer.parseInt(view.getTag().toString())).getUrl());
+                                                      bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), listimagensCodigo.get(Integer.parseInt(view.getTag().toString())),idAlimento});
+                                                      insereRegistro(listimagensCodigo.get(Integer.parseInt(view.getTag().toString())), "", 0, true);
+
                                                       startActivity(imageActivity);
 
                                                   }
                                               }
                 );
 
-                Picasso.get().load(listimagens.get(i).getUrl()).into(imageView2);
+                Picasso.get().load(listimagens.get(i).getUrl()).placeholder(R.drawable.progress_animation).into(imageView2);
 
                 imageView2.setTag(Integer.toString(i));
 
@@ -3615,6 +3630,7 @@ public class Questionario extends Activity  {
             cursorPergunta.moveToNext();
 
         } catch (Exception e) {
+            finishAffinity();
             System.out.println(e.getMessage());
         }
 
@@ -4090,6 +4106,14 @@ public class Questionario extends Activity  {
                     return true;
                 }
 
+                if (child instanceof ConstraintLayout) {
+                    if (imagemEstaMarca){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+
                 if (!child.getTag().toString().equals("")) {
 
                     if (child.getTag().toString().equals("apagar")) {
@@ -4097,7 +4121,9 @@ public class Questionario extends Activity  {
                     }
                     Cursor Cursorminimo = bd.rawQuery(sql_select.GET_OBRIGATORIO, new String[]{(child.getTag().toString())});
                     Cursorminimo.moveToFirst();
-                    obrigatorio = Cursorminimo.getInt(0);
+                    if (Cursorminimo.getCount() > 0) {
+                        obrigatorio = Cursorminimo.getInt(0);
+                    }
                 }
 
                 if (obrigatorio == 1) {
@@ -4171,6 +4197,8 @@ public class Questionario extends Activity  {
                             } else {
                                 return false;
                             }
+                        }else if (child2 instanceof LinearLayout) {
+                            nBoolean = true;
                         }
                     }
                 } else if (child instanceof CheckBox) {
@@ -4205,6 +4233,8 @@ public class Questionario extends Activity  {
                     if (bu.getVisibility() == View.VISIBLE) {
                         return true;
                     }
+                }else if (child instanceof LinearLayout) {
+                    nBoolean = true;
                 }
             }
 
@@ -4845,15 +4875,15 @@ public class Questionario extends Activity  {
 
     }
 
-    public void insereeAtualizaAlimentoeRefeicaoComoCodigocomFOR(String pTag, int valor1000){
+    public void insereeAtualizaAlimentoeRefeicaoComoCodigocomFOR(int valor1000){
 
-        Cursor cursorALIMENTO = bd.rawQuery(sql_select.GET_ALIMENTOS_REFEICAO_NULL, new String[]{Integer.toString(AlunoAtual)});
+        Cursor cursorALIMENTO = bd.rawQuery(sql_select.GET_ALIMENTOS_REFEICAO_ALL, new String[]{Integer.toString(AlunoAtual)});
         cursorALIMENTO.moveToFirst();
         cursorALIMENTO.getCount();
 
         if (cursorALIMENTO.getCount() > 0) {
             for (int i = 0; i < cursorALIMENTO.getCount(); i++ ) {
-                insereeAtualizaAlimentoeRefeicao(pTag, cursorALIMENTO.getString(3), cursorALIMENTO.getString(1), cursorALIMENTO.getString(4), valor1000);
+                insereeAtualizaAlimentoeRefeicao(cursorALIMENTO.getString(0), cursorALIMENTO.getString(3), cursorALIMENTO.getString(1), cursorALIMENTO.getString(4), valor1000);
                 cursorALIMENTO.moveToNext();
             }
         }
@@ -5077,6 +5107,7 @@ public class Questionario extends Activity  {
                 paramsButton.weight = 1f;
 
                 LinearLayout linearLayout = new LinearLayout(this);
+                linearLayout.setTag("detalhes");
                 linearLayout.setLayoutParams(params);
                 linearLayout.setOrientation(LinearLayout.HORIZONTAL);
                 linearLayout.setGravity(Gravity.CENTER);
@@ -5233,6 +5264,7 @@ public class Questionario extends Activity  {
                 paramsButton.weight = 1f;
 
                 LinearLayout linearLayout = new LinearLayout(this);
+                linearLayout.setTag("detalhes");
                 linearLayout.setLayoutParams(params);
                 linearLayout.setOrientation(LinearLayout.HORIZONTAL);
                 linearLayout.setGravity(Gravity.CENTER);
@@ -5407,6 +5439,7 @@ public class Questionario extends Activity  {
                 paramsButton.weight = 1f;
 
                 LinearLayout linearLayout = new LinearLayout(this);
+                linearLayout.setTag("detalhes");
                 linearLayout.setLayoutParams(params);
                 linearLayout.setOrientation(LinearLayout.HORIZONTAL);
                 linearLayout.setGravity(Gravity.CENTER);
@@ -5892,7 +5925,6 @@ public class Questionario extends Activity  {
 
                 Glide.with(getApplicationContext())
                         .load(fotoProfile)
-                        .apply(RequestOptions.centerInsideTransform())
                         .into(foto);
             } catch (Exception e) {
 
@@ -5927,7 +5959,12 @@ public class Questionario extends Activity  {
                     .setNegativeButton("Não", null)
                     .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
-                            Questionario.super.onBackPressed();
+                            if (NaoENotificacao){
+                                Intent i = new Intent(Questionario.this, MainActivity.class);
+                                startActivity(i);
+                            }else{
+                                Questionario.super.onBackPressed();
+                            }
                         }
                     }).create().show();
         }

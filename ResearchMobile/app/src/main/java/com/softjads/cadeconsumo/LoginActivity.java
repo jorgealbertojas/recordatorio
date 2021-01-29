@@ -391,9 +391,11 @@ public class LoginActivity extends AppCompatActivity {
                     Log.i("QuestionsCallback1", "Code: " + response.code() + " Message: " + response.message());
 
                 } else {
+                    finishAffinity();
                     Log.i("QuestionsCallback2", "Code: " + response.code() + " Message: " + response.message());
                 }
             } catch (NullPointerException e) {
+                finishAffinity();
                 Log.i("QuestionsCallback3", "Code: " + response.code() + " Message: " + response.message());
             }
         }

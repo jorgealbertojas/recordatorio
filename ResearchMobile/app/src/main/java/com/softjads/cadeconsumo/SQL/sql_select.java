@@ -59,6 +59,11 @@ public class sql_select {
 					" FROM ALIMENTO  "+
 					" WHERE ID_ALUNO = ? and ALIMENTO_REFEICAO isnull ";
 
+	public static String GET_ALIMENTOS_REFEICAO_ALL =
+			" SELECT ID, DESCRICAO, ID_ALUNO, CODIGO, ALIMENTO_REFEICAO, QUAL_E_ESSE_ITEM  " +
+					" FROM ALIMENTO  "+
+					" WHERE ID_ALUNO = ?  ";
+
 	public static String GET_ALIMENTOS_nome =
 			" SELECT ID, DESCRICAO, ID_ALUNO " +
 					" FROM ALIMENTO  "+
