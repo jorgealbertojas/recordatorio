@@ -74,10 +74,11 @@ public class CriarUsuario extends AppCompatActivity {
 
         });
         String array_spinner[];
-        array_spinner = new String[3];
-        array_spinner[0] = "Usuario Escolar";
-        array_spinner[1] = "Usuario Domiciliar";
-        array_spinner[2] = "Coordenador";
+        array_spinner = new String[4];
+        array_spinner[0] = "Usuário Escolar";
+        array_spinner[1] = "Usuário Domiciliar";
+        array_spinner[2] = "Usuário Coordenador";
+        array_spinner[3] = "Administrador";
         ArrayAdapter adapter = new ArrayAdapter(this,
                 R.layout.textview_spinner_item, array_spinner);
         spinner.setAdapter(adapter);
@@ -100,7 +101,18 @@ public class CriarUsuario extends AppCompatActivity {
                     usuario.setNome(edtNome.getText().toString());
                     usuario.setSenha(edtSenha.getText().toString());
                     usuario.setLogin(edtLogin.getText().toString());
-                    usuario.setPerfil(1);
+
+                    if (spinner.getItemAtPosition(spinner.getSelectedItemPosition()).toString() != null) {
+                        if (spinner.getItemAtPosition(spinner.getSelectedItemPosition()).toString().equals("Administrador")) {
+                            usuario.setPerfil("Administrador");
+                        }else if (spinner.getItemAtPosition(spinner.getSelectedItemPosition()).toString().equals("Usuário Domiciliar")) {
+                                usuario.setPerfil("UsuarioDomiciliar");
+                        }else if (spinner.getItemAtPosition(spinner.getSelectedItemPosition()).toString().equals("Usuário Escolar")) {
+                            usuario.setPerfil("UsuarioEscolar");
+                        }else if (spinner.getItemAtPosition(spinner.getSelectedItemPosition()).toString().equals("Usuário Coordenador")) {
+                            usuario.setPerfil("UsuarioCoordenador");
+                        }
+                    }
 
                     createStackOverflowAPI();
                     mInterfaceObject.createUsuario(usuario).enqueue(cadatrarUsuarioCallback);

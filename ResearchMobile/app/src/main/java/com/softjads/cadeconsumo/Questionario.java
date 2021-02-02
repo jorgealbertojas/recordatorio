@@ -770,9 +770,19 @@ public class Questionario extends Activity  {
     }
 
     private void putAlimento() {
-        int valor = 1000;
         if (NumeroPerguntaAtual.equals(VariavelAPI.constant_chave_1017)) {
-            bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + valor);
+            int valor = 1000;
+
+            Cursor cursorALIMENTO_REFEICAO = bd.rawQuery(sql_select.GET_ALIMENTO_REFEICAO_ORDER, null);
+            cursorALIMENTO_REFEICAO.moveToFirst();
+            cursorALIMENTO_REFEICAO.getCount();
+
+            if (cursorALIMENTO_REFEICAO.getCount() > 0) {
+                valor = cursorALIMENTO_REFEICAO.getInt(0);
+                valor = valor + 1;
+            }
+
+            bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + valor + " WHERE ALIMENTO_REFEICAO_ORDER < 1000 ");
 
             insereeAtualizaAlimentoeRefeicaoComoCodigocomFOR(valor);
         }
@@ -1279,12 +1289,12 @@ public class Questionario extends Activity  {
                                                                     if (cursorRefeicaoatualiza.getCount() > 0) {
                                                                         if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_101_domic)) {
 
-                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'" + " AND ALIMENTO_REFEICAO_ORDER <> 1000 " );
+                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'" + " AND ALIMENTO_REFEICAO_ORDER < 1000 " );
                                                                                 insereeAtualizaAlimentoeRefeicaoComoCodigo(idAlimento, ((TextView) selectedItemView).getText().toString());
 
                                                                         }else{
                                                                             for (int h = 0; h < cursorRefeicaoatualiza.getCount(); h++) {
-                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + cursorRefeicaoatualiza.getString(0) + "'" + " AND ALIMENTO_REFEICAO_ORDER <> 1000 ");
+                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + cursorRefeicaoatualiza.getString(0) + "'" + " AND ALIMENTO_REFEICAO_ORDER < 1000 ");
                                                                                 insereeAtualizaAlimentoeRefeicaoComoCodigo(cursorRefeicaoatualiza.getString(0), ((TextView) selectedItemView).getText().toString());
                                                                                 cursorRefeicaoatualiza.moveToNext();
 
@@ -1302,12 +1312,12 @@ public class Questionario extends Activity  {
                                                                     if (cursorRefeicaoatualiza.getCount() > 0) {
                                                                         if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_101_domic) ) {
 
-                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'" + " AND ALIMENTO_REFEICAO_ORDER <> 1000 ");
+                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'" + " AND ALIMENTO_REFEICAO_ORDER < 1000 ");
                                                                                 insereeAtualizaAlimentoeRefeicaoComoCodigo(idAlimento, ((TextView) selectedItemView).getText().toString());
 
                                                                         }else{
                                                                             for (int h = 0; h < cursorRefeicaoatualiza.getCount(); h++) {
-                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + cursorRefeicaoatualiza.getString(0) + "'"  + " AND ALIMENTO_REFEICAO_ORDER <> 1000 ");
+                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + cursorRefeicaoatualiza.getString(0) + "'"  + " AND ALIMENTO_REFEICAO_ORDER < 1000 ");
                                                                                 insereeAtualizaAlimentoeRefeicaoComoCodigo(cursorRefeicaoatualiza.getString(0), ((TextView) selectedItemView).getText().toString());
                                                                                 cursorRefeicaoatualiza.moveToNext();
                                                                             }
@@ -3683,17 +3693,19 @@ public class Questionario extends Activity  {
         notificationIntent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent resultIntent = PendingIntent.getActivity(Questionario.this, 0, notificationIntent2, 0);
 
+        Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        AudioAttributes att = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                .build();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             @SuppressLint("WrongConstant") NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "My Notifications", NotificationManager.IMPORTANCE_MAX);
             // Configure the notification channel.
             notificationChannel.setDescription("Sample Channel description");
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.RED);
-            Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            AudioAttributes att = new AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
-                    .build();
+
             notificationChannel.setSound(uri,att);
             notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
             notificationChannel.enableVibration(true);
@@ -3701,10 +3713,11 @@ public class Questionario extends Activity  {
         }
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
         notificationBuilder.setAutoCancel(true)
-                .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
+                .setDefaults(Notification.DEFAULT_SOUND)
                 .setSmallIcon(R.mipmap.ic_icon)
                 .setTicker("Tutorialspoint")
+                .setSound(uri,att.getContentType())
                 .setPriority(Notification.PRIORITY_MAX)
                 .setContentIntent(resultIntent)
                 .setContentTitle("Cade - Consumo Alimentar")
@@ -4877,7 +4890,7 @@ public class Questionario extends Activity  {
 
     public void insereeAtualizaAlimentoeRefeicaoComoCodigocomFOR(int valor1000){
 
-        Cursor cursorALIMENTO = bd.rawQuery(sql_select.GET_ALIMENTOS_REFEICAO_ALL, new String[]{Integer.toString(AlunoAtual)});
+        Cursor cursorALIMENTO = bd.rawQuery(sql_select.GET_ALIMENTOS_REFEICAO_ALL, new String[]{Integer.toString(AlunoAtual), Integer.toString(valor1000)});
         cursorALIMENTO.moveToFirst();
         cursorALIMENTO.getCount();
 

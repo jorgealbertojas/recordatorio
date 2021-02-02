@@ -226,7 +226,7 @@ public class MainFragment extends Fragment {
         modulo.Liberado = true;
 
         FloatingActionsMenu multiple_actions_down = fragmentView.findViewById(R.id.multiple_actions_down);
-        if (modulo.perfilUsuario == 1){
+        if (modulo.perfilUsuario.equals("3")){
             multiple_actions_down.setVisibility(View.VISIBLE);
         }
 
