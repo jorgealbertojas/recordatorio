@@ -137,6 +137,8 @@ public class Questionario extends Activity  {
 
     Boolean imagemEstaMarca = false;
 
+    public String tempFotoAlimento = "0";
+
     int TAKE_PHOTO_CODE = 0;
     int NOTIFICATION_REMINDER_NIGHT = 1;
     private final int REQUEST_TAKE_PHOTO_CODE = 1;
@@ -516,6 +518,30 @@ public class Questionario extends Activity  {
             }
 
             if (VariavelAPI.contant_chave_inicair_anterior_DETALIMESC30.equals(saltoTEMP)) {
+                saltoTEMP = VariavelAPI.contant_chave_inicair_anterior_DETALIMESC1;
+            }
+
+            if (VariavelAPI.contant_chave_inicair_anterior_DETALIMESC40.equals(saltoTEMP)) {
+                saltoTEMP = VariavelAPI.contant_chave_inicair_anterior_DETALIMESC1;
+            }
+
+            if (VariavelAPI.contant_chave_inicair_anterior_DETALIMESC4.equals(saltoTEMP)) {
+                saltoTEMP = VariavelAPI.contant_chave_inicair_anterior_DETALIMESC1;
+            }
+
+            if (VariavelAPI.contant_chave_inicair_anterior_DETALIMESC5.equals(saltoTEMP)) {
+                saltoTEMP = VariavelAPI.contant_chave_inicair_anterior_DETALIMESC1;
+            }
+
+            if (VariavelAPI.contant_chave_inicair_anterior_DETALIMESC31.equals(saltoTEMP)) {
+                saltoTEMP = VariavelAPI.contant_chave_inicair_anterior_DETALIMESC1;
+            }
+
+            if (VariavelAPI.contant_chave_inicair_anterior_DETALIMESC41.equals(saltoTEMP)) {
+                saltoTEMP = VariavelAPI.contant_chave_inicair_anterior_DETALIMESC1;
+            }
+
+            if (VariavelAPI.contant_chave_inicair_anterior_DETALIMESC51.equals(saltoTEMP)) {
                 saltoTEMP = VariavelAPI.contant_chave_inicair_anterior_DETALIMESC1;
             }
 
@@ -1152,51 +1178,71 @@ public class Questionario extends Activity  {
                                         buttonPersonalizado.setTag(cursor.getString(8));
                                     } else {
                                         buttonPersonalizado.setTag(cursor.getString(6));
+                                        if (buttonPersonalizado.getTag().toString().equals(VariavelAPI.constant_chave_133_domic)) {
+                                            buttonPersonalizado.setVisibility(View.VISIBLE);
+                                        }
                                     }
                                     if (buttonPersonalizadoBolean) {
                                         buttonPersonalizado.setVisibility(View.VISIBLE);
                                     }
-                                        buttonPersonalizadoBolean = true;
+                                    buttonPersonalizadoBolean = true;
+                                    buttonPersonalizado.setText(opcoes);
+                                }
+                            } else {
+                                if (mostraAmbiente(cursor.getString(8)) && (!temIdadeFrase(cursor.getString(8)))) {
+                                    if (eParaFechar(cursor.getString(8))) {
+                                        buttonPersonalizado2.setTag(cursor.getString(8));
+                                    } else {
+                                        buttonPersonalizado2.setTag(cursor.getString(6));
+                                    }
+                                    buttonPersonalizado2.setVisibility(View.VISIBLE);
+                                    buttonPersonalizado2.setText(opcoes);
+                                }
+                            }
+                            if (buttonPersonalizado.getVisibility() == View.INVISIBLE) {
+                                if (idadeMaior7(cursor.getString(8), idade >= 7)) {
+                                    if (temIdadeFrase(cursor.getString(8))) {
+                                        if (eParaFechar(cursor.getString(8))) {
+                                            buttonPersonalizado.setTag(cursor.getString(8));
+                                        } else {
+                                            buttonPersonalizado.setTag(cursor.getString(6));
+                                        }
+                                        buttonPersonalizado.setVisibility(View.VISIBLE);
                                         buttonPersonalizado.setText(opcoes);
                                     }
-                                } else {
-                                    if (mostraAmbiente(cursor.getString(8)) && (!temIdadeFrase(cursor.getString(8)))) {
-                                        if (eParaFechar(cursor.getString(8))){
+                                }
+                            } else {
+                                if (idadeMaior7(cursor.getString(8), idade >= 7)) {
+                                    if (temIdadeFrase(cursor.getString(8))) {
+                                        if (eParaFechar(cursor.getString(8))) {
                                             buttonPersonalizado2.setTag(cursor.getString(8));
-                                        }else{
+                                        } else {
                                             buttonPersonalizado2.setTag(cursor.getString(6));
                                         }
                                         buttonPersonalizado2.setVisibility(View.VISIBLE);
                                         buttonPersonalizado2.setText(opcoes);
                                     }
                                 }
-                                if (buttonPersonalizado.getVisibility() == View.INVISIBLE) {
-                                    if (idadeMaior7(cursor.getString(8), idade >= 7)) {
-                                        if (temIdadeFrase(cursor.getString(8))) {
-                                            if (eParaFechar(cursor.getString(8))) {
-                                                buttonPersonalizado.setTag(cursor.getString(8));
-                                            } else {
-                                                buttonPersonalizado.setTag(cursor.getString(6));
-                                            }
-                                            buttonPersonalizado.setVisibility(View.VISIBLE);
-                                            buttonPersonalizado.setText(opcoes);
-                                        }
-                                    }
-                                } else {
-                                    if (idadeMaior7(cursor.getString(8), idade >= 7)) {
-                                        if (temIdadeFrase(cursor.getString(8))) {
-                                            if (eParaFechar(cursor.getString(8))) {
-                                                buttonPersonalizado2.setTag(cursor.getString(8));
-                                            } else {
-                                                buttonPersonalizado2.setTag(cursor.getString(6));
-                                            }
-                                            buttonPersonalizado2.setVisibility(View.VISIBLE);
-                                            buttonPersonalizado2.setText(opcoes);
-                                        }
-                                    }
-                                }
-                                imageButtonAvancar.setVisibility(View.INVISIBLE);
                             }
+                            imageButtonAvancar.setVisibility(View.INVISIBLE);
+
+                            if (cursorPergunta.getString(7).equals(VariavelAPI.contant_chave_inicair_anterior_DETALIMESC5)) {
+                                buttonPersonalizado2.setVisibility(View.INVISIBLE);
+                                buttonPersonalizado.setVisibility(View.VISIBLE);
+                                imageButtonAvancar.setVisibility(View.INVISIBLE);
+                                if (tempFotoAlimento.equals(cursor.getString(8))) {
+                                    buttonPersonalizado.setTag(cursor.getString(6));
+                                    buttonPersonalizado.setText(cursor.getString(3));
+                                }else if (tempFotoAlimento.equals(cursor.getString(8))) {
+                                    buttonPersonalizado.setTag(cursor.getString(6));
+                                    buttonPersonalizado.setText(cursor.getString(3));
+                                }else if (tempFotoAlimento.equals(cursor.getString(8))){
+                                    buttonPersonalizado.setTag(cursor.getString(6));
+                                    buttonPersonalizado.setText(cursor.getString(3));
+                                }
+
+                            }
+                        }
                             // Combo
                             else if (cursor.getInt(2) == 33) {
                                 if (!((cursor.getString(0)).equals(igual))) {
@@ -1258,10 +1304,13 @@ public class Questionario extends Activity  {
 
                                                                 if (medidasCaseiras.getTipoFoto().equals("FOTO_PORCAO_ALIMENTO")){
                                                                     habilitarBotao(VariavelAPI.constant_foto_alimento);
+                                                                    tempFotoAlimento = VariavelAPI.constant_foto_alimento;
                                                                 }else if (medidasCaseiras.getTipoFoto().equals("SEM FOTO")){
                                                                     habilitarBotao(VariavelAPI.constant_sem_foto);
+                                                                    tempFotoAlimento = VariavelAPI.constant_sem_foto;
                                                                 }else{
                                                                     habilitarBotao(VariavelAPI.constant_foto_utensilio);
+                                                                    tempFotoAlimento = VariavelAPI.constant_foto_utensilio;
                                                                 }
 
                                                                 listimagens = new ArrayList<>();
@@ -4878,7 +4927,7 @@ public class Questionario extends Activity  {
 
     public void insereeAtualizaAlimentoeRefeicaoComoCodigo(String pTag, String alimentoRefeicao){
 
-        Cursor cursorALIMENTO = bd.rawQuery(sql_select.GET_ALIMENTOS_REFEICAO, new String[]{Integer.toString(AlunoAtual), pTag});
+        Cursor cursorALIMENTO = bd.rawQuery(sql_select.GET_ALIMENTOS_REFEICAO, new String[]{Integer.toString(AlunoAtual), pTag, alimentoRefeicao});
         cursorALIMENTO.moveToFirst();
         cursorALIMENTO.getCount();
 
@@ -4916,7 +4965,7 @@ public class Questionario extends Activity  {
 
         RespostaAdd respostaAdd = new RespostaAdd();
         respostaAdd.setIdPergunta(sql_create.TABLE_ALIMENTO);
-        respostaAdd.setIdItemPergunta(pTag);
+        respostaAdd.setIdItemPergunta(alimentoRefeicao);
         respostaAdd.setValor(gson.toJson(respostaAlimento));
         respostaAdd.setTagLivre(sql_create.TABLE_ALIMENTO);
         respostaAdd.setIdAlimento(pTag);
@@ -5238,7 +5287,12 @@ public class Questionario extends Activity  {
                     nButtonCheck.setVisibility(View.INVISIBLE);
                     buttonPersonalizadoBolean = false;
                     // coloca o botao invicivel, so volta para o visivel deposi que coletar todos
-                    buttonPersonalizado.setVisibility(View.INVISIBLE);
+                    if (!buttonPersonalizado.getTag().toString().equals(VariavelAPI.constant_chave_133_domic)){
+                        buttonPersonalizado.setVisibility(View.INVISIBLE);
+                    }else{
+                        buttonPersonalizado.setVisibility(View.VISIBLE);
+                    }
+
                     buttonPersonalizado2.setVisibility(View.INVISIBLE);
                     imageButtonAvancar.setVisibility(View.INVISIBLE);
                 }

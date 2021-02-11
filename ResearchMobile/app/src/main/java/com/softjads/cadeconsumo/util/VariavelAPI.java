@@ -100,12 +100,23 @@ public class VariavelAPI {
     public static final String contant_chave_inicair_anterior_DETALIMESC2 = "DETALIM/2/ESC";
     public static final String contant_chave_inicair_anterior_DETALIMESC1 = "DETALIM/1/ESC";
 
+    public static final String contant_chave_inicair_anterior_DETALIMESC31 = "DETALIM/31/ESC";
+    public static final String contant_chave_inicair_anterior_DETALIMESC41 = "DETALIM/41/ESC";
+    public static final String contant_chave_inicair_anterior_DETALIMESC51 = "DETALIM/51/ESC";
+
     public static final String contant_chave_inicair_anterior_DETALIMESC30 = "DETALIM/30/ESC";
+    public static final String contant_chave_inicair_anterior_DETALIMESC40 = "DETALIM/40/ESC";
+    public static final String contant_chave_inicair_anterior_DETALIMESC4 = "DETALIM/4/ESC";
+    public static final String contant_chave_inicair_anterior_DETALIMESC5 = "DETALIM/5/ESC";
 
     public static final String contant_chave_inicair_anterior_DETALIMPAPEL2 = "DETALIM/2/PAPEL";
     public static final String contant_chave_inicair_anterior_DETALIMPAPEL1 = "DETALIM/1/PAPEL";
 
+
+
     public static final String constant_chave_101_domic =  "FIMPAPEL/5";
+
+    public static final String constant_chave_133_domic =  "FIMPAPEL/6";
 
     public static final String constant_foto_alimento = "{{EXIBIR_SOMENTE_TEM_FOTO_ALIMENTO}}";
     public static final String constant_foto_utensilio = "{{EXIBIR_SOMENTE_TEM_FOTO_UTENSILIO}}";

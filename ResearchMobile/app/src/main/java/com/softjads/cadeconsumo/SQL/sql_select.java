@@ -52,7 +52,7 @@ public class sql_select {
 	public static String GET_ALIMENTOS_REFEICAO =
 			" SELECT ID, DESCRICAO, ID_ALUNO, CODIGO, ALIMENTO_REFEICAO, QUAL_E_ESSE_ITEM  " +
 					" FROM ALIMENTO  "+
-					" WHERE ID_ALUNO = ? and ID = ? ";
+					" WHERE ID_ALUNO = ? and ID = ? and ALIMENTO_REFEICAO = ? ";
 
 	public static String GET_ALIMENTOS_REFEICAO_NULL =
 			" SELECT ID, DESCRICAO, ID_ALUNO, CODIGO, ALIMENTO_REFEICAO, QUAL_E_ESSE_ITEM  " +
@@ -69,7 +69,7 @@ public class sql_select {
 					" FROM ALIMENTO  "+
 					" WHERE ID = ? ";
 	public static String GET_MODO_PREPARACAO =
-			" SELECT ID_ALUNO, DESCRICAO " +
+			" SELECT distinct ID_ALUNO, DESCRICAO " +
 					" FROM MODO_PREPARACAO  "+
 					" WHERE ID_ALIMENTO = ? ";
 	public static String GET_TUDO_ALIMENTO_CHECADO_DOMIC =
@@ -91,12 +91,12 @@ public class sql_select {
 			" SELECT   distinct ALIMENTO_REFEICAO_ORDER FROM ALIMENTO WHERE ALIMENTO_REFEICAO_ORDER >= 1000 ORDER BY ALIMENTO_REFEICAO_ORDER DESC ";
 
 	public static String GET_ADICOES =
-			" SELECT ID_ALUNO, DESCRICAO " +
+			" SELECT distinct ID_ALUNO, DESCRICAO " +
 					" FROM ADICOES  "+
 					" WHERE ID_ALIMENTO = ? ";
 
 	public static String GET_MEDIDAS_CASEIRAS =
-			" SELECT ID_ALUNO, DESCRICAO " +
+			" SELECT distinct ID_ALUNO, DESCRICAO " +
 					" FROM MEDIDAS_CASEIRAS  "+
 					" WHERE ID_ALIMENTO = ? ";
 
