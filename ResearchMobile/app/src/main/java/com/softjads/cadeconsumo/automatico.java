@@ -262,7 +262,7 @@ public class automatico extends Activity {
 						obj.put("CODIGO", personsFromJson.getCodigo());
 						obj.put("DESCRICAO", personsFromJson.getDescricao());
 						obj.put("QUAL_E_ESSE_ITEM", respostaAdd.getIdItemPergunta());
-						obj.put("ALIMENTO_REFEICAO", personsFromJson.getAlimento_refeicao());
+						obj.put("ALIMENTO_REFEICAO", respostaAdd.getIdItemPergunta());
 						obj.put("ALIMENTO_REFEICAO_ORDER", personsFromJson.getAlimento_order());
 						this.onInsert(this, obj, sql_create.TABLE_ALIMENTO);
 					}

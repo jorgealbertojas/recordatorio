@@ -810,7 +810,26 @@ public class Questionario extends Activity  {
 
             bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + valor + " WHERE ALIMENTO_REFEICAO_ORDER < 1000 ");
 
-            insereeAtualizaAlimentoeRefeicaoComoCodigocomFOR(valor);
+            try {
+
+
+                    RespostaAdd respostaAdd = new RespostaAdd();
+                    respostaAdd.setIdPergunta(NumeroPerguntaAtual);
+                    respostaAdd.setIdItemPergunta(NumeroPerguntaAtual);
+
+                    respostaAdd.setIdAlimento(NumeroPerguntaAtual);
+
+                    respostaAdd.setValor("");
+                    respostaAdd.setTagLivre(idAlimento);
+
+                    createStackOverflowAPI();
+
+                    mInterfaceObject.postAdicionaCrianca(respostaAdd, AlunoAtualID).enqueue(cadatrarRespostaCallback);
+
+
+            } catch(Throwable ex){
+                System.out.println(ex.getMessage());
+            }
         }
     }
 
