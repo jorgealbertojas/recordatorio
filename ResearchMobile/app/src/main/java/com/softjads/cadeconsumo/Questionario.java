@@ -238,7 +238,7 @@ public class Questionario extends Activity  {
     private String log = "";
     private Boolean nTIME = false;
     private String nGPS = "";
-    private LinearLayout ll;
+    private LinearLayout edits_ll;
     private int count = 0;
     //private ArrayList<EditText> edits;
     private ArrayList<TextInputLayout> edits;
@@ -283,78 +283,81 @@ public class Questionario extends Activity  {
         public void onResponse(Call<AlimentosCompletos> call, Response<AlimentosCompletos> response) {
             try {
                 if (response.isSuccessful()) {
-                    data = new ArrayList<>();
-                    data.addAll(response.body().alimentos);
+                    if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_102)) {
+                        data = new ArrayList<>();
+                        data.addAll(response.body().alimentos);
 
-                    grupo = new ArrayList<>();
-                    grupo.addAll(response.body().contagemGrupoAlimentar);
+                        grupo = new ArrayList<>();
+                        grupo.addAll(response.body().contagemGrupoAlimentar);
 
-                    Questionario.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            DestruirTextView();
+                        Questionario.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                DestruirTextView();
 
-                            if (grupo.size() > 0) {
-                                for (int i = 0; i < grupo.size(); i++) {
-                                    CheckBox checkBox = new CheckBox(getApplicationContext());
-                                    checkBox.setText( grupo.get(i).getGrupoAlimentar() + " (" + grupo.get(i).getTotalAlimentos() +")" );
-                                    checkBox.setTag(grupo.get(i).getGrupoAlimentar());
-                                    checkBox.setTextColor(getResources().getColor(R.color.black));
-                                    checkBox.setBackgroundColor(getResources().getColor(R.color.white));
-                                    checkBox.setPadding(20, 2, 20, 2);
-                                    checkBox.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            TornaInvisivelTextView(false);
-                                           if (((CheckBox) view).isChecked()) {
-                                               TornaVisivelTextViewGrupo(listaGrupoCheckbox(), true);
-                                            }else{
-                                               if (estaUmMarcadoCheckbox()) {
-                                                   TornaVisivelTextViewGrupo(listaGrupoCheckbox(), true);
-                                               }else{
-                                                   TornaInvisivelTextView(true);
-                                               }
+                                if (grupo.size() > 0) {
+                                    for (int i = 0; i < grupo.size(); i++) {
+                                        CheckBox checkBox = new CheckBox(getApplicationContext());
+                                        checkBox.setText(grupo.get(i).getGrupoAlimentar() + " (" + grupo.get(i).getTotalAlimentos() + ")");
+                                        checkBox.setTag(grupo.get(i).getGrupoAlimentar());
+                                        checkBox.setTextColor(getResources().getColor(R.color.black));
+                                        checkBox.setBackgroundColor(getResources().getColor(R.color.white));
+                                        checkBox.setPadding(20, 2, 20, 2);
+                                        checkBox.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                TornaInvisivelTextView(false);
+                                                if (((CheckBox) view).isChecked()) {
+                                                    TornaVisivelTextViewGrupo(listaGrupoCheckbox(), true);
+                                                } else {
+                                                    if (estaUmMarcadoCheckbox()) {
+                                                        TornaVisivelTextViewGrupo(listaGrupoCheckbox(), true);
+                                                    } else {
+                                                        TornaInvisivelTextView(true);
+                                                    }
+
+                                                }
+
 
                                             }
+                                        });
 
+                                        LinearLayout.LayoutParams params;
+                                        params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                        params.setMargins(10, 2, 10, 2);
+                                        edits_ll.addView(checkBox, params);
+                                    }
+                                }
 
-                                        }
-                                    });
+                                if (data.size() > 0) {
+                                    for (int i = 0; i < data.size(); i++) {
+                                        TextView textView = new TextView(getApplicationContext());
+                                        textView.setText(data.get(i).getDescricao());
+                                        textView.setTag(i);
+                                        textView.setTextColor(getResources().getColor(R.color.white));
+                                        textView.setBackgroundColor(getResources().getColor(R.color.color_primary_dark));
+                                        textView.setPadding(20, 20, 20, 20);
+                                        textView.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                desejaAdicionar(view, TemEditText.getTag().toString());
+                                            }
+                                        });
 
-                                    LinearLayout.LayoutParams params;
-                                    params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-                                    params.setMargins(10, 2, 10, 2);
-                                    ll.addView(checkBox, params);
+                                        LinearLayout.LayoutParams params;
+                                        params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                                        params.setMargins(10, 10, 10, 40);
+                                        edits_ll.addView(textView, params);
+                                    }
                                 }
                             }
-
-                            if (data.size() > 0) {
-                                for (int i = 0; i < data.size(); i++) {
-                                    TextView textView = new TextView(getApplicationContext());
-                                    textView.setText(data.get(i).getDescricao());
-                                    textView.setTag(i);
-                                    textView.setTextColor(getResources().getColor(R.color.white));
-                                    textView.setBackgroundColor(getResources().getColor(R.color.color_primary_dark));
-                                    textView.setPadding(20, 20, 20, 20);
-                                    textView.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            desejaAdicionar(view, TemEditText.getTag().toString());
-                                        }
-                                    });
-
-                                    LinearLayout.LayoutParams params;
-                                    params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-                                    params.setMargins(10, 10, 10, 40);
-                                    ll.addView(textView, params);
-                                }
-                            }
-                        }
-                    });
+                        });
+                        progressBar.setVisibility(View.INVISIBLE);
+                    } else {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Log.d("QuestionsCallback", "Code: " + response.code() + " Message: " + response.message());
+                    }
                     progressBar.setVisibility(View.INVISIBLE);
-                } else {
-                    progressBar.setVisibility(View.INVISIBLE);
-                    Log.d("QuestionsCallback", "Code: " + response.code() + " Message: " + response.message());
                 }
             } catch (NullPointerException e) {
                 progressBar.setVisibility(View.INVISIBLE);
@@ -569,7 +572,7 @@ public class Questionario extends Activity  {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.questionario);
-        this.ll = (LinearLayout) this.findViewById(R.id.edits_ll);
+        this.edits_ll = (LinearLayout) this.findViewById(R.id.edits_ll);
 
         llPergunta = (EditText) findViewById(R.id.editEntrevistado);
         imageButtonAvancar = (Button) findViewById(R.id.imageButtonAvancar);
@@ -1039,7 +1042,7 @@ public class Questionario extends Activity  {
                                     LinearLayout.LayoutParams params;
                                     params = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
                                     params.setMargins(10, 10, 10, 40);
-                                    ll.addView(textView, params);
+                                    edits_ll.addView(textView, params);
                                 }
                             }
                             // RADIONBUTTON
@@ -1143,7 +1146,7 @@ public class Questionario extends Activity  {
                                             }
                                         }
 
-                                        ll.addView(radionbutton, params); // adiciona a editText ao ViewGroup
+                                        edits_ll.addView(radionbutton, params); // adiciona a editText ao ViewGroup
                                     } else if (cursor.getString(3).equals(VariavelAPI.constante_variavel_alimento_excluir_editar)) {
                                         criarAlimentosInseridos();
                                     } else if (cursor.getString(3).equals(VariavelAPI.constante_variavel_alimento_porcoes) || cursor.getString(3).equals(VariavelAPI.constante_variavel_alimento_utensilios)) {
@@ -1427,9 +1430,9 @@ public class Questionario extends Activity  {
                                     editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
                                     editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
                                     edits.add(editAnimation); // adiciona a nova editText a lista.
-                                    ll.addView(editAnimation, params);
+                                    edits_ll.addView(editAnimation, params);
 
-                                    ll.addView(spinner, params); // adiciona a editText ao ViewGroup
+                                    edits_ll.addView(spinner, params); // adiciona a editText ao ViewGroup
                                 }
                             }
 
@@ -1518,7 +1521,7 @@ public class Questionario extends Activity  {
                                     });
 
                                     checkboxs.add(checkbox); // adiciona a nova editText a lista.
-                                    ll.addView(checkbox, params); // adiciona a editText ao ViewGroup
+                                    edits_ll.addView(checkbox, params); // adiciona a editText ao ViewGroup
                                 }
                             }
                             // numero 4 o numero normal
@@ -1782,7 +1785,7 @@ public class Questionario extends Activity  {
                                     edit.setBackground(null);
                                     editAnimation.addView(edit, paramsTextHelp);
                                     edits.add(editAnimation); // adiciona a nova editText a lista.
-                                    ll.addView(editAnimation, params);
+                                    edits_ll.addView(editAnimation, params);
                                 }
                             }
 
@@ -1928,7 +1931,7 @@ public class Questionario extends Activity  {
                                     edit.setBackground(null);
                                     editAnimation.addView(edit, paramsTextHelp);
                                     edits.add(editAnimation); // adiciona a nova editText a lista.
-                                    ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
+                                    edits_ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
                                 }
 
                                 ///	DATA MASCARA
@@ -2100,9 +2103,9 @@ public class Questionario extends Activity  {
 
                                     edits.add(editAnimation); // adiciona a nova editText a lista.
                                     edit.setBackground(null);
-                                    ll.addView(nTextView, paramsTextHelp);
-                                    ll.addView(nButton, paramsButton);
-                                    ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
+                                    edits_ll.addView(nTextView, paramsTextHelp);
+                                    edits_ll.addView(nButton, paramsButton);
+                                    edits_ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
 
                                 }
                             }
@@ -2281,9 +2284,9 @@ public class Questionario extends Activity  {
                                     editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
                                     edits.add(editAnimation); // adiciona a nova editText a lista.
 
-                                    ll.addView(nTextView, paramsTextView);
-                                    ll.addView(nButton, paramsButton);
-                                    ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
+                                    edits_ll.addView(nTextView, paramsTextView);
+                                    edits_ll.addView(nButton, paramsButton);
+                                    edits_ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
 
                                 }
                             }
@@ -2507,9 +2510,9 @@ public class Questionario extends Activity  {
                                     editAnimation.addView(edit, paramsTextHelp);
                                     edits.add(editAnimation); // adiciona a nova editText a lista.
 
-                                    ll.addView(nTextView, paramsTextView);
-                                    ll.addView(nButton, paramsButton);
-                                    ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
+                                    edits_ll.addView(nTextView, paramsTextView);
+                                    edits_ll.addView(nButton, paramsButton);
+                                    edits_ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
 
                                 }
                             }
@@ -2720,7 +2723,7 @@ public class Questionario extends Activity  {
                                     edit.setBackground(null);
                                     editAnimation.addView(edit, paramsTextHelp);
                                     edits.add(editAnimation); // adiciona a nova editText a lista.
-                                    ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
+                                    edits_ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
                                 }
                             }
                            /* else if (cursor.getInt(2) == 10) {
@@ -2869,7 +2872,7 @@ public class Questionario extends Activity  {
                                     });
 
                                     numberPickers.add(number); // adiciona a nova editText a lista.
-                                    ll.addView(number, params); // adiciona a editText ao ViewGroup
+                                    edits_ll.addView(number, params); // adiciona a editText ao ViewGroup
                                 }
                             }
                             // CHECK especial
@@ -2930,7 +2933,7 @@ public class Questionario extends Activity  {
                                     });
 
                                     checkboxs.add(checkbox); // adiciona a nova editText a lista.
-                                    ll.addView(checkbox, params); // adiciona a editText ao ViewGroup
+                                    edits_ll.addView(checkbox, params); // adiciona a editText ao ViewGroup
                                 }
                             }
                             // TEXTO especial
@@ -3003,7 +3006,7 @@ public class Questionario extends Activity  {
                                     };
                                     edit.addTextChangedListener(textWatcher);
                                     //edits.add(edit); // adiciona a nova editText a lista.
-                                    ll.addView(edit, params); // adiciona a editText ao ViewGroup
+                                    edits_ll.addView(edit, params); // adiciona a editText ao ViewGroup
                                 }
                         }
 
@@ -3162,7 +3165,7 @@ public class Questionario extends Activity  {
                 edit.addTextChangedListener(textWatcher);
                 editAnimation.addView(edit, params);
                 edits.add(editAnimation); // adiciona a nova editText a lista.
-                ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
+                edits_ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
 
 
                 if (cursorPergunta.isLast()) {
@@ -3236,7 +3239,7 @@ public class Questionario extends Activity  {
                 LinearLayout.LayoutParams params;
                 params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
                 params.setMargins(0, 0, 0, 0);
-                ll.addView(constraintLayout, params);
+                edits_ll.addView(constraintLayout, params);
 
                 imageView1.setOnClickListener(new View.OnClickListener() {
                                                    @Override
@@ -3329,7 +3332,7 @@ public class Questionario extends Activity  {
         imageButton.setImageResource(R.mipmap.user_mais_01);
         imageButton.setBackgroundColor(Color.WHITE);
         imageButtons.add(imageButton); // adiciona a nova editText a lista.
-        ll.addView(imageButton, paramsNovo);
+        edits_ll.addView(imageButton, paramsNovo);
 
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -3380,8 +3383,8 @@ public class Questionario extends Activity  {
     private void habilitaTUDO_OPCOES() {
         try {
 
-            for (int i = 0; i < ll.getChildCount(); i++) {
-                View child = ll.getChildAt(i);
+            for (int i = 0; i < edits_ll.getChildCount(); i++) {
+                View child = edits_ll.getChildAt(i);
                 if (child instanceof EditText) {
                     EditText et = (EditText) child;
                     et.setVisibility(View.VISIBLE);
@@ -3394,9 +3397,9 @@ public class Questionario extends Activity  {
     public void DestruirString() {
         try {
             //for (int i = 0; i < ll.getChildCount(); i++){
-            int i = ll.getChildCount();
+            int i = edits_ll.getChildCount();
             while (-2 < i - 1) {
-                View child = ll.getChildAt(i);
+                View child = edits_ll.getChildAt(i);
                 if (child instanceof Button) {
                     Button et = (Button) child;
                     ViewGroup parent = (ViewGroup) et.getParent();
@@ -3412,9 +3415,9 @@ public class Questionario extends Activity  {
     public void DestruirTextView() {
         try {
             //for (int i = 0; i < ll.getChildCount(); i++){
-            int i = ll.getChildCount();
+            int i = edits_ll.getChildCount();
             while (-2 < i - 1) {
-                View child = ll.getChildAt(i);
+                View child = edits_ll.getChildAt(i);
                 if (child instanceof TextView) {
                     TextView et = (TextView) child;
                     ViewGroup parent = (ViewGroup) et.getParent();
@@ -3430,8 +3433,8 @@ public class Questionario extends Activity  {
     public void apagarValores() {
         try {
 
-            for (int i = 0; i < ll.getChildCount(); i++) {
-                View child = ll.getChildAt(i);
+            for (int i = 0; i < edits_ll.getChildCount(); i++) {
+                View child = edits_ll.getChildAt(i);
                 if (child instanceof TextInputLayout) {
                     for (int y = 0; y < ((TextInputLayout) child).getChildCount(); y++) {
                         View child2 = ((TextInputLayout) child).getChildAt(y);
@@ -3451,10 +3454,10 @@ public class Questionario extends Activity  {
     public void apagarValoresLinearLayout() {
         try {
 
-            for (int i = 0; i < ll.getChildCount(); i++) {
-                View child = ll.getChildAt(i);
+            for (int i = 0; i < edits_ll.getChildCount(); i++) {
+                View child = edits_ll.getChildAt(i);
                 if (child instanceof TextInputLayout) {
-                    int ii = ll.getChildCount();
+                    int ii = edits_ll.getChildCount();
                     while (-2 < ii - 1) {
                         View child1 = ((LinearLayout) child).getChildAt(ii);
                         if (child1 instanceof LinearLayout) {
@@ -3508,7 +3511,7 @@ public class Questionario extends Activity  {
                         button.setText(Temp_SubPgunta);
                         button.setTag(pegaPerguntaTresPrimeirosant);
                         Buttons.add(button); // adiciona a nova editText a lista.
-                        ll.addView(button, 0, paramsNovo);
+                        edits_ll.addView(button, 0, paramsNovo);
                         //ll.addView(button, paramsNovo);
                         Temp_SubPgunta = "";
 
@@ -3525,7 +3528,7 @@ public class Questionario extends Activity  {
                 button.setText(Temp_SubPgunta);
                 Buttons.add(button); // adiciona a nova editText a lista.
                 //ll.addView(button, paramsNovo);
-                ll.addView(button, 0, paramsNovo);
+                edits_ll.addView(button, 0, paramsNovo);
 
                 AssociaEvento(button);
 
@@ -3614,7 +3617,7 @@ public class Questionario extends Activity  {
     }
 
     protected void DestruirPergunta() {
-        ll.removeAllViewsInLayout();
+        edits_ll.removeAllViewsInLayout();
 
     }
 
@@ -3930,8 +3933,8 @@ public class Questionario extends Activity  {
 
     public void marcaCheck(String nOpcao, String nValorOpcao, String tipoValor, String VALOR) {
         try {
-            for (int i = 0; i < ll.getChildCount(); i++) {
-                View child = ll.getChildAt(i);
+            for (int i = 0; i < edits_ll.getChildCount(); i++) {
+                View child = edits_ll.getChildAt(i);
                 if (child instanceof TextInputLayout) {
                     for (int y = 0; y < ((TextInputLayout) child).getChildCount(); y++) {
                         View child2 = ((TextInputLayout) child).getChildAt(y);
@@ -4174,12 +4177,12 @@ public class Questionario extends Activity  {
                 return true;
             }
 
-            if (ll.getChildCount() == 0) {
+            if (edits_ll.getChildCount() == 0) {
                 return true;
             }
 
-            for (int i = 0; i < ll.getChildCount(); i++) {
-                View child = ll.getChildAt(i);
+            for (int i = 0; i < edits_ll.getChildCount(); i++) {
+                View child = edits_ll.getChildAt(i);
 
                 obrigatorio = 0;
 
@@ -4450,8 +4453,8 @@ public class Questionario extends Activity  {
 
     public void TornaVisivelTextEspecial(String nOpcao, Boolean TornarVisivel) {
         try {
-            for (int i = 0; i < ll.getChildCount(); i++) {
-                View child = ll.getChildAt(i);
+            for (int i = 0; i < edits_ll.getChildCount(); i++) {
+                View child = edits_ll.getChildAt(i);
                 if (child instanceof EditText) {
                     EditText et = (EditText) child;
                     if (et.getTag().equals(nOpcao)) {
@@ -4483,8 +4486,8 @@ public class Questionario extends Activity  {
 
     public void TornaInvisivelTextView(boolean visible) {
         try {
-            for (int i = 0; i < ll.getChildCount(); i++) {
-                View child = ll.getChildAt(i);
+            for (int i = 0; i < edits_ll.getChildCount(); i++) {
+                View child = edits_ll.getChildAt(i);
                 if (!(child instanceof CheckBox)) {
                     if (child instanceof TextView) {
                         TextView et = (TextView) child;
@@ -4506,8 +4509,8 @@ public class Questionario extends Activity  {
     public boolean estaUmMarcadoCheckbox() {
         try {
             int count = 0;
-            for (int i = 0; i < ll.getChildCount(); i++) {
-                View child = ll.getChildAt(i);
+            for (int i = 0; i < edits_ll.getChildCount(); i++) {
+                View child = edits_ll.getChildAt(i);
                 if ((child instanceof CheckBox)) {
                     CheckBox et = (CheckBox) child;
                     if (et.isChecked()) {
@@ -4531,8 +4534,8 @@ public class Questionario extends Activity  {
         try {
 
             List<String> list = new ArrayList<String>();
-            for (int i = 0; i < ll.getChildCount(); i++) {
-                View child = ll.getChildAt(i);
+            for (int i = 0; i < edits_ll.getChildCount(); i++) {
+                View child = edits_ll.getChildAt(i);
                 if ((child instanceof CheckBox)) {
                     CheckBox et = (CheckBox) child;
                     if (et.isChecked()) {
@@ -4552,8 +4555,8 @@ public class Questionario extends Activity  {
     public void TornaVisivelTextViewGrupo(List<String> listaGrupoCheckbox, boolean visible) {
         try {
             for (int y = 0; y < listaGrupoCheckbox.size(); y++) {
-                for (int i = 0; i < ll.getChildCount(); i++) {
-                    View child = ll.getChildAt(i);
+                for (int i = 0; i < edits_ll.getChildCount(); i++) {
+                    View child = edits_ll.getChildAt(i);
                     if (!(child instanceof CheckBox)) {
                         if (child instanceof TextView) {
                             TextView et = (TextView) child;
@@ -4591,8 +4594,8 @@ public class Questionario extends Activity  {
     public void VisivelLabelButton(String nOpcao, String valor, Boolean TornarVisivel, String ntipoValor) {
         try {
 
-            for (int i = 0; i < ll.getChildCount(); i++) {
-                View child = ll.getChildAt(i);
+            for (int i = 0; i < edits_ll.getChildCount(); i++) {
+                View child = edits_ll.getChildAt(i);
                 if (child instanceof TextView) {
                     TextView et = (TextView) child;
                     if (et.getTag().equals(nOpcao)) {
@@ -4631,8 +4634,8 @@ public class Questionario extends Activity  {
 
     public void VisivleMasTexbox(String nOpcao) {
         try {
-            for (int i = 0; i < ll.getChildCount(); i++) {
-                View child = ll.getChildAt(i);
+            for (int i = 0; i < edits_ll.getChildCount(); i++) {
+                View child = edits_ll.getChildAt(i);
                 if (child instanceof TextInputLayout) {
                     for (int y = 0; y < ((TextInputLayout) child).getChildCount(); y++) {
                         View child2 = ((TextInputLayout) child).getChildAt(y);
@@ -4656,8 +4659,8 @@ public class Questionario extends Activity  {
     private void desabilitaOPCOES(String opcaoDesabilita, boolean nboolean) {
         try {
 
-            for (int i = 0; i < ll.getChildCount(); i++) {
-                View child = ll.getChildAt(i);
+            for (int i = 0; i < edits_ll.getChildCount(); i++) {
+                View child = edits_ll.getChildAt(i);
                 if (child instanceof EditText) {
                     EditText et = (EditText) child;
                     if (et.getTag().toString().equals(opcaoDesabilita)) {
@@ -4702,9 +4705,9 @@ public class Questionario extends Activity  {
             if (cursorMarcarSubformulario.getCount() > 0) {
                 while (!cursorMarcarSubformulario.isAfterLast()) {
 
-                    for (int i = 0; i < ll.getChildCount(); i++) {
+                    for (int i = 0; i < edits_ll.getChildCount(); i++) {
                         cursorSALTOSUBFORMULARIO.moveToFirst();
-                        View child = ll.getChildAt(i);
+                        View child = edits_ll.getChildAt(i);
                         if (child instanceof TextInputLayout) {
                             for (int y = 0; y < ((TextInputLayout) child).getChildCount(); y++) {
                                 View child2 = ((TextInputLayout) child).getChildAt(y);
@@ -4759,8 +4762,8 @@ public class Questionario extends Activity  {
     }
 
     public void tornarSUBFORMULARIOVisivel() {
-        for (int i = 0; i < ll.getChildCount(); i++) {
-            View child = ll.getChildAt(i);
+        for (int i = 0; i < edits_ll.getChildCount(); i++) {
+            View child = edits_ll.getChildAt(i);
             if (child instanceof TextInputLayout) {
                 for (int y = 0; y < ((TextInputLayout) child).getChildCount(); y++) {
                     View child2 = ((TextInputLayout) child).getChildAt(y);
@@ -4777,9 +4780,9 @@ public class Questionario extends Activity  {
 
         try {
 
-            for (int i = 0; i < ll.getChildCount(); i++) {
+            for (int i = 0; i < edits_ll.getChildCount(); i++) {
 
-                View child = ll.getChildAt(i);
+                View child = edits_ll.getChildAt(i);
                 if (child instanceof TextInputLayout) {
                     for (int y = 0; y < ((TextInputLayout) child).getChildCount(); y++) {
                         View child2 = ((TextInputLayout) child).getChildAt(y);
@@ -4908,9 +4911,9 @@ public class Questionario extends Activity  {
     public void DestruirStringAlimento() {
         try {
             //for (int i = 0; i < ll.getChildCount(); i++){
-            int i = ll.getChildCount();
+            int i = edits_ll.getChildCount();
             while (-2 < i - 1) {
-                View child = ll.getChildAt(i);
+                View child = edits_ll.getChildAt(i);
                 if (child instanceof TextView) {
                     if (child.getTag().equals("apagar")) {
                         TextView et = (TextView) child;
@@ -5220,7 +5223,7 @@ public class Questionario extends Activity  {
 
                 editAnimation.addView(linearLayout, paramsTextHelp);
                 edits.add(editAnimation); // adiciona a nova editText a lista.
-                ll.addView(editAnimation, params);
+                edits_ll.addView(editAnimation, params);
                 //
              //   ll.addView(linearLayout);
 
@@ -5373,7 +5376,7 @@ public class Questionario extends Activity  {
 
                 editAnimation.addView(linearLayout, paramsTextHelp);
                 edits.add(editAnimation); // adiciona a nova editText a lista.
-                ll.addView(editAnimation, params);
+                edits_ll.addView(editAnimation, params);
 
 
                 cursorREFEICAO.moveToNext();
@@ -5535,7 +5538,7 @@ public class Questionario extends Activity  {
                 linearLayout.addView(textView, params);
                 linearLayout.addView(nButton, paramsButton);
                 linearLayout.addView(nButton2, paramsButton);
-                ll.addView(linearLayout);
+                edits_ll.addView(linearLayout);
 
                 cursorALIMENTO.moveToNext();
             }
@@ -5685,7 +5688,7 @@ public class Questionario extends Activity  {
         imageButton.setImageResource(R.mipmap.ic_youtube);
         imageButton.setBackgroundColor(Color.WHITE);
         imageButtons.add(imageButton); // adiciona a nova editText a lista.
-        ll.addView(imageButton, paramsNovo);
+        edits_ll.addView(imageButton, paramsNovo);
 
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -5870,10 +5873,10 @@ public class Questionario extends Activity  {
             });
         }
 
-        imageButtons.add(fotoCamera);
+      //  imageButtons.add(fotoCamera);
 
         // adiciona a nova editText a lista.
-        ll.addView(childLayout, paramsNovo);
+        edits_ll.addView(childLayout, paramsNovo);
 
 
         final String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/picFolder/";
@@ -6376,8 +6379,8 @@ public class Questionario extends Activity  {
     public void desmarcarImagem() {
 
         try {
-            for (int i = 0; i < ll.getChildCount(); i++) {
-                View child = ll.getChildAt(i);
+            for (int i = 0; i < edits_ll.getChildCount(); i++) {
+                View child = edits_ll.getChildAt(i);
                 if (child instanceof ConstraintLayout) {
                     for (int y = 0; y < ((ConstraintLayout) child).getChildCount(); y++) {
                         View child2 = ((ConstraintLayout) child).getChildAt(y);

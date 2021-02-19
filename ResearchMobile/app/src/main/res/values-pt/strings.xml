@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">Recordátorio</string>
+    <string name="app_name">CADE</string>
 
     <string name="mensagem01">Deseja sair da aplicação</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Settings</string>post
 
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
