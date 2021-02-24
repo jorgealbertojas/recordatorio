@@ -27,7 +27,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
         android:alpha="100"
-        android:tint="@color/color_primary"
         android:background="@drawable/bnt_blue_border_oval"
         android:src="@mipmap/ic_icon"
         android:transitionName="icon_main" />

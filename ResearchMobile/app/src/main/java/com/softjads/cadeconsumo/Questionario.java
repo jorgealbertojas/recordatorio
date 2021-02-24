@@ -967,11 +967,12 @@ public class Questionario extends Activity  {
                         if (pergunta.length() > 0) {
 
                             String medidacaseira = "";
-                            Cursor cursorRESPOSTA_OPCAO_MEDIDA_CASEIRA = bd.rawQuery(sql_select.GET_RESPOSTA_OPCAO_MEDIDA_CASEIRA_2, new String[]{Integer.toString(AlunoAtual)});
+                            Cursor cursorRESPOSTA_OPCAO_MEDIDA_CASEIRA = bd.rawQuery(sql_select.GET_RESPOSTA_OPCAO_MEDIDA_CASEIRA_2, new String[]{Integer.toString(AlunoAtual), idAlimento});
                             cursorRESPOSTA_OPCAO_MEDIDA_CASEIRA.moveToFirst();
                             cursorRESPOSTA_OPCAO_MEDIDA_CASEIRA.getCount();
                             if (cursorRESPOSTA_OPCAO_MEDIDA_CASEIRA.getCount() > 0) {
                                 medidacaseira = cursorRESPOSTA_OPCAO_MEDIDA_CASEIRA.getString(4);
+
                             }
 
                             pergunta = pergunta.replace("          ", " ");
@@ -3801,7 +3802,7 @@ public class Questionario extends Activity  {
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notificationBuilder.build());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        long futureInMillis = 3000;
+        long futureInMillis = 3600000;
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, futureInMillis, pendingIntent);
 
@@ -5730,13 +5731,13 @@ public class Questionario extends Activity  {
 
         if (valor != null) {
             if (valor.contains(VariavelAPI.constante_variavel_regra1)) {
-                if (idade < 7) {
+                if (idade < 8) {
                     return true;
                 } else {
                     return false;
                 }
             } else if (valor.contains(VariavelAPI.constante_variavel_regra2)) {
-                if (idade >= 7) {
+                if (idade >= 8) {
                     return true;
                 } else {
                     return false;
