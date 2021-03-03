@@ -82,6 +82,8 @@ public class VariavelAPI {
     public static final String constant_chave_1017 = "FEEE1EE3-DC81-4816-A266-064247EA1B3E";
 
 
+    public static final String constant_chave_escolar_youtube = "C15EBC53-75D8-452C-BF2F-8A95B69D5C02";
+    public static final String constant_chave_domiciliar_youtube = "15B42A5E-3A55-451A-B58A-F564257DC8C7";
 
 
 

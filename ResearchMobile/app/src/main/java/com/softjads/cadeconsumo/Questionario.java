@@ -139,6 +139,8 @@ public class Questionario extends Activity  {
 
     public String tempFotoAlimento = "0";
 
+    public int escolarWatchYoutubeVideo = 0;
+
     int TAKE_PHOTO_CODE = 0;
     int NOTIFICATION_REMINDER_NIGHT = 1;
     private final int REQUEST_TAKE_PHOTO_CODE = 1;
@@ -1083,9 +1085,12 @@ public class Questionario extends Activity  {
 
                                                 if (VariavelAPI.constante_descricao_domiciliar.equals(((RadioButton) view).getText().toString())) {
                                                     colocarValorAmbiente(VariavelAPI.constante_variavel_domiciliar);
+                                                    escolarWatchYoutubeVideo = 1;
                                                 }
                                                 if (VariavelAPI.constante_descricao_escolar.equals(((RadioButton) view).getText().toString())) {
                                                     colocarValorAmbiente(VariavelAPI.constante_variavel_escolar);
+
+                                                    escolarWatchYoutubeVideo = 2;
                                                 }
                                                 if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_100)) {
                                                     if (VariavelAPI.constante_descricao_inicio_2_confirma.equals(((RadioButton) view).getText().toString())) {
@@ -1135,6 +1140,14 @@ public class Questionario extends Activity  {
 
                                         // coloca resposta
                                         if (colocaValorRadio(radionbutton.getTag().toString())){
+                                            if (radionbutton.getTag().toString().equals(VariavelAPI.constant_chave_escolar_youtube)){
+                                                escolarWatchYoutubeVideo = 2;
+                                            }
+
+                                            if (radionbutton.getTag().toString().equals(VariavelAPI.constant_chave_domiciliar_youtube)){
+                                                escolarWatchYoutubeVideo = 1;
+                                            }
+
                                             radionbutton.setChecked(true);
                                             Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{(NumeroPerguntaAtual), cursor.getString(0)});
                                             cursorSALTO.moveToFirst();
@@ -1223,7 +1236,7 @@ public class Questionario extends Activity  {
                                 }
                             }
                             if (buttonPersonalizado.getVisibility() == View.INVISIBLE) {
-                                if (idadeMaior7(cursor.getString(8), idade >= 7)) {
+                                if (idadeMaior7(cursor.getString(8), idade >= 8)) {
                                     if (temIdadeFrase(cursor.getString(8))) {
                                         if (eParaFechar(cursor.getString(8))) {
                                             buttonPersonalizado.setTag(cursor.getString(8));
@@ -1235,7 +1248,7 @@ public class Questionario extends Activity  {
                                     }
                                 }
                             } else {
-                                if (idadeMaior7(cursor.getString(8), idade >= 7)) {
+                                if (idadeMaior7(cursor.getString(8), idade >= 8)) {
                                     if (temIdadeFrase(cursor.getString(8))) {
                                         if (eParaFechar(cursor.getString(8))) {
                                             buttonPersonalizado2.setTag(cursor.getString(8));
@@ -5685,7 +5698,7 @@ public class Questionario extends Activity  {
 
     protected void AdicionarYouTube() {
         LinearLayout.LayoutParams paramsNovo = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        ImageButton imageButton = new ImageButton(this);
+        final ImageButton imageButton = new ImageButton(this);
         imageButton.setImageResource(R.mipmap.ic_youtube);
         imageButton.setBackgroundColor(Color.WHITE);
         imageButtons.add(imageButton); // adiciona a nova editText a lista.
@@ -5694,7 +5707,18 @@ public class Questionario extends Activity  {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                watchYoutubeVideo("syXd7kgLSN8");
+                if (escolarWatchYoutubeVideo != 0) {
+                    if (escolarWatchYoutubeVideo == 2) {
+                        watchYoutubeVideo("YF6fmEo9ENg");
+                    } else {
+                        watchYoutubeVideo("7U69oX_HUkY");
+                    }
+                }else{
+                    Toast.makeText(view.getContext(), "Escolha uma opção primeiro, antes de ver o video demostrativo!", Toast.LENGTH_SHORT).show();
+
+                }
+
+
 
             }
         });
