@@ -145,22 +145,27 @@
         android:layout_alignParentBottom="true"
         android:gravity="center"
         android:id="@+id/label_signup"
-        android:alpha="0">
+        android:alpha="100">
 
         <TextView
+            android:id="@+id/link1"
+            android:background="@drawable/selector_login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#cccccc"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text=""
+            android:textColor="@color/colorRedStart"
+            android:textSize="16sp"
+            android:padding="5dp"
+            android:textStyle="bold"
+            android:textAlignment="textStart"
+            android:text="@string/hyperlink"
             android:typeface="serif"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Criar conta"
-            android:visibility="gone"
+            android:text="          "
+
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:textSize="14sp"
@@ -169,15 +174,16 @@
             android:typeface="serif"/>
 
         <TextView
+            android:id="@+id/link2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorRedStart"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Esqueci senha"
-            android:visibility="gone"
-            android:textColor="#FFFFFF"
+            android:text="@string/hyperlink2"
+            android:background="@drawable/selector_login_button"
+            android:padding="5dp"
             android:textStyle="bold"
-            android:id="@+id/label_forget"
-            android:textSize="10sp"
+            android:textSize="16sp"
             android:layout_marginLeft="10dp"
             android:typeface="serif"/>
 

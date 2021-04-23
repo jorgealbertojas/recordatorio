@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">CADE</string>
 
-    <string name="mensagem01">Deseja sair da aplicação</string>
+    <string name="hyperlink"><a href="https://forms.gle/Px5aLgBmSWjqssnr6">Cadastra-se aqui</a></string>
+    <string name="hyperlink2"><a href="https://drive.google.com/drive/folders/1EskGZdNlYmxVkCJAFMP3hai6JtYofau3?usp=sharing">Acesse o manual</a></string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>post

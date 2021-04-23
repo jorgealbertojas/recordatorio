@@ -2,6 +2,7 @@ package com.softjads.cadeconsumo;
 
 import android.os.Bundle;
 
+import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +36,6 @@ public class LoginFragment extends Fragment
     private DisplayMetrics dm;
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.fragment_login, container, false);
@@ -50,6 +50,12 @@ public class LoginFragment extends Fragment
         mainEditText3 = v.findViewById(R.id.mainEditText3);
         mainImageView3 = v.findViewById(R.id.mainImageView3);
 
+        TextView linkTextView1 = v.findViewById(R.id.link1);
+        linkTextView1.setMovementMethod(LinkMovementMethod.getInstance());
+
+        TextView linkTextView2 = v.findViewById(R.id.link2);
+        linkTextView2.setMovementMethod(LinkMovementMethod.getInstance());
+
         button_label = (TextView) getActivity().findViewById(R.id.button_label);
         button_login = getActivity().findViewById(R.id.button_login);
 
@@ -62,31 +68,6 @@ public class LoginFragment extends Fragment
                 mainImageView3.setVisibility(View.VISIBLE);
                 button_login.setTag(4);
                 button_label.setText(getActivity().getResources().getString(R.string.create));
-            }
-        });
-
-        label_forget=v.findViewById(R.id.label_forget);
-        label_forget.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                String emailAddress = mainEditText1.getText().toString();
-
-                if (notNullEmail(emailAddress)){
-/*                    mAuth.sendPasswordResetEmail(emailAddress)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Log.d(TAG_LOGIN_FIREBASE, "Email sent.");
-
-                                        Toast.makeText(getActivity(), getResources().getString(R.string.login_email_send),
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });*/
-
-
-                }
-
             }
         });
 
