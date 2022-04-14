@@ -35,6 +35,8 @@ public class Utility {
 
     public final static String COMPLEMENT_URL_RESPOSTA_CRIANCA_DELETE = "/RecordatorioFunc/resposta/";
 
+    public final static String COMPLEMENT_URL_RESPOSTA_ALIMENTO_DELETE = "/RecordatorioFunc/alimento/";
+
     public static int countCaracter(String string){
 
 
@@ -96,6 +98,21 @@ public class Utility {
         }
 
         return noofyears;
+    }
+
+    public static String getAmbiente(String string){
+        String result  = "0";
+        if (string.length() > 0){
+           if (string.substring(string.length()-1,string.length()).equals("1")){
+               result = "E";
+           }else if (string.substring(string.length()-1,string.length()).equals("2")){
+               result = "C";
+           }else{
+               result = "P";
+           }
+
+        }
+        return result;
     }
 
 }

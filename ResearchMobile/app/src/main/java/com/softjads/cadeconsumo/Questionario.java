@@ -141,6 +141,8 @@ public class Questionario extends Activity  {
 
     public int escolarWatchYoutubeVideo = 0;
 
+    private SharedPreferencesService shared;
+
     int TAKE_PHOTO_CODE = 0;
     int NOTIFICATION_REMINDER_NIGHT = 1;
     private final int REQUEST_TAKE_PHOTO_CODE = 1;
@@ -194,7 +196,7 @@ public class Questionario extends Activity  {
     public static String nomeCrianca = "Jorge Alberto";
     public static String nomeAlimento = "Jorge Alberto";
 
-    public static String idAlimento = "";
+
     public static String idPerguntaParaAliemnto = "";
 
     public boolean PassouPorAquiTextoTemp = false;
@@ -302,8 +304,8 @@ public class Questionario extends Activity  {
                                         CheckBox checkBox = new CheckBox(getApplicationContext());
                                         checkBox.setText(grupo.get(i).getGrupoAlimentar() + " (" + grupo.get(i).getTotalAlimentos() + ")");
                                         checkBox.setTag(grupo.get(i).getGrupoAlimentar());
-                                        checkBox.setTextColor(getResources().getColor(R.color.black));
-                                        checkBox.setBackgroundColor(getResources().getColor(R.color.white));
+                                        checkBox.setTextColor(getResources().getColor(R.color.white));
+                                        checkBox.setBackgroundColor(getResources().getColor(R.color.color_primary_dark));
                                         checkBox.setPadding(20, 2, 20, 2);
                                         checkBox.setOnClickListener(new View.OnClickListener() {
                                             @Override
@@ -336,8 +338,8 @@ public class Questionario extends Activity  {
                                         TextView textView = new TextView(getApplicationContext());
                                         textView.setText(data.get(i).getDescricao());
                                         textView.setTag(i);
-                                        textView.setTextColor(getResources().getColor(R.color.white));
-                                        textView.setBackgroundColor(getResources().getColor(R.color.color_primary_dark));
+                                        textView.setTextColor(getResources().getColor(R.color.black));
+                                        textView.setBackgroundColor(getResources().getColor(R.color.white));
                                         textView.setPadding(20, 20, 20, 20);
                                         textView.setOnClickListener(new View.OnClickListener() {
                                             @Override
@@ -485,6 +487,8 @@ public class Questionario extends Activity  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
+        shared = new SharedPreferencesService(this);
+
         numero_refeicao_atual_domic = "0";
 
         dm = getResources().getDisplayMetrics();
@@ -609,14 +613,13 @@ public class Questionario extends Activity  {
         Nomeusuario = extras.getString("Nomeusuario");
         AlunoAtual = Integer.parseInt(extras.getString("AlunoAtual"));
         if (AlunoAtual == 0) {
-            SharedPreferencesService shared = new SharedPreferencesService(this);
             AlunoAtual = Integer.parseInt(shared.getCodigoCrianca());
         }
 
 
         AlunoAtualID = (extras.getString("AlunoAtualID"));
         if (AlunoAtualID.equals("0")) {
-            SharedPreferencesService shared = new SharedPreferencesService(this);
+
             AlunoAtualID = (shared.getIDCriancaCodigo());
         }
 
@@ -825,7 +828,9 @@ public class Questionario extends Activity  {
                     respostaAdd.setIdAlimento(NumeroPerguntaAtual);
 
                     respostaAdd.setValor("");
-                    respostaAdd.setTagLivre(idAlimento);
+
+                    String AliemntoID = (shared.getIDAlimento());
+                    respostaAdd.setTagLivre(AliemntoID);
 
                     createStackOverflowAPI();
 
@@ -969,7 +974,10 @@ public class Questionario extends Activity  {
                         if (pergunta.length() > 0) {
 
                             String medidacaseira = "";
-                            Cursor cursorRESPOSTA_OPCAO_MEDIDA_CASEIRA = bd.rawQuery(sql_select.GET_RESPOSTA_OPCAO_MEDIDA_CASEIRA_2, new String[]{Integer.toString(AlunoAtual), idAlimento});
+
+                            String AliemntoID = (shared.getIDAlimento());
+
+                            Cursor cursorRESPOSTA_OPCAO_MEDIDA_CASEIRA = bd.rawQuery(sql_select.GET_RESPOSTA_OPCAO_MEDIDA_CASEIRA_2, new String[]{Integer.toString(AlunoAtual), AliemntoID});
                             cursorRESPOSTA_OPCAO_MEDIDA_CASEIRA.moveToFirst();
                             cursorRESPOSTA_OPCAO_MEDIDA_CASEIRA.getCount();
                             if (cursorRESPOSTA_OPCAO_MEDIDA_CASEIRA.getCount() > 0) {
@@ -1136,6 +1144,30 @@ public class Questionario extends Activity  {
                                             }
                                         });
 
+                                        if (igual.equals(VariavelAPI.constant_e_papel_nao)){
+                                            if (Utility.getAmbiente(Integer.toString(AlunoAtual)).equals("P")) {
+                                                radionbutton.setVisibility(View.GONE);
+                                            }
+                                        }
+
+                                        if (igual.equals(VariavelAPI.constant_e_papel_sim)){
+                                            if (Utility.getAmbiente(Integer.toString(AlunoAtual)).equals("E") || Utility.getAmbiente(Integer.toString(AlunoAtual)).equals("C")) {
+                                                radionbutton.setVisibility(View.GONE);
+                                            }
+                                        }
+
+                                        if (igual.equals(VariavelAPI.constant_casa)){
+                                            if (Utility.getAmbiente(Integer.toString(AlunoAtual)).equals("E")) {
+                                                radionbutton.setVisibility(View.GONE);
+                                            }
+                                        }
+
+                                        if (igual.equals(VariavelAPI.constant_escola)){
+                                            if (Utility.getAmbiente(Integer.toString(AlunoAtual)).equals("C")) {
+                                                radionbutton.setVisibility(View.GONE);
+                                            }
+                                        }
+
                                         radionbuttons.add(radionbutton); // adiciona a nova editText a lista.
 
                                         // coloca resposta
@@ -1298,6 +1330,56 @@ public class Questionario extends Activity  {
 
                                     array_spinner = new String[Utility.countCaracter(opcoes) + 1];
 
+                                    if (igual.equals(VariavelAPI.constant_preparado_aliemnto)){
+                                        if (array_spinner.length == 2) {
+                                            spinner.setVisibility(View.GONE);
+                                            editAnimation.setVisibility(View.GONE);
+                                        }
+                                    }
+
+                                    if (igual.equals(VariavelAPI.constant_voce_acrescentou)){
+                                        if (array_spinner.length == 2) {
+                                            spinner.setVisibility(View.GONE);
+                                            editAnimation.setVisibility(View.GONE);
+                                        }
+                                    }
+
+                                    if (igual.equals(VariavelAPI.constant_preparado_escola_aliemnto)){
+                                        if (array_spinner.length == 2) {
+                                            spinner.setVisibility(View.GONE);
+                                            editAnimation.setVisibility(View.GONE);
+                                        }
+                                    }
+
+                                    if (igual.equals(VariavelAPI.constant_voce_escola_acrescentou)){
+                                        if (array_spinner.length == 2) {
+                                            spinner.setVisibility(View.GONE);
+                                            editAnimation.setVisibility(View.GONE);
+                                        }
+                                    }
+
+                                    if (igual.equals(VariavelAPI.constant_voce_escola2_acrescentou)){
+                                        if (array_spinner.length == 2) {
+                                            spinner.setVisibility(View.GONE);
+                                            editAnimation.setVisibility(View.GONE);
+                                        }
+                                    }
+
+                                    if (igual.equals(VariavelAPI.constant_voce_casa_acrescentou)){
+                                        if (array_spinner.length == 2) {
+                                            spinner.setVisibility(View.GONE);
+                                            editAnimation.setVisibility(View.GONE);
+                                        }
+                                    }
+
+                                    if (igual.equals(VariavelAPI.constant_voce_casa2_acrescentou)){
+                                        if (array_spinner.length == 2) {
+                                            spinner.setVisibility(View.GONE);
+                                            editAnimation.setVisibility(View.GONE);
+                                        }
+                                    }
+
+
                                     for (int i = 0; i < array_spinner.length; i++) {
                                         if (i == 0) {
                                             array_spinner[0] = VariavelAPI.constanteSelecione;
@@ -1316,17 +1398,21 @@ public class Questionario extends Activity  {
                                     ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                                             .hideSoftInputFromWindow(spinner.getWindowToken(), 0);
 
+                                     String AliemntoID = (shared.getIDAlimento());
+
                                     spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                         @Override
                                         public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                                             if (((TextView) selectedItemView).getText() != VariavelAPI.constanteSelecione) {
                                                 if (((TextView) selectedItemView).getText().toString() != null) {
 
-                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), parentView.getTag().toString(), idAlimento});
+                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), parentView.getTag().toString(), AliemntoID});
 
                                                     insereRegistro(parentView.getTag().toString(), ((TextView) selectedItemView).getText().toString(), 0, false);
 
-                                                    Cursor cursorMEDIDAS_CASEIRAS = bd.rawQuery(sql_select.GET_MEDIDAS_CASEIRAS, new String[]{idAlimento});
+
+
+                                                    Cursor cursorMEDIDAS_CASEIRAS = bd.rawQuery(sql_select.GET_MEDIDAS_CASEIRAS, new String[]{AliemntoID});
                                                     cursorMEDIDAS_CASEIRAS.moveToFirst();
                                                     cursorMEDIDAS_CASEIRAS.getCount();
 
@@ -1374,8 +1460,8 @@ public class Questionario extends Activity  {
                                                                     if (cursorRefeicaoatualiza.getCount() > 0) {
                                                                         if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_101_domic)) {
 
-                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'" + " AND ALIMENTO_REFEICAO_ORDER < 1000 " );
-                                                                                insereeAtualizaAlimentoeRefeicaoComoCodigo(idAlimento, ((TextView) selectedItemView).getText().toString());
+                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + AliemntoID + "'" + " AND ALIMENTO_REFEICAO_ORDER < 1000 " );
+                                                                                insereeAtualizaAlimentoeRefeicaoComoCodigo(AliemntoID, ((TextView) selectedItemView).getText().toString());
 
                                                                         }else{
                                                                             for (int h = 0; h < cursorRefeicaoatualiza.getCount(); h++) {
@@ -1397,8 +1483,8 @@ public class Questionario extends Activity  {
                                                                     if (cursorRefeicaoatualiza.getCount() > 0) {
                                                                         if (cursorPergunta.getString(7).equals(VariavelAPI.constant_chave_101_domic) ) {
 
-                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + idAlimento + "'" + " AND ALIMENTO_REFEICAO_ORDER < 1000 ");
-                                                                                insereeAtualizaAlimentoeRefeicaoComoCodigo(idAlimento, ((TextView) selectedItemView).getText().toString());
+                                                                                bd.execSQL(" update ALIMENTO set ALIMENTO_REFEICAO_ORDER = " + getRefeicaoOrder() + ", ALIMENTO_REFEICAO = '" + ((TextView) selectedItemView).getText() + "' WHERE ID = '" + AliemntoID + "'" + " AND ALIMENTO_REFEICAO_ORDER < 1000 ");
+                                                                                insereeAtualizaAlimentoeRefeicaoComoCodigo(AliemntoID, ((TextView) selectedItemView).getText().toString());
 
                                                                         }else{
                                                                             for (int h = 0; h < cursorRefeicaoatualiza.getCount(); h++) {
@@ -1487,6 +1573,8 @@ public class Questionario extends Activity  {
                                     ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                                             .hideSoftInputFromWindow(checkbox.getWindowToken(), 0);
 
+                                    String AliemntoID = (shared.getIDAlimento());
+
                                     checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                                         @Override
                                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -1501,13 +1589,13 @@ public class Questionario extends Activity  {
                                             for (int i = 0; i < radionbuttons.size(); i++) {
 
                                                 if (radionbuttons.get(i).isChecked()) {
-                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), (radionbuttons.get(i).getTag().toString()),idAlimento});
+                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), (radionbuttons.get(i).getTag().toString()),AliemntoID});
                                                 }
                                                 radionbuttons.get(i).setChecked(false);
                                             }
 
                                             if (isChecked) {
-                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString(),idAlimento});
+                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString(),AliemntoID});
 
                                                 if (getPersonalizacaoBOOLEAN((NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString())) {
                                                     insereRegistro(buttonView.getTag().toString(), ((CheckBox) buttonView).getText().toString(), 0, false);
@@ -1522,7 +1610,20 @@ public class Questionario extends Activity  {
                                                     }
                                                 }
                                             } else {
-                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString(),idAlimento});
+                                                // todo bebeto
+                                                if (mInterfaceObject == null){
+                                                    callApiAlimentos();
+                                                }
+                                                if (mInterfaceObject != null) {
+                                                    mInterfaceObject.deleteRespostaCrianca(AlunoAtualID, (NumeroPerguntaAtual)).enqueue(deletarRespostaCriancaCallback);
+                                                }
+
+                                               // bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString(),AliemntoID});
+                                               for (int i = 0; i < checkboxs.size(); i++) {
+                                                   bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString(),AliemntoID});
+                                                   checkboxs.get(i).setChecked(false);
+                                                }
+
                                                 if (cursorSALTO.getCount() > 0) {
                                                     String n = cursorSALTO.getString(6);
                                                     if (!cursorSALTO.getString(6).equals("0")) {
@@ -1626,17 +1727,19 @@ public class Questionario extends Activity  {
                                         }
                                     });
 
+                                    String AliemntoID = (shared.getIDAlimento());
+
                                     TextWatcher textWatcher = new TextWatcher() {
                                         public void afterTextChanged(Editable s) {
                                             if (PassouPorAquiTextoTemp) {
                                                 for (int i = 0; i < radionbuttons.size(); i++) {
                                                     if (radionbuttons.get(i).isChecked()) {
-                                                        bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString(),idAlimento});
+                                                        bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString(),AliemntoID});
                                                     }
                                                     radionbuttons.get(i).setChecked(false);
                                                 }
 
-                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), (TemEditText.getTag().toString()),idAlimento});
+                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), (TemEditText.getTag().toString()),AliemntoID});
                                                 if (s.length() > 0) {
                                                     insereRegistro((TemEditText.getTag().toString()), s.toString(), 0, false);
 
@@ -1878,11 +1981,14 @@ public class Questionario extends Activity  {
                                         }
                                     });
 
+
+
                                     TextWatcher textWatcher = new TextWatcher() {
                                         public void afterTextChanged(Editable s) {
+                                            String AlimentoID = shared.getIDAlimento();
                                             for (int i = 0; i < radionbuttons.size(); i++) {
                                                 if (radionbuttons.get(i).isChecked()) {
-                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString(),idAlimento});
+                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString(),AlimentoID});
                                                 }
                                                 radionbuttons.get(i).setChecked(false);
                                             }
@@ -2067,9 +2173,10 @@ public class Questionario extends Activity  {
 
                                     TextWatcher textWatcher = new TextWatcher() {
                                         public void afterTextChanged(Editable s) {
+                                            String AlimentoID = shared.getIDAlimento();
                                             for (int i = 0; i < radionbuttons.size(); i++) {
                                                 if (radionbuttons.get(i).isChecked()) {
-                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString(),idAlimento});
+                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString(),AlimentoID});
                                                 }
                                                 radionbuttons.get(i).setChecked(false);
                                             }
@@ -2170,6 +2277,7 @@ public class Questionario extends Activity  {
                                     // colocar respostas
                                     if (nestaPerguntaNaoColocaResposta()) {
                                         String temp = colocaValor(edit.getTag().toString());
+                                        temp.trim();
                                         if (!temp.equals("")) {
                                             temp = temp.trim();
                                             if (!temp.equals("")) {
@@ -2177,9 +2285,20 @@ public class Questionario extends Activity  {
                                                     temp = "00:00";
                                                 }
 
+                                                if (!temp.equals("")) {
+                                                    if ((temp.substring(temp.length()-1,temp.length())).toString().equals(":")){
+                                                        temp = temp +"00";
+                                                    }else if ((temp.substring(0,1)).toString().equals(":")){
+                                                        temp = "00" + temp;
+                                                    }else if ((temp.substring(temp.length()-2,temp.length()-1)).toString().equals(":")){
+                                                        temp = temp + "0";
+                                                    }
+                                                }
+
                                                 edit.setText(temp);
                                             }
                                         }
+
                                     }
 
                                     Button nButton = new Button(this);
@@ -2251,9 +2370,10 @@ public class Questionario extends Activity  {
 
                                     TextWatcher textWatcher = new TextWatcher() {
                                         public void afterTextChanged(Editable s) {
+                                            String AlimentoID = shared.getIDAlimento();
                                             for (int i = 0; i < radionbuttons.size(); i++) {
                                                 if (radionbuttons.get(i).isChecked()) {
-                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString(),idAlimento});
+                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString(),AlimentoID});
                                                 }
                                                 radionbuttons.get(i).setChecked(false);
                                             }
@@ -2481,9 +2601,10 @@ public class Questionario extends Activity  {
 
                                     TextWatcher textWatcher = new TextWatcher() {
                                         public void afterTextChanged(Editable s) {
+                                            String AlimentoID = shared.getIDAlimento();
                                             for (int i = 0; i < radionbuttons.size(); i++) {
                                                 if (radionbuttons.get(i).isChecked()) {
-                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString(),idAlimento});
+                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString(),AlimentoID});
                                                 }
                                                 radionbuttons.get(i).setChecked(false);
                                             }
@@ -2674,9 +2795,10 @@ public class Questionario extends Activity  {
 
                                     TextWatcher textWatcher = new TextWatcher() {
                                         public void afterTextChanged(Editable s) {
+                                            String AlimentoID = shared.getIDAlimento();
                                             for (int i = 0; i < radionbuttons.size(); i++) {
                                                 if (radionbuttons.get(i).isChecked()) {
-                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString(),idAlimento});
+                                                    bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), radionbuttons.get(i).getTag().toString(),AlimentoID});
                                                 }
                                                 radionbuttons.get(i).setChecked(false);
                                             }
@@ -2916,6 +3038,7 @@ public class Questionario extends Activity  {
                                         @Override
                                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                                             boolean pegarEstado = isChecked;
+                                            String AlimentoID = shared.getIDAlimento();
 
                                             Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{(NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString()});
                                             cursorSALTO.moveToFirst();
@@ -2923,7 +3046,7 @@ public class Questionario extends Activity  {
 
                                             if (isChecked) {
                                                 TornaVisivelTextEspecial(Integer.toString(Integer.parseInt(buttonView.getTag().toString()) + 1), true);
-                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString(),idAlimento});
+                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString(),AlimentoID});
                                                 insereRegistro(buttonView.getTag().toString(), "", 0, false);
 
                                                 if (cursorSALTO.getCount() > 0) {
@@ -2934,7 +3057,7 @@ public class Questionario extends Activity  {
                                                 }
                                             } else {
                                                 TornaVisivelTextEspecial(Integer.toString(Integer.parseInt(buttonView.getTag().toString()) + 1), false);
-                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString(),idAlimento});
+                                                bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), ((CheckBox) buttonView).getTag().toString(),AlimentoID});
                                                 bd.execSQL(sql_delete.DEL_SALTO_PERGUNTA, new String[]{(NumeroPerguntaAtual)});
                                                 if (cursorSALTO.getCount() > 0) {
                                                     String n = cursorSALTO.getString(6);
@@ -3258,12 +3381,13 @@ public class Questionario extends Activity  {
                 imageView1.setOnClickListener(new View.OnClickListener() {
                                                    @Override
                                                    public void onClick(View view) {
+                                                       String AlimentoID = shared.getIDAlimento();
                                                        imagemEstaMarca = true;
                                                        desmarcarImagem();
                                                        ((ImageView) view).setBackground(getResources().getDrawable(R.drawable.image_select));
                                                        Intent imageActivity = new Intent(Questionario.this, ImageActivity.class);
                                                        imageActivity.putExtra("imagem_url", listimagens.get(Integer.parseInt(view.getTag().toString())).getUrl());
-                                                       bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), listimagensCodigo.get(Integer.parseInt(view.getTag().toString())),idAlimento});
+                                                       bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), listimagensCodigo.get(Integer.parseInt(view.getTag().toString())),AlimentoID});
                                                        insereRegistro(listimagensCodigo.get(Integer.parseInt(view.getTag().toString())), "", 0, true);
 
                                                        startActivity(imageActivity);
@@ -3283,12 +3407,13 @@ public class Questionario extends Activity  {
                 imageView2.setOnClickListener(new View.OnClickListener() {
                                                   @Override
                                                   public void onClick(View view) {
+                                                      String AlimentoID = shared.getIDAlimento();
                                                       imagemEstaMarca = true;
                                                       desmarcarImagem();
                                                       ((ImageView) view).setBackground(getResources().getDrawable(R.drawable.image_select));
                                                       Intent imageActivity = new Intent(Questionario.this, ImageActivity.class);
                                                       imageActivity.putExtra("imagem_url", listimagens.get(Integer.parseInt(view.getTag().toString())).getUrl());
-                                                      bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), listimagensCodigo.get(Integer.parseInt(view.getTag().toString())),idAlimento});
+                                                      bd.execSQL(sql_delete.DEL_TODOS_RESPOSTA_ID_OPCAO_ID_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), listimagensCodigo.get(Integer.parseInt(view.getTag().toString())),AlimentoID});
                                                       insereRegistro(listimagensCodigo.get(Integer.parseInt(view.getTag().toString())), "", 0, true);
 
                                                       startActivity(imageActivity);
@@ -3848,8 +3973,9 @@ public class Questionario extends Activity  {
                     obj.put("ID_ALIMENTO", numero_refeicao_atual_domic);
                 }else{
                     if (colocaIDAlimento()) {
-                        temId = idAlimento;
-                        obj.put("ID_ALIMENTO", idAlimento);
+                        String AlimentoID = shared.getIDAlimento();
+                        temId = AlimentoID;
+                        obj.put("ID_ALIMENTO", AlimentoID);
                     } else {
                         obj.put("ID_ALIMENTO", "");
                     }
@@ -3877,7 +4003,10 @@ public class Questionario extends Activity  {
             respostaAdd.setIdAlimento(temId);
 
             respostaAdd.setValor(pvalue);
-            respostaAdd.setTagLivre(idAlimento);
+
+            String AliemntoID = (shared.getIDAlimento());
+
+            respostaAdd.setTagLivre(AliemntoID);
 
             this.onInsert(this, obj, sql_create.TABLE_RESPOSTA);
 
@@ -3887,12 +4016,17 @@ public class Questionario extends Activity  {
          //       Log.d("bebeto12", "teste" );
          //   }
 
-            if (delete) {
-                mInterfaceObject.postAdicionaCriancaDelete(respostaAdd, AlunoAtualID).enqueue(cadatrarRespostaCallback);
-            }else{
-                mInterfaceObject.postAdicionaCrianca(respostaAdd, AlunoAtualID).enqueue(cadatrarRespostaCallback);
-            }
 
+
+            if (NumeroPerguntaAtual.equals(VariavelAPI.constant_chave_repetiu)) {
+                mInterfaceObject.postAdicionaCrianca(respostaAdd, AlunoAtualID).enqueue(cadatrarRespostaCallback);
+            }else{
+                if (delete) {
+                    mInterfaceObject.postAdicionaCriancaDelete(respostaAdd, AlunoAtualID).enqueue(cadatrarRespostaCallback);
+                }else{
+                    mInterfaceObject.postAdicionaCrianca(respostaAdd, AlunoAtualID).enqueue(cadatrarRespostaCallback);
+                }
+            }
 
 
         } catch (Throwable ex) {
@@ -4290,7 +4424,7 @@ public class Questionario extends Activity  {
                             }
                         }else if (child2 instanceof Spinner) {
                             Spinner sp = (Spinner) child2;
-                            if (sp.getSelectedItemPosition() > 0) {
+                            if (sp.getSelectedItemPosition() > 0 || (sp.getVisibility() != View.VISIBLE) ) {
                                 nBoolean = true;
                             } else {
                                 return false;
@@ -5190,7 +5324,11 @@ public class Questionario extends Activity  {
                 nButton2.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        // Todo insert
                         bd.execSQL(sql_delete.DEL_ALIMENTO, new String[]{Integer.toString(AlunoAtual), (view.getTag().toString())});
+
+                        mInterfaceObject.deleteRespostaAlimento(AlunoAtualID,view.getTag().toString()).enqueue(deletarRespostaCriancaCallback);
+
                         apagarValoresLinearLayout();
                         criarAlimentosInseridos();
                     }
@@ -5281,12 +5419,15 @@ public class Questionario extends Activity  {
                 nButton2.setColorFilter(newColor2, PorterDuff.Mode.SRC_ATOP);
                 nButton2.setTag(cursorREFEICAO.getString(0));
 
+
+
                 nButton2.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         numero_refeicao_atual_domic = view.getTag().toString();
 
-                        idAlimento = numero_refeicao_atual_domic;
+
+                        shared.setIDAlimento(numero_refeicao_atual_domic);
 
                         InsereSalto(VariavelAPI.constant_chave_107, VariavelAPI.constant_chave_107);
 
@@ -5468,7 +5609,7 @@ public class Questionario extends Activity  {
                     }
                 });
 
-                idAlimento = cursorALIMENTO.getString(0);
+               shared.setIDAlimento(cursorALIMENTO.getString(0));
 
                 Resources res = getResources();
 
@@ -5483,11 +5624,13 @@ public class Questionario extends Activity  {
 
                 boolean mostarCheck = false;
 
+                String AlimentoID = shared.getIDAlimento();
+
                 if (colocaIDAlimento()) {
-                    Cursor cursorTUDO_ALIMENTO_CHECADO = bd.rawQuery(sql_select.GET_RESPOSTA_OPCAO_TOTAS_MAIOR_3, new String[]{Integer.toString(AlunoAtual), idPerguntaParaAliemnto, idAlimento});
+                    Cursor cursorTUDO_ALIMENTO_CHECADO = bd.rawQuery(sql_select.GET_RESPOSTA_OPCAO_TOTAS_MAIOR_3, new String[]{Integer.toString(AlunoAtual), idPerguntaParaAliemnto, AlimentoID});
                     cursorTUDO_ALIMENTO_CHECADO.moveToFirst();
                     cursorTUDO_ALIMENTO_CHECADO.getCount();
-                    if (cursorTUDO_ALIMENTO_CHECADO.getCount() > 2) {
+                    if (cursorTUDO_ALIMENTO_CHECADO.getCount() > 0) {
                         mostarCheck = true;
                     }else if (cursorTUDO_ALIMENTO_CHECADO.getCount() == 2 && (ambienteTEMP.equals(VariavelAPI.constante_variavel_papel)) ) {
                         mostarCheck = true;
@@ -5965,7 +6108,6 @@ public class Questionario extends Activity  {
     }
 
     private void setSharedPreferencesServiceVistoriaFoto(String fotoPerfilEncoded, String numero) {
-        SharedPreferencesService shared = new SharedPreferencesService(this);
         shared.setVistoriaFoto(fotoPerfilEncoded, numero);
     }
 
@@ -6010,7 +6152,6 @@ public class Questionario extends Activity  {
     }
 
     private void carregarFoto(ImageView foto, String numero) {
-        SharedPreferencesService shared = new SharedPreferencesService(this);
         String stringFoto = shared.getVistoriaFoto(numero);
 
         Object fotoProfile = null;
@@ -6039,6 +6180,7 @@ public class Questionario extends Activity  {
 
                 Glide.with(getApplicationContext())
                         .load(fotoProfile)
+                        .centerInside()
                         .into(foto);
             } catch (Exception e) {
 
@@ -6147,7 +6289,8 @@ public class Questionario extends Activity  {
         cursorGET_ALIMENTOS_nome.getCount();
 
         if (cursorGET_ALIMENTOS_nome.getCount() > 0) {
-            idAlimento = aliemntoid;
+
+            shared.setIDAlimento(aliemntoid);
             nomeAlimento = cursorGET_ALIMENTOS_nome.getString(1);
         }
 
@@ -6172,7 +6315,9 @@ public class Questionario extends Activity  {
             }
         }
 
-        Cursor cursorRESPOSTA_OPCAO_TOTAS = bd.rawQuery(sql_select.GET_RESPOSTA_OPCAO_TOTAS, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), tag, idAlimento});
+        String AlimentoID = shared.getIDAlimento();
+
+        Cursor cursorRESPOSTA_OPCAO_TOTAS = bd.rawQuery(sql_select.GET_RESPOSTA_OPCAO_TOTAS, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), tag, AlimentoID});
         cursorRESPOSTA_OPCAO_TOTAS.moveToFirst();
         cursorRESPOSTA_OPCAO_TOTAS.getCount();
         if (cursorRESPOSTA_OPCAO_TOTAS.getCount() > 0) {
@@ -6205,7 +6350,9 @@ public class Questionario extends Activity  {
             }
         }
 
-        Cursor cursorRESPOSTA_OPCAO_TOTAS = bd.rawQuery(sql_select.GET_RESPOSTA_OPCAO_TOTAS, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), tag, idAlimento});
+        String AlimentoID = shared.getIDAlimento();
+
+        Cursor cursorRESPOSTA_OPCAO_TOTAS = bd.rawQuery(sql_select.GET_RESPOSTA_OPCAO_TOTAS, new String[]{Integer.toString(AlunoAtual), (NumeroPerguntaAtual), tag, AlimentoID});
         cursorRESPOSTA_OPCAO_TOTAS.moveToFirst();
         cursorRESPOSTA_OPCAO_TOTAS.getCount();
         if (cursorRESPOSTA_OPCAO_TOTAS.getCount() > 0) {

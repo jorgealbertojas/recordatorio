@@ -52,4 +52,7 @@ public interface InterfaceRetrofit {
         @DELETE(Utility.COMPLEMENT_URL_RESPOSTA_CRIANCA_DELETE + "{id_crianca}" + "/{id_pergunta}")
         Call<Integer> deleteRespostaCrianca(@Path("id_crianca") String id_crianca, @Path("id_pergunta") String id_pergunta);
 
+        @DELETE(Utility.COMPLEMENT_URL_RESPOSTA_ALIMENTO_DELETE + "{idCrianca}" + "/{idAlimento}")
+        Call<Integer> deleteRespostaAlimento(@Path("idCrianca") String id_crianca, @Path("idAlimento") String id_pergunta);
+
     }

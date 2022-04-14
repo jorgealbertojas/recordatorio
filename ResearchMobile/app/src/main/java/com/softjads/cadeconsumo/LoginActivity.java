@@ -170,8 +170,8 @@ public class LoginActivity extends AppCompatActivity {
         password.setText(sharedPref.getString("preference_key_password", null));
 
         if (BuildConfig.DEBUG) {
-            email.setText("marina");
-            password.setText("senha");
+            email.setText("jade");
+            password.setText("Veloso");
         }
     }
 

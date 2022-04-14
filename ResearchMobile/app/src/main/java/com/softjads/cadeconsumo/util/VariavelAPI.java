@@ -81,6 +81,23 @@ public class VariavelAPI {
     // "FIMESC/1 encerra as refeições com codigo ID
     public static final String constant_chave_1017 = "FEEE1EE3-DC81-4816-A266-064247EA1B3E";
 
+    public static final String constant_chave_repetiu = "F2ED028D-80EF-476A-87DB-2E757389023F";
+
+    public static final String constant_e_papel_sim = "0AC82ED0-B6AD-44C5-94BB-A58E2664C12F";
+    public static final String constant_e_papel_nao = "96D4170A-7730-4B7B-A6C4-06A753EAE038";
+
+    public static final String constant_casa = "15B42A5E-3A55-451A-B58A-F564257DC8C7";
+    public static final String constant_escola = "C15EBC53-75D8-452C-BF2F-8A95B69D5C02";
+
+    public static final String constant_preparado_aliemnto = "57fdf280-2e55-4097-9000-bff82c293c5f";
+    public static final String constant_voce_acrescentou = "d28b2bf9-2fe7-4bf8-9d37-1bdef32d3fcb";
+
+    public static final String constant_preparado_escola_aliemnto = "5c7db056-832b-4af7-b575-ea1ba452c7af";
+    public static final String constant_voce_escola_acrescentou = "79aba2a8-2a3c-4946-85cb-15c612f65451";
+    public static final String constant_voce_escola2_acrescentou = "d1885195-bc7c-4e98-85b5-0f80fabcfb0b";
+    public static final String constant_voce_casa_acrescentou = "46b48b0c-c79a-47a8-a7dd-5f19070d446d";
+    public static final String constant_voce_casa2_acrescentou = "9fd3bff3-d984-4a5f-ad2b-20bec1a9f8a5";
+
 
     public static final String constant_chave_escolar_youtube = "C15EBC53-75D8-452C-BF2F-8A95B69D5C02";
     public static final String constant_chave_domiciliar_youtube = "15B42A5E-3A55-451A-B58A-F564257DC8C7";
