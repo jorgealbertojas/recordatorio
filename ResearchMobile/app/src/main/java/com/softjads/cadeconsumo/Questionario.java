@@ -72,6 +72,7 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -135,6 +136,8 @@ public class Questionario extends Activity  {
 
     Boolean esperaFinalizar = false;
 
+    private boolean primeirravez = true;
+
     Boolean imagemEstaMarca = false;
 
     public String tempFotoAlimento = "0";
@@ -153,6 +156,7 @@ public class Questionario extends Activity  {
     public EditText llPergunta;
 
     public boolean isBackPressed = false;
+    public boolean isBackPressedBug = false;
 
     private ProgressBar progressBar;
 
@@ -193,8 +197,8 @@ public class Questionario extends Activity  {
     public String saltoTEMP = saltoTEMP_NOVO;
     public static String ambienteTEMP = ConstAmbienteTEMP;
 
-    public static String nomeCrianca = "Jorge Alberto";
-    public static String nomeAlimento = "Jorge Alberto";
+    public static String nomeCrianca = " ";
+    public static String nomeAlimento = " ";
 
 
     public static String idPerguntaParaAliemnto = "";
@@ -487,6 +491,7 @@ public class Questionario extends Activity  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
+
         shared = new SharedPreferencesService(this);
 
         numero_refeicao_atual_domic = "0";
@@ -499,6 +504,8 @@ public class Questionario extends Activity  {
         saltoTEMP = (extras.getString("saltoTEMP_NOVO"));
         if (!NaoENotificacao) {
             ambienteTEMP = ConstAmbienteTEMP;
+        }else{
+           // primeirravez = false;
         }
 
         nDataBase = new DataBase(this);
@@ -890,6 +897,24 @@ public class Questionario extends Activity  {
 
 
 
+        Cursor cursorExisteResposta = bd.rawQuery(sql_select.GET_completo_new, new String[]{Integer.toString(AlunoAtual), VariavelAPI.constant_e_papel_sim});
+        cursorExisteResposta.moveToFirst();
+        cursorExisteResposta.getCount();
+
+        if (cursorExisteResposta.getCount() > 0) {
+            primeirravez = false;
+        }
+
+        Cursor cursorExisteResposta2 = bd.rawQuery(sql_select.GET_completo_new, new String[]{Integer.toString(AlunoAtual), VariavelAPI.constant_e_papel_nao});
+        cursorExisteResposta2.moveToFirst();
+        cursorExisteResposta2.getCount();
+
+        if (cursorExisteResposta2.getCount() > 0) {
+            primeirravez = false;
+        }
+
+
+
 
 
      //   llPergunta.animate().translationY(dm.heightPixels).setStartDelay(0).setDuration(0).start();
@@ -995,6 +1020,90 @@ public class Questionario extends Activity  {
 
 
                 }
+
+                    if (primeirravez && Utility.getAmbiente(Integer.toString(AlunoAtual)).equals("P") ) {
+                        insereRegistro(VariavelAPI.constant_e_papel_sim, "", 0, true);
+                        primeirravez = false;
+
+                        Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{(NumeroPerguntaAtual), VariavelAPI.constant_e_papel_sim});
+                        cursorSALTO.moveToFirst();
+                        cursorSALTO.getCount();
+
+                        if (cursorSALTO.getCount() > 0) {
+                            if (!cursorSALTO.getString(6).equals("0")) {
+                                InsereSalto(cursorSALTO.getString(6), VariavelAPI.constant_e_papel_sim);
+                            }
+                        }
+
+                        String ValorSalto = "0";
+                        if (!cursorSALTO.isAfterLast()) {
+                            while (!cursorSALTO.isAfterLast()) {
+                                ValorSalto = cursorSALTO.getString(1);
+
+                                if (cursorSALTO.getString(1) == "0") {
+                                    // BREAKPOINT N�O PARA NO BREAK
+                                    break;
+                                } else if ((cursorSALTO.getString(6).equals(cursorPergunta.getString(7)))) {
+                                    // BREAKPOINT N�O PARA NO BREAK
+                                    break;
+                                }  else if (eParaFechar(cursorSALTO.getString(1))) {
+                                    //this.finish();
+                                    break;
+                                }
+                                cursorPergunta.moveToNext();
+                            }
+                            bd.execSQL(sql_delete.DEL_SALTO, new String[]{ValorSalto});
+                        }
+                    }
+
+
+                if (primeirravez && Utility.getAmbiente(Integer.toString(AlunoAtual)).equals("E") ) {
+                    insereRegistro(VariavelAPI.constant_e_papel_nao, "", 0, true);
+                    if (!cursorPergunta.isLast()) {
+                        cursorPergunta.moveToNext();
+                    }
+                    NumeroPerguntaAtual = (cursorPergunta.getString(6));
+                    primeirravez = false;
+                    colocarValorAmbiente(VariavelAPI.constante_variavel_escolar);
+                    escolarWatchYoutubeVideo = 2;
+                    Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{(NumeroPerguntaAtual), VariavelAPI.constant_escola});
+                    cursorSALTO.moveToFirst();
+                    cursorSALTO.getCount();
+
+                    if (cursorSALTO.getCount() > 0) {
+                        if (!cursorSALTO.getString(6).equals("0")) {
+                            InsereSalto(cursorSALTO.getString(6), VariavelAPI.constant_escola);
+                        }
+                    }
+
+                    llPergunta.setText("Você gostaria de relatar a alimentação da criança do ambiente escolar" );
+
+
+
+                }else if (primeirravez &&  Utility.getAmbiente(Integer.toString(AlunoAtual)).equals("C")){
+                    insereRegistro(VariavelAPI.constant_e_papel_nao, "", 0, true);
+                    if (!cursorPergunta.isLast()) {
+                        cursorPergunta.moveToNext();
+                    }
+                    NumeroPerguntaAtual = (cursorPergunta.getString(6));
+
+                    primeirravez = false;
+                    colocarValorAmbiente(VariavelAPI.constante_variavel_domiciliar);
+                    escolarWatchYoutubeVideo = 1;
+
+                    Cursor cursorSALTO = bd.rawQuery(sql_select.GET_OPCAO_OPCAO, new String[]{(NumeroPerguntaAtual), VariavelAPI.constant_casa});
+                    cursorSALTO.moveToFirst();
+                    cursorSALTO.getCount();
+
+                    if (cursorSALTO.getCount() > 0) {
+                        if (!cursorSALTO.getString(6).equals("0")) {
+                            InsereSalto(cursorSALTO.getString(6), VariavelAPI.constant_casa);
+                        }
+                    }
+
+                    llPergunta.setText("Você gostaria de relatar a alimentação da criança do ambiente domiciliar" );
+                }
+
 
                 llPergunta.refreshDrawableState();
 
@@ -1166,6 +1275,10 @@ public class Questionario extends Activity  {
                                             if (Utility.getAmbiente(Integer.toString(AlunoAtual)).equals("C")) {
                                                 radionbutton.setVisibility(View.GONE);
                                             }
+                                        }
+
+                                        if (NumeroPerguntaAtual.equals(VariavelAPI.constant_inserir_salto_video)){
+                                            radionbutton.setVisibility(View.GONE);
                                         }
 
                                         radionbuttons.add(radionbutton); // adiciona a nova editText a lista.
@@ -1549,9 +1662,6 @@ public class Questionario extends Activity  {
 
                                     CheckBox checkbox = new CheckBox(this);
                                     checkbox.setTag(cursor.getString(0));
-
-                                    String getPersonalizacaoRE = "";
-
 
                                     checkbox.setText(cursor.getString(3));
 
@@ -3829,9 +3939,18 @@ public class Questionario extends Activity  {
             } else {
             }
 
+            if (VariavelAPI.constant_chave_no_more_fist_quest.equals(cursorPergunta.getString(6)) && isBackPressedBug){
+                cursorPergunta.moveToNext();
+                onBackPressed();
+            }
+
+            isBackPressedBug = true;
+
             NumeroPerguntaAtual = cursorPergunta.getString(6);
             pcodPergunta = cursorPergunta.getInt(0);
             pnomePergunta = cursorPergunta.getString(1);
+
+
 
             llPergunta.setTag(pcodPergunta);
             llPergunta.setText(pnomePergunta);
@@ -3940,9 +4059,21 @@ public class Questionario extends Activity  {
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notificationBuilder.build());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        long futureInMillis = 3600000;
+        long futureInMillis = (3600000 * 2);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, futureInMillis, pendingIntent);
+    //    alarmManager.set(AlarmManager.RTC_WAKEUP, futureInMillis, pendingIntent);
+
+        Calendar c = Calendar.getInstance();
+        int hours = c.get(Calendar.HOUR_OF_DAY);
+        int minutes = c.get(Calendar.MINUTE);
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        cal.set(Calendar.HOUR_OF_DAY, hours);
+        cal.set(Calendar.MINUTE, minutes);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis() + futureInMillis, PendingIntent.getBroadcast(this, 1, notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT));
 
 
     }
@@ -6190,10 +6321,17 @@ public class Questionario extends Activity  {
 
     @Override
     public void onBackPressed() {
-
+        boolean avanca = true;
         if (arrayVoltar.size() > 0) {
             if (arrayVoltar.size() == 1){
-                saltoTEMP = VariavelAPI.constant_chave_105;
+                if ((VariavelAPI.constant_chave_105.equals(cursorPergunta.getString(7)))) {
+                    dialogBack();
+                }else if ((VariavelAPI.constant_chave_1019.equals(cursorPergunta.getString(7)))) {
+                    avanca = false;
+                    dialogBack();
+                }else{
+                    cursorPergunta.moveToPrevious();
+                }
             }else {
                 saltoTEMP = arrayVoltar.get(arrayVoltar.size() - 2);
             }
@@ -6206,9 +6344,19 @@ public class Questionario extends Activity  {
                 InsereSalto(saltoTEMP, saltoTEMP);
                 saltoTEMP = "";
             }
-            AvancarQuestionario("");
+
+            if (avanca) {
+                AvancarQuestionario("");
+            }
+
         }else{
-            isBackPressed = true;
+            dialogBack();
+        }
+
+    }
+
+    private void dialogBack(){
+         isBackPressed = true;
             new androidx.appcompat.app.AlertDialog.Builder(this)
                     .setTitle(getString(R.string.app_name))
                     .setMessage("Deseja voltar para a tela inicial?")
@@ -6223,8 +6371,6 @@ public class Questionario extends Activity  {
                             }
                         }
                     }).create().show();
-        }
-
     }
 
 

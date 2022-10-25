@@ -6,6 +6,7 @@ public class sql_select {
 
 
 	public static String GET_completo = " select id_aluno from resposta where id_pergunta = ? and id_aluno = ? ";
+	public static String GET_completo_new = " select id_aluno from resposta where id_aluno = ? and  id_opcao = ? ";
 	public static String get_contapergunta = " select max(id_pergunta) from PERGUNTAS ";
 	public static String getPersonalizacao_opcao_opcao = " SELECT O.ID_OPCAO, O.OPCAO, O.ID_PERGUNTA, O.ORDENA, O.VALOR  FROM OPCAO O WHERE O.ID_PERGUNTA = ? and O.ID_OPCAO = ? ";
 	public static String GET_tem_controle_inicio = " SELECT ID_USUARIO, NM_USUARIO, LONGITUDE, LATITUDE, DATA_INICIO, INICIO  FROM CONTROLE_INICIO WHERE ID_aluno = ?";

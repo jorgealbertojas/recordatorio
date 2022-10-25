@@ -64,6 +64,7 @@ public class VariavelAPI {
     public static final String constant_chave_108 =  "FIMDOMIC/1";
     public static final String constant_chave_109 =  "FIMDOMIC/3";
     public static final String constant_chave_1013 = "PAPEL/2";
+    public static final String constant_chave_1019 = "FIMDOMICDET/7";
 
 
     // "FIMDOMIC/2" não tinha como saber pela id
@@ -101,6 +102,8 @@ public class VariavelAPI {
 
     public static final String constant_chave_escolar_youtube = "C15EBC53-75D8-452C-BF2F-8A95B69D5C02";
     public static final String constant_chave_domiciliar_youtube = "15B42A5E-3A55-451A-B58A-F564257DC8C7";
+
+    public static final String constant_chave_no_more_fist_quest = "DE65F8E8-3EB1-4DA5-BCBD-417FC245BC1D";
 
 
 
@@ -143,5 +146,7 @@ public class VariavelAPI {
 
     public static final String constant_ativar_natificacao = "Ativar notificação para as próximas refeições";
     public static final String constant_ativar_natificacaoNao = "Não";
+
+    public static final String constant_inserir_salto_video = "13F91073-7F58-4DA8-BB85-2D8B7BE3A059";
 
 }
