@@ -1078,7 +1078,7 @@ public class Questionario extends Activity  {
                         }
                     }
 
-                    llPergunta.setText("Você gostaria de relatar a alimentação da criança do ambiente escolar" );
+                    llPergunta.setText("Você irá informar a alimentação que a criança está realizando na escola" );
 
 
 
@@ -1103,7 +1103,7 @@ public class Questionario extends Activity  {
                         }
                     }
 
-                    llPergunta.setText("Você gostaria de relatar a alimentação da criança do ambiente domiciliar" );
+                    llPergunta.setText("Você  irá informar a alimentação que a criança realizou ontem em casa ou locais fora de casa (exceto a escola)" );
                 }
 
 
@@ -1134,6 +1134,15 @@ public class Questionario extends Activity  {
 
             saltoTelaImagem = new ArrayList<String>();
             qualTelaImagem = new ArrayList<String>();
+
+
+            if (NumeroPerguntaAtual.equals(VariavelAPI.constant_inserir_salto_video) && Utility.getAmbiente(Integer.toString(AlunoAtual)).equals("E") ) {
+                llPergunta.setText("Você irá informar a alimentação que a criança está realizando na escola" );
+                escolarWatchYoutubeVideo = 2;
+            }else if (NumeroPerguntaAtual.equals(VariavelAPI.constant_inserir_salto_video)  &&  Utility.getAmbiente(Integer.toString(AlunoAtual)).equals("C")){
+                llPergunta.setText("Você  irá informar a alimentação que a criança realizou ontem em casa ou locais fora de casa (exceto a escola)" );
+                escolarWatchYoutubeVideo = 1;
+            }
 
             while (!cursor.isAfterLast()) {
 
