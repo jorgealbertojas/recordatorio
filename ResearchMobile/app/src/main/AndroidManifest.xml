@@ -27,14 +27,24 @@
         android:roundIcon="@mipmap/ic_icon_new_round"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:exported="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.softjads.cadeconsumo.ValidarPermissao"></activity>
         <activity
+            android:exported="true"
+            android:name="com.softjads.cadeconsumo.ValidarPermissao"></activity>
+        <activity
+            android:exported="true"
             android:name=".ImageActivity"
             android:theme="@style/Theme.Transparent" />
-        <activity android:name="com.softjads.cadeconsumo.CriarUsuario" />
-        <activity android:name="com.softjads.cadeconsumo.CriarCrianca" />
-        <activity android:name="com.softjads.cadeconsumo.LoginActivity">
+        <activity
+            android:exported="true"
+            android:name="com.softjads.cadeconsumo.CriarUsuario" />
+        <activity
+            android:exported="true"
+            android:name="com.softjads.cadeconsumo.CriarCrianca" />
+        <activity
+            android:exported="true"
+            android:name="com.softjads.cadeconsumo.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -42,46 +52,57 @@
             </intent-filter>
         </activity>
         <activity
+            android:exported="true"
             android:name="com.softjads.cadeconsumo.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
+            android:exported="true"
             android:name="com.softjads.cadeconsumo.login"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
+            android:exported="true"
             android:name="com.softjads.cadeconsumo.ExecutorsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
+            android:exported="true"
             android:name="com.softjads.cadeconsumo.automatico"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
+            android:exported="true"
             android:name="com.softjads.cadeconsumo.automatico_nao"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
+            android:exported="true"
             android:name="com.softjads.cadeconsumo.confirmar"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
+            android:exported="true"
             android:name="com.softjads.cadeconsumo.DbExportImport"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
+            android:exported="true"
             android:name="com.softjads.cadeconsumo.Questionario"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
+            android:exported="true"
             android:name="com.softjads.cadeconsumo.faz_opcao_dinamica"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
+            android:exported="true"
             android:name="com.softjads.cadeconsumo.ShowLocationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
+            android:exported="true"
             android:name="com.softjads.cadeconsumo.inicio"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />

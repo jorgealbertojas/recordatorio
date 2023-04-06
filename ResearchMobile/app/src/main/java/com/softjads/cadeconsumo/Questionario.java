@@ -920,6 +920,7 @@ public class Questionario extends Activity  {
      //   llPergunta.animate().translationY(dm.heightPixels).setStartDelay(0).setDuration(0).start();
     //    llPergunta.animate().translationY(0).setDuration(500).alpha(1).setStartDelay(1500).start();
 
+/*
         buttonPersonalizado.animate().translationX(dm.widthPixels + buttonPersonalizado.getMeasuredWidth()).setDuration(0).setStartDelay(0).start();
         buttonPersonalizado.animate().translationX(0).setStartDelay(500).setDuration(1500).setInterpolator(new OvershootInterpolator()).start();
 
@@ -928,6 +929,7 @@ public class Questionario extends Activity  {
 
         imageButtonAvancar.animate().translationX(dm.widthPixels + imageButtonAvancar.getMeasuredWidth()).setDuration(0).setStartDelay(0).start();
         imageButtonAvancar.animate().translationX(0).setStartDelay(500).setDuration(1500).setInterpolator(new OvershootInterpolator()).start();
+*/
 
         NumeroPerguntaAtual = (cursorPergunta.getString(6));
 
@@ -1638,7 +1640,8 @@ public class Questionario extends Activity  {
 
 
                                     editAnimation.addView(spinner, params);
-                                    editAnimation.setHelperText("  " + cursor.getString(3));
+                                    //editAnimation.setHelperText("  " + cursor.getString(3));
+                                    colocaTextView("  " + cursor.getString(3));
 
                                     editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
                                     editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
@@ -2003,7 +2006,9 @@ public class Questionario extends Activity  {
                                     paramsTextHelp.setMargins(0, 0, 0, 0);
                                     TextInputLayout editAnimation = new TextInputLayout(this);
                                     editAnimation.setTag(cursor.getString(0));
-                                    editAnimation.setHelperText("  " + cursor.getString(3));
+                                   // editAnimation.setHelperText("  " + cursor.getString(3));
+
+                                    colocaTextView("  " + cursor.getString(3));
 
                                     editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
                                     editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
@@ -2153,8 +2158,11 @@ public class Questionario extends Activity  {
                                     paramsTextHelp.setMargins(0, 0, 0, 0);
                                     TextInputLayout editAnimation = new TextInputLayout(this);
                                     editAnimation.setTag(cursor.getString(0));
-                                    editAnimation.setHelperText("  " + cursor.getString(3));
-                                    editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
+
+                                    colocaTextView("  " + cursor.getString(3));
+
+                                   // editAnimation.setHelperText("  " + cursor.getString(3));
+                                   // editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
                                     editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
 
                                     edit.addTextChangedListener(textWatcher);
@@ -2327,7 +2335,8 @@ public class Questionario extends Activity  {
                                     edit.addTextChangedListener(textWatcher);
                                     editAnimation.addView(edit, paramsTextHelp);
                                     editAnimation.setTag(cursor.getString(0));
-                                    editAnimation.setHelperText("  " + cursor.getString(3));
+                                    //editAnimation.setHelperText("  " + cursor.getString(3));
+                                    colocaTextView("  " + cursor.getString(3));
 
                                     editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
                                     editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
@@ -2523,7 +2532,8 @@ public class Questionario extends Activity  {
                                     edit.addTextChangedListener(textWatcher);
                                     editAnimation.addView(edit, paramsTextHelp);
                                     editAnimation.setTag(cursor.getString(0));
-                                    editAnimation.setHelperText("  " + cursor.getString(3));
+                                   // editAnimation.setHelperText("  " + cursor.getString(3));
+                                    colocaTextView("  " + cursor.getString(3));
                                     editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
                                     editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
                                     edits.add(editAnimation); // adiciona a nova editText a lista.
@@ -2960,7 +2970,8 @@ public class Questionario extends Activity  {
                                     paramsTextHelp.setMargins(0, 0, 0, 0);
                                     TextInputLayout editAnimation = new TextInputLayout(this);
                                     editAnimation.setTag(cursor.getString(0));
-                                    editAnimation.setHelperText("  " + cursor.getString(3));
+                                   // editAnimation.setHelperText("  " + cursor.getString(3));
+                                    colocaTextView("  " + cursor.getString(3));
                                     editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
                                     editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
 
@@ -3262,6 +3273,11 @@ public class Questionario extends Activity  {
                     }
                 }
                 cursor.moveToNext();
+
+                if (VariavelAPI.constant_chave_no_more_fist_quest.equals(cursorPergunta.getString(6))) {
+                    cursorPergunta.moveToNext();
+                    criarNovaEditText();
+                }
             }
 
             if (cursorPergunta.getString(7).equals(VariavelAPI.contant_chave_inicair_anterior_DETALIMESC2) || cursorPergunta.getString(7).equals(VariavelAPI.contant_chave_inicair_anterior_DETALIMDOMIC2) || cursorPergunta.getString(7).equals(VariavelAPI.contant_chave_inicair_anterior_DETALIMPAPEL2
@@ -3908,9 +3924,13 @@ public class Questionario extends Activity  {
             Cursor cursorSALTO = bd.rawQuery(sql_select.GET_SALTO, null);
             cursorSALTO.moveToFirst();
 
-            int ttt = cursorPergunta.getCount();
-
-            cursorPergunta.moveToFirst();
+            if (VariavelAPI.constant_inserir_salto_video.equals(NumeroPerguntaAtual)) {
+                cursorPergunta.moveToFirst();
+                cursorPergunta.moveToNext();
+                cursorPergunta.moveToNext();
+            }else{
+                cursorPergunta.moveToFirst();
+            }
 
             if (!cursorSALTO.isAfterLast()) {
                 while (!cursorSALTO.isAfterLast()) {
@@ -3942,9 +3962,10 @@ public class Questionario extends Activity  {
             if (VariavelAPI.constant_chave_no_more_fist_quest.equals(cursorPergunta.getString(6)) && isBackPressedBug){
                 cursorPergunta.moveToNext();
                 onBackPressed();
+                isBackPressedBug = false;
             }
 
-            isBackPressedBug = true;
+           // isBackPressedBug = true;
 
             NumeroPerguntaAtual = cursorPergunta.getString(6);
             pcodPergunta = cursorPergunta.getInt(0);
@@ -6321,6 +6342,7 @@ public class Questionario extends Activity  {
 
     @Override
     public void onBackPressed() {
+        isBackPressedBug = true;
         boolean avanca = true;
         if (arrayVoltar.size() > 0) {
             if (arrayVoltar.size() == 1){
@@ -6753,6 +6775,16 @@ public class Questionario extends Activity  {
 
         return retorno;
 
+    }
+
+    private void colocaTextView(String value){
+        LinearLayout.LayoutParams paramsTextHelp2 = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+        paramsTextHelp2.setMargins(0, 0, 0, 0);
+        TextView mTextView = new TextView(this);
+        mTextView.setText(value);
+        mTextView.setTextColor(getResources().getColor(R.color.black));
+        mTextView.setTextSize(20);
+        edits_ll.addView(mTextView, paramsTextHelp2);
     }
 
 

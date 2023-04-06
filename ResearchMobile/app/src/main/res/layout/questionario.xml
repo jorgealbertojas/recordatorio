@@ -192,6 +192,8 @@
         android:layout_height="match_parent"
         android:focusableInTouchMode="false"
         android:paddingLeft="15dp"
+        android:fadeScrollbars="false"
+        android:scrollbarSize="10dp"
         android:paddingRight="15dp">
 
         <LinearLayout
@@ -223,7 +225,7 @@
         android:onClick="Avancar"
         android:padding="3dp"
         android:scaleType="fitXY"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:text="teste "
         android:textColor="@color/black"
         android:visibility="visible"
@@ -243,7 +245,7 @@
         android:padding="3dp"
         android:scaleType="fitXY"
         android:text="teste"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textColor="@color/black"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -261,7 +263,7 @@
         android:padding="3dp"
         android:scaleType="fitXY"
         android:text="Avançar"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textColor="@color/black"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
