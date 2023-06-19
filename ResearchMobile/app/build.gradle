@@ -21,8 +21,8 @@ android {
         applicationId "com.softjads.cadeconsumo"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 21
-        versionName "11.0"
+        versionCode 23
+        versionName "13.0"
         multiDexEnabled true
     }
     buildTypes {

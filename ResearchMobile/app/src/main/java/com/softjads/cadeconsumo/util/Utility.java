@@ -8,34 +8,34 @@ import java.util.GregorianCalendar;
 public class Utility {
     /** Base URL for get Json */
     public final static String BASE_URL =
-            "https://recordatorioapi.azure-api.net/";
+            "https://recordatorioapinovo.azure-api.net/";
 
-    public final static String imagemURL = "https://recordatorioapi.azure-api.net/RecordatorioFunc/foto/";
+    public final static String imagemURL = "https://recordatorioapi.azure-api.net/RecordatorioFuncNovo/foto/";
 
     /** Base URL for get Json */
-    public final static String COMPLEMENT_URL = "/RecordatorioFunc/questionario";
+    public final static String COMPLEMENT_URL = "/RecordatorioFuncNovo/questionario";
 
-    public final static String COMPLEMENT_URL_ALIMENTO = "/RecordatorioFunc/alimentoV2/";
+    public final static String COMPLEMENT_URL_ALIMENTO = "/RecordatorioFuncNovo/alimentoV2/";
 
-    public final static String COMPLEMENT_URL_USUARIO = "/RecordatorioFunc/usuario/login/";
+    public final static String COMPLEMENT_URL_USUARIO = "/RecordatorioFuncNovo/usuario/login/";
 
-    public final static String COMPLEMENT_URL_CREATE_USUARIO = "/RecordatorioFunc/usuario/";
+    public final static String COMPLEMENT_URL_CREATE_USUARIO = "/RecordatorioFuncNovo/usuario/";
 
-    public final static String COMPLEMENT_URL_CRIANCA = "/RecordatorioFunc/crianca/";
+    public final static String COMPLEMENT_URL_CRIANCA = "/RecordatorioFuncNovo/crianca/";
 
-    public final static String COMPLEMENT_URL_CRIANCA_FULL = "/RecordatorioFunc/crianca/todas/full/";
+    public final static String COMPLEMENT_URL_CRIANCA_FULL = "/RecordatorioFuncNovo/crianca/todas/full/";
 
-    public final static String COMPLEMENT_URL_CRIANCA_DELETE = "/RecordatorioFunc/crianca/";
+    public final static String COMPLEMENT_URL_CRIANCA_DELETE = "/RecordatorioFuncNovo/crianca/";
 
-    public final static String COMPLEMENT_URL_CRIANCA_CODIGO = "/RecordatorioFunc/crianca/codigo/";
+    public final static String COMPLEMENT_URL_CRIANCA_CODIGO = "/RecordatorioFuncNovo/crianca/codigo/";
 
-    public final static String COMPLEMENT_URL_ADICIONA_RESPOSTA = "/RecordatorioFunc/resposta/";
+    public final static String COMPLEMENT_URL_ADICIONA_RESPOSTA = "/RecordatorioFuncNovo/resposta/";
 
-    public final static String COMPLEMENT_URL_ADICIONA_RESPOSTA_DELETE = "/RecordatorioFunc/RespostaDeletando/";
+    public final static String COMPLEMENT_URL_ADICIONA_RESPOSTA_DELETE = "/RecordatorioFuncNovo/RespostaDeletando/";
 
-    public final static String COMPLEMENT_URL_RESPOSTA_CRIANCA_DELETE = "/RecordatorioFunc/resposta/";
+    public final static String COMPLEMENT_URL_RESPOSTA_CRIANCA_DELETE = "/RecordatorioFuncNovo/resposta/";
 
-    public final static String COMPLEMENT_URL_RESPOSTA_ALIMENTO_DELETE = "/RecordatorioFunc/alimento/";
+    public final static String COMPLEMENT_URL_RESPOSTA_ALIMENTO_DELETE = "/RecordatorioFuncNovo/alimento/";
 
     public static int countCaracter(String string){
 

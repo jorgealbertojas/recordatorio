@@ -6013,9 +6013,9 @@ public class Questionario extends Activity  {
             public void onClick(View view) {
                 if (escolarWatchYoutubeVideo != 0) {
                     if (escolarWatchYoutubeVideo == 2) {
-                        watchYoutubeVideo("YF6fmEo9ENg");
+                        watchYoutubeVideo("7gAZ8zR3bEo");
                     } else {
-                        watchYoutubeVideo("7U69oX_HUkY");
+                        watchYoutubeVideo("NhkC-fzBICQ");
                     }
                 }else{
                     Toast.makeText(view.getContext(), "Escolha uma opção primeiro, antes de ver o video demostrativo!", Toast.LENGTH_SHORT).show();
