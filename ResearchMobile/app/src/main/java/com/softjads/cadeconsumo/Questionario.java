@@ -659,18 +659,7 @@ public class Questionario extends Activity  {
             Log.d("bebeto12", "teste" + cursorQualAmbiente2.getCount());
         }
 
-        Cursor cursorQualAmbiente;
-        cursorQualAmbiente = bd.rawQuery(sql_select.GET_AMBIENTE_CASA, new String[]{(Integer.toString(AlunoAtual))});
-        cursorQualAmbiente.moveToFirst();
-        if (cursorQualAmbiente.getCount() > 0) {
-            ambienteTEMP = VariavelAPI.constante_variavel_domiciliar;
-        }
-
-        cursorQualAmbiente = bd.rawQuery(sql_select.GET_AMBIENTE_ESCOLAR, new String[]{(Integer.toString(AlunoAtual))});
-        cursorQualAmbiente.moveToFirst();
-        if (cursorQualAmbiente.getCount() > 0) {
-            ambienteTEMP = VariavelAPI.constante_variavel_escolar;
-        }
+        colocarValorAmbiente(ambienteTEMP);
 
         //edits = new ArrayList<EditText>();
         edits = new ArrayList<TextInputLayout>();
@@ -1650,7 +1639,9 @@ public class Questionario extends Activity  {
 
                                     editAnimation.addView(spinner, params);
                                     //editAnimation.setHelperText("  " + cursor.getString(3));
-                                    colocaTextView("  " + cursor.getString(3));
+                                    if (editAnimation.getVisibility() != View.GONE) {
+                                        colocaTextView("  " + cursor.getString(3));
+                                    }
 
                                     editAnimation.setHelperTextTextAppearance(R.style.TextHelp);
                                     editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
@@ -2547,9 +2538,14 @@ public class Questionario extends Activity  {
                                     editAnimation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_questionario));
                                     edits.add(editAnimation); // adiciona a nova editText a lista.
 
-                                    edits_ll.addView(nTextView, paramsTextView);
-                                    edits_ll.addView(nButton, paramsButton);
-                                    edits_ll.addView(editAnimation, params); // adiciona a editText ao ViewGroup
+                                   // edits_ll.addView(nTextView, paramsTextView);
+                                   // edits_ll.addView(nButton, paramsButton);
+                                   // edits_ll.addView(editAnimation, params);
+
+                                    edit.setBackground(null);
+
+
+                                    edits_ll.addView(editAnimation, params);// adiciona a editText ao ViewGroup
 
                                 }
                             }
@@ -6044,11 +6040,11 @@ public class Questionario extends Activity  {
     public void colocarValorAmbiente(String valor) {
 
         if (valor != null) {
-            if (valor.contains(VariavelAPI.constante_variavel_domiciliar)) {
+            if (Utility.getAmbiente(Integer.toString(AlunoAtual)).equals("C")){
                 ambienteTEMP = VariavelAPI.constante_variavel_domiciliar;
-            } else if (valor.contains(VariavelAPI.constante_variavel_escolar)) {
+            } else if (Utility.getAmbiente(Integer.toString(AlunoAtual)).equals("E")){
                 ambienteTEMP = VariavelAPI.constante_variavel_escolar;
-            } else if (valor.contains(VariavelAPI.constante_variavel_papel)) {
+            } else {
                 ambienteTEMP = VariavelAPI.constante_variavel_papel;
             }
         }
